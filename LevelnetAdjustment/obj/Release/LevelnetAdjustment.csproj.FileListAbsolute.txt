@@ -1,0 +1,16 @@
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.exe.config
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.exe
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.pdb
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\MathNet.Numerics.dll
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.ValueTuple.dll
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\MathNet.Numerics.xml
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.ValueTuple.xml
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FileView.resources
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.MainForm.resources
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.Properties.Resources.resources
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.GenerateResource.cache
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.CoreCompileInputs.cache
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.CopyComplete
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.exe
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.pdb
