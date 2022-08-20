@@ -350,45 +350,19 @@ namespace LevelnetAdjustment {
 
             #region 搜索所有闭合环
             Console.WriteLine("最小独立闭合环的个数：{0}-{1}-{2}", ObservedDatasNoRep.Count - (T + 2) + 1, ObservedDatasNoRep.Count, ObservedDatas.Count);
-
-
-            // https://blog.csdn.net/beijinghorn/article/details/125057813
-            var loops = Graph1.Drive(AllPoint, ObservedDatas);
-
-            // https://blog.csdn.net/robin_xu_shuai/article/details/51898847
-            for (int ii = pointNum - 1; ii >= pointNum - KnownPoints_array.Count; ii--) {
-                VertexNode[] vertexNodes = new VertexNode[pointNum];
-                for (int i = 0; i < pointNum; i++) {
-                    vertexNodes[i] = new VertexNode(i, allPoint[i].ToString());
-                }
-
-                DFSAlgorithm graph = new DFSAlgorithm(vertexNodes);
-                ObservedDatas.ForEach(p => {
-                    var startIdx = allPoint.IndexOf(p.Start);
-                    var endIdx = allPoint.IndexOf(p.End);
-                    graph.insertEdge(startIdx, endIdx);
-                    graph.insertEdge(endIdx, startIdx);
-                });
-                graph.findRing(ii);
-                //   打印邻接表结构
-                //for (int i = 0; i < graph.numVertex; i++) {
-                //    VertexNode vertexNode = graph.vertexNodes[i];
-                //    EdgeNode firstEdge = vertexNode.FirstEdge;
-
-                //    EdgeNode currentEdge = firstEdge;
-                //    Console.WriteLine(vertexNode.Data + ":");
-                //    while (currentEdge != null) {
-                //        int vertexNodeIndex = currentEdge.Adjvex;
-                //        Console.Write("->" + vertexNodes[vertexNodeIndex].Data);
-                //        currentEdge = currentEdge.Next;
-                //    }
-                //    Console.WriteLine("end");
-                //}
-            }
+            string str = LoopClosure(2);
+            Console.WriteLine(str);
             #endregion
         }
 
-        //  搜索最短路径
+        /// <summary>
+        /// 搜索最短路径
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="exclude"></param>
+        /// <param name="neighbor"></param>
+        /// <param name="diff"></param>
+        /// <param name="S"></param>
         void FindShortPath(int p, int exclude, int[] neighbor, double[] diff, double[] S) {
             for (int i = 0; i < AllPoint.Count; i++) {
                 neighbor[i] = -1;  // 还没有邻接点
@@ -402,21 +376,21 @@ namespace LevelnetAdjustment {
                 bool successful = true;
                 for (int j = 0; j <= ObservedDatasNoRep.Count - 1; j++) {
                     if (j == exclude) continue;
-                    int p1 = StarP[j];
-                    int p2 = EndP[j];
-                    double S12 = 1.0 / P[j];
+                    int p1 = AllPoint.IndexOf(ObservedDatasNoRep[j].Start); //起点点号
+                    int p2 = AllPoint.IndexOf(ObservedDatasNoRep[j].End); //终点点号
+                    double S12 = ObservedDatasNoRep[j].Distance; // p1到p2的距离
                     if (neighbor[p1] < 0 && neighbor[p2] < 0) continue;
 
                     if (S[p2] > S[p1] + S12) {
                         neighbor[p2] = p1;
                         S[p2] = S[p1] + S12;
-                        diff[p2] = diff[p1] + L[j];
+                        diff[p2] = diff[p1] + ObservedDatasNoRep[j].HeightDiff;
                         successful = false;
                     }
                     else if (S[p1] > S[p2] + S12) {
                         neighbor[p1] = p2;
                         S[p1] = S[p2] + S12;
-                        diff[p1] = diff[p2] - L[j];
+                        diff[p1] = diff[p2] - ObservedDatasNoRep[j].HeightDiff;
                         successful = false;
                     }
                 }
@@ -425,7 +399,80 @@ namespace LevelnetAdjustment {
             return;
         }
 
+        /// <summary>
+        /// 环闭合差计算	
+        /// </summary>
+        /// <param name="roundi"></param>
+        string LoopClosure(double roundi) {
+            int m_Pnumber = AllPoint.Count;
+            int m_Lnumber = ObservedDatasNoRep.Count;
+            StringBuilder strClosure = new StringBuilder();
+            strClosure.Append("\n\n----------------------- 环闭合差计算 ----------------------- ");
+            int closure_N = 0;
+            int num = ObservedDatasNoRep.Count - (m_Pnumber - 1);
+            if (num < 1) {
+                strClosure.Append("\n    无闭合环\n\n");
+                return strClosure.ToString();
+            }
+            int[] neighbor = new int[m_Pnumber]; //邻接点数组
+            int[] used = new int[m_Lnumber]; //观测值是否已经用于闭合差计算
+            double[] diff = new double[m_Pnumber]; //高差累加值数组
+            double[] S = new double[m_Pnumber];	//路线长数组
 
+            for (int i = 0; i < m_Lnumber; i++)
+                used[i] = 0;
+
+            for (int i = 0; i < m_Lnumber; i++) {
+                int k1 = AllPoint.IndexOf(ObservedDatasNoRep[i].Start); //起点点号;
+                int k2 = AllPoint.IndexOf(ObservedDatasNoRep[i].End); //终点点号
+                if (used[i] != 0) continue;
+                if (k2 == k1)   //后面添加修改的
+                    return strClosure.ToString();
+
+                FindShortPath(k2, i, neighbor, diff, S);//搜索最短路线，第i号观测值不能参加
+
+                if (neighbor[k1] < 0) {
+                    strClosure.Append("\n   观测值" + AllPoint[k1] + "-" + AllPoint[k2] + "与任何观测边不构成闭合环");
+                }
+                else {
+                    used[i] = 1;
+                    closure_N++;
+                    strClosure.Append("\n   闭合环号： " + closure_N);
+                    strClosure.Append("\n   线路点号： ");
+                    int p1 = k1;
+                    while (true)//输出点名
+                    {
+                        int p2 = neighbor[p1];
+                        strClosure.Append(AllPoint[p1] + "-");
+
+                        for (int r = 0; r < m_Lnumber; r++)//将用过的观测值标定
+                        {
+                            if (AllPoint.IndexOf(ObservedDatasNoRep[r].Start) == p1 && AllPoint.IndexOf(ObservedDatasNoRep[r].End) == p2) {
+                                used[r] = 1;
+                                break;
+                            }
+                            else if (AllPoint.IndexOf(ObservedDatasNoRep[r].Start) == p2 && AllPoint.IndexOf(ObservedDatasNoRep[r].End) == p1) {
+                                used[r] = 1;
+                                break;
+                            }
+                        }
+                        if (p2 == k2)
+                            break;
+                        //if (used[p2] == 1)
+                        //    break;
+                        else
+                            p1 = p2;
+                    }
+                    strClosure.Append(AllPoint[k2] + "-" + AllPoint[k1]);
+                    double W = (ObservedDatasNoRep[i].HeightDiff + diff[k1]) * 1000;   //闭合差
+                    double SS = S[k1] + ObservedDatasNoRep[i].Distance; //环长
+                    double limit = (roundi * Math.Sqrt(SS));
+                    strClosure.Append("\n   高差闭合差： " + (-W).ToString("f2") + "mm \n   平原限差:" + limit.ToString("f4") + "mm)\n");
+                }
+            }
+            return strClosure.ToString();
+
+        }
     }
 }
 
