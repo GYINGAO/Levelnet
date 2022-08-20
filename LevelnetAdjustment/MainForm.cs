@@ -27,6 +27,7 @@ namespace LevelnetAdjustment {
         public List<PointData> UnknownPoint_new { get; set; } // 定义列表存储近似高程(按照unknownPoints_array点号顺序排列)
         public List<PointData> AllKnownPoint { get; set; } //所有点的信息
         public List<ObservedData> ObservedDatasNoRep { get; set; } // 去除重复边的观测数据
+        public ArrayList AllPoint { get; set; }
         public int N { get; set; } //观测数
         public int T { get; set; } //必要观测数
         public int R { get; set; } //多余观测数
@@ -209,7 +210,7 @@ namespace LevelnetAdjustment {
             sb.AppendLine(split);
             sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"高程(m)",titlePad}");
             for (int i = 0; i < KnownPoints.Count; i++) {
-                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad}");
+                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad:#0.00000}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "高差观测数据");
@@ -250,12 +251,12 @@ namespace LevelnetAdjustment {
 
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
             // 点的集合
-            var point = Commom.Clone(UnknownPoints_array);
+            AllPoint = Commom.Clone(UnknownPoints_array);
             for (int i = 0; i < KnownPoints_array.Count; i++) {
-                point.Add(KnownPoints_array[i]);
+                AllPoint.Add(KnownPoints_array[i]);
             }
             #region 根据观测数据生成邻接表
-            var pointNum = point.Count;
+            var pointNum = AllPoint.Count;
             const int inf = 100000000;
             double[,] cost = new double[pointNum, pointNum];
             // 对角线为0，其余为inf
@@ -271,8 +272,8 @@ namespace LevelnetAdjustment {
             }
             // 记录观测数据
             ObservedDatas.ForEach(pd => {
-                var rowIdx = point.IndexOf(pd.Start);
-                var columnIdx = point.IndexOf(pd.End);
+                var rowIdx = AllPoint.IndexOf(pd.Start);
+                var columnIdx = AllPoint.IndexOf(pd.End);
                 cost[rowIdx, columnIdx] = pd.Distance;
                 cost[columnIdx, rowIdx] = pd.Distance;
             });
@@ -282,81 +283,89 @@ namespace LevelnetAdjustment {
             // 参考 https://blog.csdn.net/weixin_42724039/article/details/81255726
             // https://www.codetd.com/article/9950057
             var path = new List<int>();
-            for (int ii = pointNum - 1; ii >= pointNum - KnownPoints_array.Count; ii--) {
-                for (int jj = ii - 1; jj >= pointNum - KnownPoints_array.Count; jj--) {
-                    int g = ii; // 起点
-                    int h = jj; // 终点
-                    int[] book = new int[pointNum]; //book[i]=0表示此结点最短路未确定，为1表示已确定
-                    double[] distance = new double[pointNum];//出发点到各点最短距离
-                    int[] last1 = new int[pointNum];//存储最短路径，每个结点的上一个结点
-                    double min;
-                    int u = 0;
-                    //初始化distance，这是出发点到各点的初始距离
-                    for (int i = 0; i < pointNum; i++) {
-                        distance[i] = cost[g, i];
-                    }
-                    //初始化出发点的book
-                    for (int i = 0; i < pointNum; i++) { last1[i] = g; }
-                    last1[g] = -1;
-                    book[g] = 1;
-                    //核心算法
-                    for (int i = 0; i < pointNum; i++) {
-                        min = inf;
-
-                        //找到离g号结点最近的点
-                        for (int j = 0; j < pointNum; j++) {
-                            if (book[j] == 0 && distance[j] < min && distance[j] != 0) {
-                                min = distance[j];
-                                u = j;
-                            }
+            if (KnownPoints_array.Count < 2) {
+                Console.WriteLine("已知点个数小于2");
+            }
+            else {
+                for (int ii = pointNum - 1; ii >= pointNum - KnownPoints_array.Count; ii--) {
+                    for (int jj = ii - 1; jj >= pointNum - KnownPoints_array.Count; jj--) {
+                        int g = ii; // 起点
+                        int h = jj; // 终点
+                        int[] book = new int[pointNum]; //book[i]=0表示此结点最短路未确定，为1表示已确定
+                        double[] distance = new double[pointNum];//出发点到各点最短距离
+                        int[] last1 = new int[pointNum];//存储最短路径，每个结点的上一个结点
+                        double min;
+                        int u = 0;
+                        //初始化distance，这是出发点到各点的初始距离
+                        for (int i = 0; i < pointNum; i++) {
+                            distance[i] = cost[g, i];
                         }
-                        book[u] = 1;
-                        for (int v = 0; v < pointNum; v++) {
-                            if (cost[u, v] < inf && cost[u, v] != 0) {
-                                if (distance[v] > distance[u] + cost[u, v]) {
-                                    distance[v] = distance[u] + cost[u, v];
-                                    last1[v] = u;
+                        //初始化出发点的book
+                        for (int i = 0; i < pointNum; i++) { last1[i] = g; }
+                        last1[g] = -1;
+                        book[g] = 1;
+                        //核心算法
+                        for (int i = 0; i < pointNum; i++) {
+                            min = inf;
+
+                            //找到离g号结点最近的点
+                            for (int j = 0; j < pointNum; j++) {
+                                if (book[j] == 0 && distance[j] < min && distance[j] != 0) {
+                                    min = distance[j];
+                                    u = j;
                                 }
+                            }
+                            book[u] = 1;
+                            for (int v = 0; v < pointNum; v++) {
+                                if (cost[u, v] < inf && cost[u, v] != 0) {
+                                    if (distance[v] > distance[u] + cost[u, v]) {
+                                        distance[v] = distance[u] + cost[u, v];
+                                        last1[v] = u;
+                                    }
 
+                                }
                             }
                         }
-                    }
-                    int k = h;
-                    path.Add(k);
-                    while (k != g) {
-                        if (distance[k] >= inf) {
-                            Console.WriteLine("无法到达{0}", h);
-                            break;
-                        }
-                        k = last1[k];
+                        int k = h;
                         path.Add(k);
+                        while (k != g) {
+                            if (distance[k] >= inf) {
+                                Console.WriteLine("无法到达{0}", h);
+                                break;
+                            }
+                            k = last1[k];
+                            path.Add(k);
+                        }
+                        path.Reverse();
+                        Console.WriteLine("{0}到{1}最短路径", AllPoint[g], AllPoint[h]);
+                        foreach (int i in path) {
+                            Console.Write(AllPoint[i] + " ");
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine(path.Count);
                     }
-                    path.Reverse();
-                    Console.WriteLine("{0}到{1}最短路径", point[g], point[h]);
-                    foreach (int i in path) {
-                        Console.Write(point[i] + " ");
-                    }
-                    Console.WriteLine();
-                    Console.WriteLine(path.Count);
                 }
             }
             #endregion
 
             #region 搜索所有闭合环
+            Console.WriteLine("最小独立闭合环的个数：{0}-{1}-{2}", ObservedDatasNoRep.Count - (T + 2) + 1, ObservedDatasNoRep.Count, ObservedDatas.Count);
+
+
             // https://blog.csdn.net/beijinghorn/article/details/125057813
-            var loops = Graph1.Drive(point, ObservedDatas);
+            var loops = Graph1.Drive(AllPoint, ObservedDatas);
 
             // https://blog.csdn.net/robin_xu_shuai/article/details/51898847
             for (int ii = pointNum - 1; ii >= pointNum - KnownPoints_array.Count; ii--) {
                 VertexNode[] vertexNodes = new VertexNode[pointNum];
                 for (int i = 0; i < pointNum; i++) {
-                    vertexNodes[i] = new VertexNode(i, point[i].ToString());
+                    vertexNodes[i] = new VertexNode(i, allPoint[i].ToString());
                 }
 
                 DFSAlgorithm graph = new DFSAlgorithm(vertexNodes);
                 ObservedDatas.ForEach(p => {
-                    var startIdx = point.IndexOf(p.Start);
-                    var endIdx = point.IndexOf(p.End);
+                    var startIdx = allPoint.IndexOf(p.Start);
+                    var endIdx = allPoint.IndexOf(p.End);
                     graph.insertEdge(startIdx, endIdx);
                     graph.insertEdge(endIdx, startIdx);
                 });
@@ -379,8 +388,42 @@ namespace LevelnetAdjustment {
             #endregion
         }
 
+        //  搜索最短路径
+        void FindShortPath(int p, int exclude, int[] neighbor, double[] diff, double[] S) {
+            for (int i = 0; i < AllPoint.Count; i++) {
+                neighbor[i] = -1;  // 还没有邻接点
+                S[i] = 1.0e30;
+            }
+            S[p] = 0.0;
+            diff[p] = 0.0;
+            neighbor[p] = p;
 
+            for (int i = 0; ; i++) {
+                bool successful = true;
+                for (int j = 0; j <= ObservedDatasNoRep.Count - 1; j++) {
+                    if (j == exclude) continue;
+                    int p1 = StarP[j];
+                    int p2 = EndP[j];
+                    double S12 = 1.0 / P[j];
+                    if (neighbor[p1] < 0 && neighbor[p2] < 0) continue;
 
+                    if (S[p2] > S[p1] + S12) {
+                        neighbor[p2] = p1;
+                        S[p2] = S[p1] + S12;
+                        diff[p2] = diff[p1] + L[j];
+                        successful = false;
+                    }
+                    else if (S[p1] > S[p2] + S12) {
+                        neighbor[p1] = p2;
+                        S[p1] = S[p2] + S12;
+                        diff[p1] = diff[p2] - L[j];
+                        successful = false;
+                    }
+                }
+                if (successful) break;
+            }
+            return;
+        }
 
 
     }

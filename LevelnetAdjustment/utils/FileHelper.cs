@@ -31,6 +31,9 @@ namespace LevelnetAdjustment.utils {
                         knownPoints.Add(knownPoint);
                     }
                     else {
+                        if (observedDatas.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) && observedDatas.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
+                            continue;
+                        }
                         ObservedData observedData = new ObservedData {
                             Start = dataArray[0],
                             End = dataArray[1],
@@ -38,17 +41,11 @@ namespace LevelnetAdjustment.utils {
                             Distance = double.Parse(dataArray[3])
                         };
                         observedDatas.Add(observedData);
-                        //过滤重复的测段(往返测)
-                        if (observedDatas.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatas.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
+                        if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
                             continue;
                         }
-                        ObservedData observedData2 = new ObservedData {
-                            Start = dataArray[0],
-                            End = dataArray[1],
-                            HeightDiff = double.Parse(dataArray[2]),
-                            Distance = double.Parse(dataArray[3])
-                        };
-                        observedDatasNoRep.Add(observedData2);
+                        //过滤重复的测段(往返测)
+                        observedDatasNoRep.Add(observedData);
                     }
                 }
             }
