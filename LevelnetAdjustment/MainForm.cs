@@ -125,15 +125,21 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LevelnetDropItem_Click(object sender, EventArgs e) {
+            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.OU2");
+            if (File.Exists(outPath)) {
+                if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    return;
+                }
+            }
             if (ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-            if (AllPoint_array == null) {
-                AllPoint_array = Commom.Clone(KnownPoints_array);
-                for (int i = 0; i < UnknownPoints_array.Count; i++) {
-                    AllPoint_array.Add(UnknownPoints_array[i]);
-                }
+            AllPoint_array = null;
+            AllPoint_array = Commom.Clone(KnownPoints_array);
+            for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                AllPoint_array.Add(UnknownPoints_array[i]);
             }
+
             #region 1.求未知点的近似高程
             AllKnownPoint = Commom.Clone(KnownPoints);
             UnknownPoint = new List<PointData>();
@@ -331,7 +337,7 @@ namespace LevelnetAdjustment {
             sb.AppendLine("总观测数：   " + N);
             sb.AppendLine(split);
 
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.OU2");
+
             FileHelper.WriteStrToTxt(sb.ToString(), outPath);
             FileView fileView = new FileView(outPath) {
                 MdiParent = this,
@@ -346,12 +352,17 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
-            // 点的集合
-            if (AllPoint_array == null) {
-                AllPoint_array = Commom.Clone(KnownPoints_array);
-                for (int i = 0; i < UnknownPoints_array.Count; i++) {
-                    AllPoint_array.Add(UnknownPoints_array[i]);
+            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.OU1");
+            if (File.Exists(outPath)) {
+                if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    return;
                 }
+            }
+            // 点的集合
+            AllPoint_array = null;
+            AllPoint_array = Commom.Clone(KnownPoints_array);
+            for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                AllPoint_array.Add(UnknownPoints_array[i]);
             }
             #region 根据观测数据生成邻接表
             var pointNum = AllPoint_array.Count;
@@ -467,7 +478,7 @@ namespace LevelnetAdjustment {
             Console.WriteLine("最小独立闭合环的个数：{0}-{1}-{2}", ObservedDatasNoRep.Count - (T + 2) + 1, ObservedDatasNoRep.Count, ObservedDatas.Count);
             string strLoop = LoopClosure(Coefficient);
             string strLine = LineClosure(Coefficient);
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.OU1");
+
             FileHelper.WriteStrToTxt(strLine + strLoop, outPath);
             FileView fileView = new FileView(outPath) {
                 MdiParent = this,
@@ -616,7 +627,7 @@ namespace LevelnetAdjustment {
             strClosure.AppendLine(space + "路线闭合差计算结果");
             strClosure.AppendLine(split);
             if (m_knPnumber < 2)
-                return strClosure.Append("已知点数小于2").ToString(); // 已知点数小于2
+                return strClosure.AppendLine("已知点数小于2").ToString(); // 已知点数小于2
             int[] neighbor = new int[m_Pnumber];       //邻接点数组
             double[] diff = new double[m_Pnumber]; //高差累加值数组
             double[] S = new double[m_Pnumber];    //路线长累加值数组
@@ -654,6 +665,37 @@ namespace LevelnetAdjustment {
                 }
             }
             return strClosure.ToString();
+        }
+
+        private void ExitDropItem_Click(object sender, EventArgs e) {
+            Application.Exit();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            DialogResult result = MessageBox.Show("您确定要关闭软件吗？", "退出提示",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+                Application.ExitThread();
+            else {
+                e.Cancel = true;
+            }
+        }
+
+        /// <summary>
+        /// 创建新的观测文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewDropItem_Click(object sender, EventArgs e) {
+            FileView fileView = new FileView("") {
+                MdiParent = this,
+            };
+            fileView.Show();
+        }
+
+        private void AboutDropItem_Click(object sender, EventArgs e) {
+            About about = new About();
+            about.ShowDialog();
         }
     }
 }

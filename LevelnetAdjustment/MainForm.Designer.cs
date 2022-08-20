@@ -37,6 +37,7 @@ namespace LevelnetAdjustment {
             this.ResultDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OriginalDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +51,8 @@ namespace LevelnetAdjustment {
             this.HelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(960, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1179, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -61,27 +63,29 @@ namespace LevelnetAdjustment {
             this.OpenDropItem,
             this.ExitDropItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.FileToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.FileToolStripMenuItem.Text = "文件";
             // 
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(122, 26);
+            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
             this.NewDropItem.Text = "新建";
+            this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
             // OpenDropItem
             // 
             this.OpenDropItem.Name = "OpenDropItem";
-            this.OpenDropItem.Size = new System.Drawing.Size(122, 26);
+            this.OpenDropItem.Size = new System.Drawing.Size(180, 22);
             this.OpenDropItem.Text = "打开";
             this.OpenDropItem.Click += new System.EventHandler(this.OpenDropItem_Click);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(122, 26);
+            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
             this.ExitDropItem.Text = "退出";
+            this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
             // AdjToolStripMenuItem
             // 
@@ -90,27 +94,27 @@ namespace LevelnetAdjustment {
             this.LevelnetDropItem,
             this.OptionDropItem});
             this.AdjToolStripMenuItem.Name = "AdjToolStripMenuItem";
-            this.AdjToolStripMenuItem.Size = new System.Drawing.Size(83, 24);
+            this.AdjToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
             this.AdjToolStripMenuItem.Text = "数据处理";
             // 
             // ClosureErrorDropItem
             // 
             this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-            this.ClosureErrorDropItem.Size = new System.Drawing.Size(167, 26);
+            this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
             this.ClosureErrorDropItem.Text = "计算闭合差";
             this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
             // 
             // LevelnetDropItem
             // 
             this.LevelnetDropItem.Name = "LevelnetDropItem";
-            this.LevelnetDropItem.Size = new System.Drawing.Size(167, 26);
+            this.LevelnetDropItem.Size = new System.Drawing.Size(180, 22);
             this.LevelnetDropItem.Text = "平差";
             this.LevelnetDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
             // 
             // OptionDropItem
             // 
             this.OptionDropItem.Name = "OptionDropItem";
-            this.OptionDropItem.Size = new System.Drawing.Size(167, 26);
+            this.OptionDropItem.Size = new System.Drawing.Size(180, 22);
             this.OptionDropItem.Text = "选项";
             // 
             // ReportToolStripMenuItem
@@ -119,37 +123,49 @@ namespace LevelnetAdjustment {
             this.ResultDropItem,
             this.OriginalDropItem});
             this.ReportToolStripMenuItem.Name = "ReportToolStripMenuItem";
-            this.ReportToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.ReportToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.ReportToolStripMenuItem.Text = "报表";
+            this.ReportToolStripMenuItem.Visible = false;
             // 
             // ResultDropItem
             // 
             this.ResultDropItem.Name = "ResultDropItem";
-            this.ResultDropItem.Size = new System.Drawing.Size(182, 26);
+            this.ResultDropItem.Size = new System.Drawing.Size(180, 22);
             this.ResultDropItem.Text = "平差结果";
             // 
             // OriginalDropItem
             // 
             this.OriginalDropItem.Name = "OriginalDropItem";
-            this.OriginalDropItem.Size = new System.Drawing.Size(182, 26);
+            this.OriginalDropItem.Size = new System.Drawing.Size(180, 22);
             this.OriginalDropItem.Text = "原始观测数据";
             // 
             // HelpToolStripMenuItem
             // 
+            this.HelpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AboutDropItem});
             this.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
-            this.HelpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.HelpToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.HelpToolStripMenuItem.Text = "帮助";
+            // 
+            // AboutDropItem
+            // 
+            this.AboutDropItem.Name = "AboutDropItem";
+            this.AboutDropItem.Size = new System.Drawing.Size(180, 22);
+            this.AboutDropItem.Text = "关于";
+            this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(960, 500);
+            this.ClientSize = new System.Drawing.Size(1179, 685);
             this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "水准网平差程序";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -172,6 +188,7 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem OriginalDropItem;
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ClosureErrorDropItem;
+        private System.Windows.Forms.ToolStripMenuItem AboutDropItem;
     }
 }
 

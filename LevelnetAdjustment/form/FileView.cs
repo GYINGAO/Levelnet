@@ -16,25 +16,21 @@ namespace LevelnetAdjustment.form {
             this.FilePath = _filePath;
         }
         public string FilePath { get; set; }
+        public string SaveFilePath { get; set; }
 
         private void FileView_Load(object sender, EventArgs e) {
             rtb.Clear();
-            rtb.LoadFile(FilePath, RichTextBoxStreamType.PlainText);
-            rtb.Show();
-            this.Text = Path.GetFileName(FilePath);
+            if (string.IsNullOrEmpty(FilePath)) {
+                this.Text = "Undefined.OUP*";
+                return;
+            }
+            else {
+                rtb.LoadFile(FilePath, RichTextBoxStreamType.PlainText);
+                rtb.Show();
+                this.Text = Path.GetFileName(FilePath);
+            }
         }
 
-        /// <summary>
-        /// 保存文本文件
-        /// </summary>
-        private void SaveToFile() {
-            //saveFileDialog.InitialDirectory = pname;//设置保存的默认目录
-            saveFileDialog.FileName = Path.GetFileNameWithoutExtension(FilePath);
-            saveFileDialog.Filter = "观测文件(*.INP)|*.INP|结果文件(*.OUP)|*.OUP|所有文件(*.*)|*.*";
-            saveFileDialog.FilterIndex = 1;//默认显示保存类型为TXT
-            saveFileDialog.RestoreDirectory = true;
-            rtb.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
-        }
 
         /// <summary>
         /// 保存快捷键事件
@@ -43,7 +39,25 @@ namespace LevelnetAdjustment.form {
         /// <param name="e"></param>
         private void rtb_KeyDown(object sender, KeyEventArgs e) {
             if (e.Control && e.KeyCode == Keys.S) {
-                SaveToFile();
+                SaveFile();
+                this.Text = Path.GetFileName(SaveFilePath);
+                this.Close();
+            }
+        }
+
+        /// <summary>
+        /// 保存文本文件
+        /// </summary>
+        private void SaveFile() {
+            SaveFileDialog saveFileDialog = new SaveFileDialog {
+                Title = "另存为",
+                Filter = "观测文件(*.INP)|*.INP|所有文件(*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                SaveFilePath = saveFileDialog.FileName;
+                rtb.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
             }
         }
     }

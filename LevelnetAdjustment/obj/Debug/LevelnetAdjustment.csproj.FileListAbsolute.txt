@@ -14,3 +14,4 @@ F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Debug\System.ValueTupl
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Debug\MathNet.Numerics.xml
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Debug\System.ValueTuple.xml
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.CopyComplete
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.About.resources

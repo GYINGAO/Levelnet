@@ -24,7 +24,7 @@ namespace LevelnetAdjustment.utils {
                     string[] dataArray;
                     while (sr.Peek() > -1) {
                         line = sr.ReadLine().Trim();
-                        dataArray = Regex.Split(line, "[\\s]+|[,]|[，]", RegexOptions.IgnoreCase);
+                        dataArray = Regex.Split(line, "(?:\\s*[,|，]\\s*)", RegexOptions.IgnoreCase); // 正则匹配逗号（允许空格）
                         if (dataArray.Length == 1) {
                             level = int.Parse(dataArray[0]);
                         }

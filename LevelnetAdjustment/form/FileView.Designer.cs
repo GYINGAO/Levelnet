@@ -33,19 +33,21 @@ namespace LevelnetAdjustment.form {
             this.rtb.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtb.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.rtb.Location = new System.Drawing.Point(0, 0);
+            this.rtb.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.rtb.Name = "rtb";
-            this.rtb.Size = new System.Drawing.Size(837, 494);
+            this.rtb.Size = new System.Drawing.Size(946, 585);
             this.rtb.TabIndex = 0;
             this.rtb.Text = "";
             this.rtb.KeyDown += new System.Windows.Forms.KeyEventHandler(this.rtb_KeyDown);
             // 
             // FileView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(837, 494);
+            this.ClientSize = new System.Drawing.Size(946, 585);
             this.Controls.Add(this.rtb);
             this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FileView";
             this.ShowIcon = false;
             this.Text = "FileView";

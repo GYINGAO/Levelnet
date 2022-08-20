@@ -14,3 +14,4 @@ F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjust
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.CopyComplete
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.exe
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.pdb
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.About.resources
