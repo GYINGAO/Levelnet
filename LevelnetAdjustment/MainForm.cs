@@ -334,7 +334,7 @@ namespace LevelnetAdjustment {
             sb.AppendLine("单位权中误差：   " + sigma0.ToString("#0.000"));
             sb.AppendLine("观测总距离：   " + totalS.ToString("#0.000") + "(km)");
             sb.AppendLine("总点数：   " + AllPoint_array.Count);
-            sb.AppendLine("总观测数：   " + N);
+            sb.AppendLine("观测边数：   " + ObservedDatasNoRep.Count);
             sb.AppendLine(split);
 
 
