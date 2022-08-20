@@ -16,38 +16,48 @@ namespace LevelnetAdjustment.utils {
         /// <param name="knownPoints"></param>
         /// <param name="observedDatas"></param>
         /// <param name="fileName"></param>
-        public static void readOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
-            using (StreamReader sr = new StreamReader(fileName)) {
-                string line;
-                string[] dataArray;
-                while (sr.Peek() > -1) {
-                    line = sr.ReadLine().Trim();
-                    dataArray = Regex.Split(line, "[\\s]+|[,]|[，]", RegexOptions.IgnoreCase);
-                    if (dataArray.Length < 3) {
-                        PointData knownPoint = new PointData {
-                            Number = dataArray[0],
-                            Height = double.Parse(dataArray[1])
-                        };
-                        knownPoints.Add(knownPoint);
-                    }
-                    else {
-                        if (observedDatas.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) && observedDatas.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
-                            continue;
+        public static int readOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
+            try {
+                int level = 2;
+                using (StreamReader sr = new StreamReader(fileName)) {
+                    string line;
+                    string[] dataArray;
+                    while (sr.Peek() > -1) {
+                        line = sr.ReadLine().Trim();
+                        dataArray = Regex.Split(line, "[\\s]+|[,]|[，]", RegexOptions.IgnoreCase);
+                        if (dataArray.Length == 1) {
+                            level = int.Parse(dataArray[0]);
                         }
-                        ObservedData observedData = new ObservedData {
-                            Start = dataArray[0],
-                            End = dataArray[1],
-                            HeightDiff = double.Parse(dataArray[2]),
-                            Distance = double.Parse(dataArray[3])
-                        };
-                        observedDatas.Add(observedData);
-                        if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
-                            continue;
+                        else if (dataArray.Length == 2) {
+                            PointData knownPoint = new PointData {
+                                Number = dataArray[0],
+                                Height = double.Parse(dataArray[1])
+                            };
+                            knownPoints.Add(knownPoint);
                         }
-                        //过滤重复的测段(往返测)
-                        observedDatasNoRep.Add(observedData);
+                        else {
+                            if (observedDatas.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) && observedDatas.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
+                                continue;
+                            }
+                            ObservedData observedData = new ObservedData {
+                                Start = dataArray[0],
+                                End = dataArray[1],
+                                HeightDiff = double.Parse(dataArray[2]),
+                                Distance = double.Parse(dataArray[3])
+                            };
+                            observedDatas.Add(observedData);
+                            if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
+                                continue;
+                            }
+                            //过滤重复的测段(往返测)
+                            observedDatasNoRep.Add(observedData);
+                        }
                     }
                 }
+                return level;
+            }
+            catch (Exception) {
+                throw new Exception("文件格式有误");
             }
         }
 

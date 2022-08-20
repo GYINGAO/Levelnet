@@ -19,19 +19,58 @@ namespace LevelnetAdjustment {
         public MainForm() {
             InitializeComponent();
         }
-        public List<PointData> KnownPoints { get; set; } //已知点列表
+
         public List<ObservedData> ObservedDatas { get; set; } //观测数据列表
-        public ArrayList UnknownPoints_array { get; set; } //已知点点号数组
-        public ArrayList KnownPoints_array { get; set; } //未知点点号数组
-        public List<PointData> UnknownPoint { get; set; } // 定义列表存储近似高程
+        public List<PointData> KnownPoints { get; set; } //已知点列表(点号，高程)
+        public List<PointData> UnknownPoint { get; set; } // 定义列表存储近似高程(点号，高程)
         public List<PointData> UnknownPoint_new { get; set; } // 定义列表存储近似高程(按照unknownPoints_array点号顺序排列)
-        public List<PointData> AllKnownPoint { get; set; } //所有点的信息
+        public List<PointData> AllKnownPoint { get; set; } // 所有点的信息(点号，高程)
         public List<ObservedData> ObservedDatasNoRep { get; set; } // 去除重复边的观测数据
-        public ArrayList AllPoint { get; set; }
+        public ArrayList UnknownPoints_array { get; set; } //未知点点号数组
+        public ArrayList KnownPoints_array { get; set; } //已知点点号数组
+        public ArrayList AllPoint_array { get; set; } //所有点号数组
+        public int Level { get; set; } //水准等级
+        private int coefficient; //闭合差限差系数
+        public int Coefficient {
+            get => coefficient;
+
+            set {
+                int c;
+                switch (value) {
+                    case 2:
+                        c = 4;
+                        break;
+                    case 3:
+                        c = 12;
+                        break;
+                    case 4:
+                        c = 20;
+                        break;
+                    case 5:
+                        c = 30;
+                        break;
+                    default:
+                        c = 0;
+                        break;
+                }
+                coefficient = c;
+            }
+        }
         public int N { get; set; } //观测数
         public int T { get; set; } //必要观测数
         public int R { get; set; } //多余观测数
         public string Path { get; set; } //文件路径
+
+        readonly string split = "---------------------------------------------------------";
+        readonly string space = "                 ";
+
+
+        enum CoefficientEnum {
+            second = 4,
+            third = 12,
+            forth = 20,
+            fifth = 30
+        }
         /// <summary>
         /// 打开任意文本文件
         /// </summary>
@@ -49,7 +88,10 @@ namespace LevelnetAdjustment {
                 KnownPoints = new List<PointData>();
                 ObservedDatas = new List<ObservedData>();
                 ObservedDatasNoRep = new List<ObservedData>();
-                FileHelper.readOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
+
+                Level = FileHelper.readOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
+                Coefficient = Level;
+                Console.WriteLine(Coefficient);
                 UnknownPoints_array = new ArrayList();
                 KnownPoints_array = new ArrayList();
                 KnownPoints.ForEach(item => {
@@ -193,8 +235,7 @@ namespace LevelnetAdjustment {
             Console.WriteLine(sigma0);
 
             // 保存文件
-            string split = "---------------------------------------------------------";
-            string space = "                 ";
+
             const int pad = -10;
             const int titlePad = -8;
             StringBuilder sb = new StringBuilder();
@@ -240,7 +281,7 @@ namespace LevelnetAdjustment {
             }
             sb.AppendLine(split);
 
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.OUP");
+            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.OU2");
             FileHelper.WriteStrToTxt(sb.ToString(), outPath);
             FileView fileView = new FileView(outPath) {
                 MdiParent = this,
@@ -249,14 +290,19 @@ namespace LevelnetAdjustment {
             fileView.Show();
         }
 
+        /// <summary>
+        /// 计算闭合差
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
             // 点的集合
-            AllPoint = Commom.Clone(UnknownPoints_array);
-            for (int i = 0; i < KnownPoints_array.Count; i++) {
-                AllPoint.Add(KnownPoints_array[i]);
+            AllPoint_array = Commom.Clone(KnownPoints_array);
+            for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                AllPoint_array.Add(UnknownPoints_array[i]);
             }
             #region 根据观测数据生成邻接表
-            var pointNum = AllPoint.Count;
+            var pointNum = AllPoint_array.Count;
             const int inf = 100000000;
             double[,] cost = new double[pointNum, pointNum];
             // 对角线为0，其余为inf
@@ -272,23 +318,23 @@ namespace LevelnetAdjustment {
             }
             // 记录观测数据
             ObservedDatas.ForEach(pd => {
-                var rowIdx = AllPoint.IndexOf(pd.Start);
-                var columnIdx = AllPoint.IndexOf(pd.End);
+                var rowIdx = AllPoint_array.IndexOf(pd.Start);
+                var columnIdx = AllPoint_array.IndexOf(pd.End);
                 cost[rowIdx, columnIdx] = pd.Distance;
                 cost[columnIdx, rowIdx] = pd.Distance;
             });
             #endregion
 
             #region 搜索附和水准路线已知点最短路径，采用Dijkstra算法 
-            // 参考 https://blog.csdn.net/weixin_42724039/article/details/81255726
+            /*// 参考 https://blog.csdn.net/weixin_42724039/article/details/81255726
             // https://www.codetd.com/article/9950057
             var path = new List<int>();
             if (KnownPoints_array.Count < 2) {
                 Console.WriteLine("已知点个数小于2");
             }
             else {
-                for (int ii = pointNum - 1; ii >= pointNum - KnownPoints_array.Count; ii--) {
-                    for (int jj = ii - 1; jj >= pointNum - KnownPoints_array.Count; jj--) {
+                for (int ii = 0; ii < KnownPoints_array.Count; ii++) {
+                    for (int jj = ii + 1; jj < KnownPoints_array.Count; jj++) {
                         int g = ii; // 起点
                         int h = jj; // 终点
                         int[] book = new int[pointNum]; //book[i]=0表示此结点最短路未确定，为1表示已确定
@@ -337,22 +383,45 @@ namespace LevelnetAdjustment {
                             path.Add(k);
                         }
                         path.Reverse();
-                        Console.WriteLine("{0}到{1}最短路径", AllPoint[g], AllPoint[h]);
-                        foreach (int i in path) {
-                            Console.Write(AllPoint[i] + " ");
+                        Console.WriteLine("{0}到{1}最短路径", AllPoint_array[g], AllPoint_array[h]);
+                        double diff = 0;
+                        ObservedData od = new ObservedData();
+                        for (int i = 0; i < path.Count; i++) {
+                            Console.Write(AllPoint_array[path[i]] + " ");
+                            if (i >= 1) {
+                                int zheng = ObservedDatas.FindIndex(p => (p.Start == AllPoint_array[path[i - 1]].ToString() && p.End == AllPoint_array[path[i]].ToString()));
+                                int fan = ObservedDatas.FindIndex(p => (p.Start == AllPoint_array[path[i]].ToString() && p.End == AllPoint_array[path[i - 1]].ToString()));
+                                if (zheng != -1) {
+                                    diff += ObservedDatas[zheng].HeightDiff;
+                                }
+                                else if (fan != -1) {
+                                    diff -= ObservedDatas[fan].HeightDiff;
+                                }
+                            }
                         }
+                        //foreach (int i in path) {
+                        //    Console.Write(AllPoint_array[i] + " ");
+                        //}
                         Console.WriteLine();
                         Console.WriteLine(path.Count);
+                        double w = KnownPoints[ii].Height + diff - KnownPoints[jj].Height;
+                        Console.WriteLine("闭合差：" + w * 1000 + "(mm)");
                     }
                 }
             }
+            */
             #endregion
 
-            #region 搜索所有闭合环
             Console.WriteLine("最小独立闭合环的个数：{0}-{1}-{2}", ObservedDatasNoRep.Count - (T + 2) + 1, ObservedDatasNoRep.Count, ObservedDatas.Count);
-            string str = LoopClosure(2);
-            Console.WriteLine(str);
-            #endregion
+            string strLoop = LoopClosure(Coefficient);
+            string strLine = LineClosure(Coefficient);
+            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.OU1");
+            FileHelper.WriteStrToTxt(strLine + strLoop, outPath);
+            FileView fileView = new FileView(outPath) {
+                MdiParent = this,
+            };
+            MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            fileView.Show();
         }
 
         /// <summary>
@@ -363,8 +432,8 @@ namespace LevelnetAdjustment {
         /// <param name="neighbor"></param>
         /// <param name="diff"></param>
         /// <param name="S"></param>
-        void FindShortPath(int p, int exclude, int[] neighbor, double[] diff, double[] S) {
-            for (int i = 0; i < AllPoint.Count; i++) {
+        private void FindShortPath(int p, int exclude, int[] neighbor, double[] diff, double[] S) {
+            for (int i = 0; i < AllPoint_array.Count; i++) {
                 neighbor[i] = -1;  // 还没有邻接点
                 S[i] = 1.0e30;
             }
@@ -376,8 +445,8 @@ namespace LevelnetAdjustment {
                 bool successful = true;
                 for (int j = 0; j <= ObservedDatasNoRep.Count - 1; j++) {
                     if (j == exclude) continue;
-                    int p1 = AllPoint.IndexOf(ObservedDatasNoRep[j].Start); //起点点号
-                    int p2 = AllPoint.IndexOf(ObservedDatasNoRep[j].End); //终点点号
+                    int p1 = AllPoint_array.IndexOf(ObservedDatasNoRep[j].Start); //起点点号
+                    int p2 = AllPoint_array.IndexOf(ObservedDatasNoRep[j].End); //终点点号
                     double S12 = ObservedDatasNoRep[j].Distance; // p1到p2的距离
                     if (neighbor[p1] < 0 && neighbor[p2] < 0) continue;
 
@@ -400,31 +469,33 @@ namespace LevelnetAdjustment {
         }
 
         /// <summary>
-        /// 环闭合差计算	
+        /// 最小独立环闭合差计算	
         /// </summary>
         /// <param name="roundi"></param>
         string LoopClosure(double roundi) {
-            int m_Pnumber = AllPoint.Count;
+            int m_Pnumber = AllPoint_array.Count;
             int m_Lnumber = ObservedDatasNoRep.Count;
             StringBuilder strClosure = new StringBuilder();
-            strClosure.Append("\n\n----------------------- 环闭合差计算 ----------------------- ");
+            strClosure.AppendLine(split);
+            strClosure.AppendLine(space + "环闭合差计算结果");
+            strClosure.AppendLine(split);
             int closure_N = 0;
             int num = ObservedDatasNoRep.Count - (m_Pnumber - 1);
             if (num < 1) {
-                strClosure.Append("\n    无闭合环\n\n");
+                strClosure.AppendLine("无闭合环");
                 return strClosure.ToString();
             }
             int[] neighbor = new int[m_Pnumber]; //邻接点数组
             int[] used = new int[m_Lnumber]; //观测值是否已经用于闭合差计算
             double[] diff = new double[m_Pnumber]; //高差累加值数组
-            double[] S = new double[m_Pnumber];	//路线长数组
+            double[] S = new double[m_Pnumber]; //路线长数组
 
             for (int i = 0; i < m_Lnumber; i++)
                 used[i] = 0;
 
             for (int i = 0; i < m_Lnumber; i++) {
-                int k1 = AllPoint.IndexOf(ObservedDatasNoRep[i].Start); //起点点号;
-                int k2 = AllPoint.IndexOf(ObservedDatasNoRep[i].End); //终点点号
+                int k1 = AllPoint_array.IndexOf(ObservedDatasNoRep[i].Start); //起点点号;
+                int k2 = AllPoint_array.IndexOf(ObservedDatasNoRep[i].End); //终点点号
                 if (used[i] != 0) continue;
                 if (k2 == k1)   //后面添加修改的
                     return strClosure.ToString();
@@ -432,26 +503,26 @@ namespace LevelnetAdjustment {
                 FindShortPath(k2, i, neighbor, diff, S);//搜索最短路线，第i号观测值不能参加
 
                 if (neighbor[k1] < 0) {
-                    strClosure.Append("\n   观测值" + AllPoint[k1] + "-" + AllPoint[k2] + "与任何观测边不构成闭合环");
+                    // strClosure.AppendLine("观测值" + AllPoint_array[k1] + "-" + AllPoint_array[k2] + "与任何观测边不构成闭合环");
                 }
                 else {
                     used[i] = 1;
                     closure_N++;
-                    strClosure.Append("\n   闭合环号： " + closure_N);
-                    strClosure.Append("\n   线路点号： ");
+                    strClosure.AppendLine("闭合环号：" + closure_N);
+                    strClosure.Append("线路点号：");
                     int p1 = k1;
                     while (true)//输出点名
                     {
                         int p2 = neighbor[p1];
-                        strClosure.Append(AllPoint[p1] + "-");
+                        strClosure.Append(AllPoint_array[p1] + "-");
 
                         for (int r = 0; r < m_Lnumber; r++)//将用过的观测值标定
                         {
-                            if (AllPoint.IndexOf(ObservedDatasNoRep[r].Start) == p1 && AllPoint.IndexOf(ObservedDatasNoRep[r].End) == p2) {
+                            if (AllPoint_array.IndexOf(ObservedDatasNoRep[r].Start) == p1 && AllPoint_array.IndexOf(ObservedDatasNoRep[r].End) == p2) {
                                 used[r] = 1;
                                 break;
                             }
-                            else if (AllPoint.IndexOf(ObservedDatasNoRep[r].Start) == p2 && AllPoint.IndexOf(ObservedDatasNoRep[r].End) == p1) {
+                            else if (AllPoint_array.IndexOf(ObservedDatasNoRep[r].Start) == p2 && AllPoint_array.IndexOf(ObservedDatasNoRep[r].End) == p1) {
                                 used[r] = 1;
                                 break;
                             }
@@ -463,15 +534,74 @@ namespace LevelnetAdjustment {
                         else
                             p1 = p2;
                     }
-                    strClosure.Append(AllPoint[k2] + "-" + AllPoint[k1]);
+                    strClosure.Append(AllPoint_array[k2] + "-" + AllPoint_array[k1]);
                     double W = (ObservedDatasNoRep[i].HeightDiff + diff[k1]) * 1000;   //闭合差
                     double SS = S[k1] + ObservedDatasNoRep[i].Distance; //环长
                     double limit = (roundi * Math.Sqrt(SS));
-                    strClosure.Append("\n   高差闭合差： " + (-W).ToString("f2") + "mm \n   平原限差:" + limit.ToString("f4") + "mm)\n");
+                    strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("f2") + "(mm)");
+                    strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
+                    strClosure.AppendLine($"总长度：{SS}(km)");
+                    strClosure.AppendLine();
                 }
             }
             return strClosure.ToString();
 
+        }
+
+        /// <summary>
+        /// 附和水准最短路径
+        /// </summary>
+        /// <param name="roundi"></param>
+        /// <returns></returns>
+        private string LineClosure(double roundi) {
+            int m_knPnumber = KnownPoints_array.Count;
+            int m_Pnumber = AllPoint_array.Count;
+            StringBuilder strClosure = new StringBuilder();
+
+            int line_N = 0;
+
+            strClosure.AppendLine(split);
+            strClosure.AppendLine(space + "路线闭合差计算结果");
+            strClosure.AppendLine(split);
+            if (m_knPnumber < 2)
+                return strClosure.Append("已知点数小于2").ToString(); // 已知点数小于2
+            int[] neighbor = new int[m_Pnumber];       //邻接点数组
+            double[] diff = new double[m_Pnumber]; //高差累加值数组
+            double[] S = new double[m_Pnumber];    //路线长累加值数组
+
+
+
+
+            for (int ii = 0; ii < KnownPoints_array.Count; ii++) {
+                FindShortPath(ii, -1, neighbor, diff, S); //搜索最短路线，用所有观测值
+                for (int jj = ii + 1; jj < KnownPoints_array.Count; jj++) {
+                    if (neighbor[jj] < 0) {
+                        // strClosure.Append(AllPoint_array[ii] + "-" + AllPoint_array[jj] + "之间找到不到最短路线");
+                        continue;
+                    }
+                    // 输出附合路线上的点号
+                    line_N++;
+                    strClosure.AppendLine("线路号：" + line_N);
+                    strClosure.Append("线路点号：");
+                    int k = jj;
+                    while (true) {
+                        strClosure.Append(AllPoint_array[k] + "-");
+                        k = neighbor[k];
+                        if (k == ii) break;
+                    }
+                    strClosure.Append(AllPoint_array[ii]);
+
+                    //闭合差计算，限差计算与输出
+                    double W = (KnownPoints[ii].Height + diff[jj] - KnownPoints[jj].Height) * 1000; // 闭合差
+                    double limit = roundi * Math.Sqrt(S[jj]);  // 限差
+                    strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("#0.00") + "(mm)");
+                    strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
+                    strClosure.AppendLine($"总长度：{S[jj]}(km)");
+                    strClosure.AppendLine();
+
+                }
+            }
+            return strClosure.ToString();
         }
     }
 }
