@@ -16,7 +16,10 @@ F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjust
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.application
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.Diagnostics.DiagnosticSource.xml
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.Fody.CopyLocal.cache
-F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.Fody.RuntimeCopyLocal.cache
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.exe.manifest
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.application
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.Buffers.xml
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.Memory.xml
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.Numerics.Vectors.xml
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.Runtime.CompilerServices.Unsafe.xml

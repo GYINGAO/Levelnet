@@ -116,6 +116,7 @@ namespace LevelnetAdjustment {
             this.OptionDropItem.Name = "OptionDropItem";
             this.OptionDropItem.Size = new System.Drawing.Size(180, 22);
             this.OptionDropItem.Text = "选项";
+            this.OptionDropItem.Visible = false;
             // 
             // ReportToolStripMenuItem
             // 
@@ -130,13 +131,13 @@ namespace LevelnetAdjustment {
             // ResultDropItem
             // 
             this.ResultDropItem.Name = "ResultDropItem";
-            this.ResultDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ResultDropItem.Size = new System.Drawing.Size(148, 22);
             this.ResultDropItem.Text = "平差结果";
             // 
             // OriginalDropItem
             // 
             this.OriginalDropItem.Name = "OriginalDropItem";
-            this.OriginalDropItem.Size = new System.Drawing.Size(180, 22);
+            this.OriginalDropItem.Size = new System.Drawing.Size(148, 22);
             this.OriginalDropItem.Text = "原始观测数据";
             // 
             // HelpToolStripMenuItem
@@ -150,7 +151,7 @@ namespace LevelnetAdjustment {
             // AboutDropItem
             // 
             this.AboutDropItem.Name = "AboutDropItem";
-            this.AboutDropItem.Size = new System.Drawing.Size(180, 22);
+            this.AboutDropItem.Size = new System.Drawing.Size(100, 22);
             this.AboutDropItem.Text = "关于";
             this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
             // 
@@ -162,7 +163,7 @@ namespace LevelnetAdjustment {
             this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "水准网平差程序";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
