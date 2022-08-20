@@ -1,11 +1,8 @@
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.exe.config
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.exe
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.pdb
-F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\MathNet.Numerics.dll
-F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.ValueTuple.dll
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\MathNet.Numerics.xml
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.ValueTuple.xml
-F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FileView.resources
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.MainForm.resources
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.Properties.Resources.resources
@@ -15,3 +12,10 @@ F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjust
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.exe
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.pdb
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.About.resources
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.exe.manifest
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\LevelnetAdjustment.application
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Release\System.Diagnostics.DiagnosticSource.xml
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.Fody.CopyLocal.cache
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.Fody.RuntimeCopyLocal.cache
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.exe.manifest
+F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Release\LevelnetAdjustment.application
