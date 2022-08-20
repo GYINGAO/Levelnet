@@ -61,8 +61,8 @@ namespace LevelnetAdjustment {
         public int R { get; set; } //多余观测数
         public string Path { get; set; } //文件路径
 
-        readonly string split = "---------------------------------------------------------";
-        readonly string space = "                 ";
+        readonly string split = "---------------------------------------------------------------------------------";
+        readonly string space = "                             ";
 
 
         enum CoefficientEnum {
@@ -80,7 +80,7 @@ namespace LevelnetAdjustment {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = false,
                 Title = "打开",
-                Filter = "水准观测文件(*.INP)|*.INP",
+                Filter = "水准观测文件(*.INP)|*.INP|所有文件(*.*)|*.*",
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
@@ -128,7 +128,12 @@ namespace LevelnetAdjustment {
             if (ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-
+            if (AllPoint_array == null) {
+                AllPoint_array = Commom.Clone(KnownPoints_array);
+                for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                    AllPoint_array.Add(UnknownPoints_array[i]);
+                }
+            }
             #region 1.求未知点的近似高程
             AllKnownPoint = Commom.Clone(KnownPoints);
             UnknownPoint = new List<PointData>();
@@ -224,28 +229,65 @@ namespace LevelnetAdjustment {
             // 求未知点的真实值
             X += x;
 
+            // 求单位权中误差
+            var V = C * x - l;
+            var VTPV = V.Transpose() * P * V;
+            var sigma0 = Math.Sqrt(double.Parse(VTPV[0, 0].ToString()) / R) * 1000;
+            var sigma1 = Math.Sqrt((l.Transpose() * P * l - W.Transpose() * x)[0, 0] / R);
 
             // 求观测数真实值(真实高差)
-            var L = C * X;
-            Console.WriteLine(L.ToString());
+            var L = new double[N];
+            for (int i = 0; i < N; i++) {
+                L[i] = V[i, 0] + ObservedDatas[i].HeightDiff;
+            }
 
+            // 求平差参数的协因数阵
+            var Qxx = B.Inverse();
+            Console.WriteLine(Qxx.ToString());
 
-            // 精度评定
-            var sigma0 = Math.Sqrt((l.Transpose() * P * l - W.Transpose() * x)[0, 0] / R);// 单位权中误差
-            Console.WriteLine(sigma0);
+            // 求高程平差值中误差
+            var Mh_P = new double[T];
+            for (int i = 0; i < T; i++) {
+                Mh_P[i] = Math.Sqrt(Qxx[i, i]) * sigma0;
+            }
+
+            // 求高差平差值中误差
+            var Mh_L = new double[N];
+            for (int i = 0; i < N; i++) {
+                var startIdx = UnknownPoints_array.IndexOf(ObservedDatas[i].Start);
+                var endIdx = UnknownPoints_array.IndexOf(ObservedDatas[i].End);
+                if (startIdx == -1 || endIdx == -1) {
+                    Mh_L[i] = 0;
+                }
+                else {
+                    Mh_L[i] = Math.Sqrt(Qxx[startIdx, startIdx] + Qxx[endIdx, endIdx] - 2 * Qxx[startIdx, endIdx]) * sigma0;
+                }
+
+            }
+
+            // 求PVV
+
+            double PVV = sigma0 * sigma0 * R;
+            /* for (int i = 0; i < N; i++) {
+                 PVV += P[i, i] * L[i] * L[i];
+             }*/
+
+            // 求观测距离总和
+            double totalS = 0;
+            ObservedDatas.ForEach(ll => totalS += ll.Distance);
+
 
             // 保存文件
-
-            const int pad = -10;
-            const int titlePad = -8;
+            const int pad = -13;
+            const int titlePad = -11;
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(split);
-            sb.AppendLine(space + "未知点近似高程");
-            sb.AppendLine(split);
-            sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"高程(m)",titlePad}");
-            for (int i = 0; i < T; i++) {
-                sb.AppendLine($"{i + 1,pad}{UnknownPoint_new[i].Number,pad}{UnknownPoint_new[i].Height,pad:#0.0000}");
-            }
+            //sb.AppendLine(split);
+            //sb.AppendLine(space + "未知点近似高程");
+            //sb.AppendLine(split);
+            //sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"高程(m)",titlePad}");
+            //for (int i = 0; i < T; i++) {
+            //    sb.AppendLine($"{i + 1,pad}{UnknownPoint_new[i].Number,pad}{UnknownPoint_new[i].Height,pad:#0.0000}");
+            //}
             sb.AppendLine(split);
             sb.AppendLine(space + "已知点高程");
             sb.AppendLine(split);
@@ -261,24 +303,32 @@ namespace LevelnetAdjustment {
                 sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{ObservedDatas[i].HeightDiff.ToString("#0.00000"),pad}{ObservedDatas[i].Distance.ToString("#0.0000"),pad}{P[i, i].ToString("#0.000"),pad}");
             }
             sb.AppendLine(split);
-            sb.AppendLine(space + "平差后高程");
+            sb.AppendLine(space + "高程平差值及其精度");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"高程(m)",titlePad}{"修改值(mm)",titlePad}");
+            sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"近似高程(m)",titlePad}{"改正数(mm)",titlePad}{"高程平差值(m)",titlePad}{"中误差(mm)",titlePad}");
             sb.AppendLine(split);
             for (int i = 0; i < KnownPoints.Count; i++) {
-                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad:#0.0000}   ");
+                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad - 4:#0.0000}{0,pad:#0.00}{KnownPoints[i].Height,pad - 2:#0.0000}");
             }
             for (int i = 0; i < T; i++) {
-                sb.AppendLine($"{i + 3,pad}{UnknownPoint_new[i].Number,pad}{X[i, 0],pad:#0.0000}{x[i, 0] * 1000,pad:#0.00}");
+                sb.AppendLine($"{i + 3,pad}{UnknownPoint_new[i].Number,pad}{UnknownPoint_new[i].Height,pad - 4:#0.0000}{x[i, 0] * 1000,pad:#0.00}{X[i, 0],pad - 2:#0.0000}{Mh_P[i],pad:#0.00}");
             }
             sb.AppendLine(split);
-            sb.AppendLine(space + "平差后观测数据");
+            sb.AppendLine(space + "观测值平差值及其精度");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差(m)",titlePad}{"距离(km)",titlePad}{"修改值(mm)",titlePad}");
+            sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差平差值(m)",titlePad}{"距离(km)",titlePad}{"中误差(mm)",titlePad}");
             sb.AppendLine(split);
             for (int i = 0; i < N; i++) {
-                sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{ObservedDatas[i].HeightDiff,pad:#0.00}{ObservedDatas[i].Distance,pad:#0.0000}{L[i, 0] * 1000,pad:#0.00}");
+                sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{L[i],pad - 5:#0.00000}{ObservedDatas[i].Distance,pad:#0.0000}{Mh_L[i],pad:#0.00}");
             }
+            sb.AppendLine(split);
+            sb.AppendLine(space + "精度评定");
+            sb.AppendLine(split);
+            sb.AppendLine("PVV：   " + PVV.ToString("#0.000"));
+            sb.AppendLine("单位权中误差：   " + sigma0.ToString("#0.000"));
+            sb.AppendLine("观测总距离：   " + totalS.ToString("#0.000") + "(km)");
+            sb.AppendLine("总点数：   " + AllPoint_array.Count);
+            sb.AppendLine("总观测数：   " + N);
             sb.AppendLine(split);
 
             string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.OU2");
@@ -297,9 +347,11 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
             // 点的集合
-            AllPoint_array = Commom.Clone(KnownPoints_array);
-            for (int i = 0; i < UnknownPoints_array.Count; i++) {
-                AllPoint_array.Add(UnknownPoints_array[i]);
+            if (AllPoint_array == null) {
+                AllPoint_array = Commom.Clone(KnownPoints_array);
+                for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                    AllPoint_array.Add(UnknownPoints_array[i]);
+                }
             }
             #region 根据观测数据生成邻接表
             var pointNum = AllPoint_array.Count;
