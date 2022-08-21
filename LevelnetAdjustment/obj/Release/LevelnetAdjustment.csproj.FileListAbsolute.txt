@@ -48,3 +48,4 @@ F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.application
 F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.CopyComplete
 F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.exe
 F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.pdb
+F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.Wait.resources
