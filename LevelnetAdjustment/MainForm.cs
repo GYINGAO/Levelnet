@@ -168,7 +168,7 @@ namespace LevelnetAdjustment {
                         AllKnownPoint.Add(pd);
                     }
                 });
-                Console.WriteLine(UnknownPoint.Count);
+                //Console.WriteLine(UnknownPoint.Count);
             }
             #endregion
 
@@ -193,7 +193,7 @@ namespace LevelnetAdjustment {
                 powerArray[i] = 1 / ObservedDatas[i].Distance;
             }
             var P = Matrix<double>.Build.DenseOfDiagonalArray(powerArray);// 根据数组生成权阵
-            Console.WriteLine(P.ToString());
+            //Console.WriteLine(P.ToString());
 
 
             // 求误差方程系数阵C
@@ -208,7 +208,7 @@ namespace LevelnetAdjustment {
                     C[i, endIndex] = 1;
                 }
             }
-            Console.WriteLine(C.ToString());
+            //Console.WriteLine(C.ToString());
 
 
             // 求误差方程常数项l
@@ -219,7 +219,7 @@ namespace LevelnetAdjustment {
                 ls[i] = startPoint.Height + ObservedDatas[i].HeightDiff - endPoint.Height;
             }// 计算每个常数项的值      
             var l = Matrix<double>.Build.DenseOfColumnArrays(ls);
-            Console.WriteLine(l.ToString());
+            //Console.WriteLine(l.ToString());
 
 
             // 求法方程系数阵B
@@ -229,7 +229,7 @@ namespace LevelnetAdjustment {
 
             // 求解x
             var x = B.Inverse() * W;
-            Console.WriteLine(x.ToString());
+            //Console.WriteLine(x.ToString());
 
 
             // 求未知点的真实值
@@ -239,17 +239,21 @@ namespace LevelnetAdjustment {
             var V = C * x - l;
             var VTPV = V.Transpose() * P * V;
             var sigma0 = Math.Sqrt(double.Parse(VTPV[0, 0].ToString()) / R) * 1000;
-            var sigma1 = Math.Sqrt((l.Transpose() * P * l - W.Transpose() * x)[0, 0] / R);
-
+            //var sigma1 = Math.Sqrt((l.Transpose() * P * l - W.Transpose() * x)[0, 0] / R);
+            //Console.WriteLine(sigma0.ToString() + "," + sigma1.ToString());
             // 求观测数真实值(真实高差)
             var L = new double[N];
             for (int i = 0; i < N; i++) {
                 L[i] = V[i, 0] + ObservedDatas[i].HeightDiff;
             }
 
-            // 求平差参数的协因数阵
+            // 求未知数的协因数阵
             var Qxx = B.Inverse();
-            Console.WriteLine(Qxx.ToString());
+            //Console.WriteLine(Qxx.ToString());
+
+            // 求观测值协因数矩阵
+            var Qll = C * Qxx * C.Transpose();
+            Console.WriteLine(Qll.ToString());
 
             // 求高程平差值中误差
             var Mh_P = new double[T];
@@ -262,8 +266,18 @@ namespace LevelnetAdjustment {
             for (int i = 0; i < N; i++) {
                 var startIdx = UnknownPoints_array.IndexOf(ObservedDatas[i].Start);
                 var endIdx = UnknownPoints_array.IndexOf(ObservedDatas[i].End);
-                if (startIdx == -1 || endIdx == -1) {
+                //Mh_L[i] = Math.Sqrt(Qll[startIdx, startIdx] + Qll[endIdx, endIdx] - 2 * Qll[startIdx, endIdx]) * sigma0;
+                if (startIdx == -1 && endIdx == -1) {
                     Mh_L[i] = 0;
+                }
+                else if (startIdx == -1 || endIdx == -1) {
+                    if (startIdx == -1) {
+                        Mh_L[i] = Math.Sqrt(Qxx[0, 0] + Qxx[endIdx, endIdx] - 2 * Qxx[0, endIdx]) * sigma0;
+                    }
+                    else {
+                        Mh_L[i] = Math.Sqrt(Qxx[startIdx, startIdx] + Qxx[0, 0] - 2 * Qxx[startIdx, 0]) * sigma0;
+                    }
+
                 }
                 else {
                     Mh_L[i] = Math.Sqrt(Qxx[startIdx, startIdx] + Qxx[endIdx, endIdx] - 2 * Qxx[startIdx, endIdx]) * sigma0;
@@ -297,9 +311,9 @@ namespace LevelnetAdjustment {
             sb.AppendLine(split);
             sb.AppendLine(space + "已知点高程");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"高程(m)",titlePad}");
+            sb.AppendLine($"                  {"序号",titlePad}{"点名",titlePad}{"高程(m)",titlePad}");
             for (int i = 0; i < KnownPoints.Count; i++) {
-                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad:#0.00000}");
+                sb.AppendLine($"                  {i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad:#0.00000}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "高差观测数据");
@@ -314,10 +328,10 @@ namespace LevelnetAdjustment {
             sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"近似高程(m)",titlePad}{"改正数(mm)",titlePad}{"高程平差值(m)",titlePad}{"中误差(mm)",titlePad}");
             sb.AppendLine(split);
             for (int i = 0; i < KnownPoints.Count; i++) {
-                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad - 4:#0.0000}{0,pad:#0.00}{KnownPoints[i].Height,pad - 2:#0.0000}");
+                sb.AppendLine($"{i + 1,pad}{KnownPoints[i].Number,pad}{KnownPoints[i].Height,pad - 4:#0.00000}{0,pad:#0.00}{KnownPoints[i].Height,pad - 2:#0.00000}");
             }
             for (int i = 0; i < T; i++) {
-                sb.AppendLine($"{i + 3,pad}{UnknownPoint_new[i].Number,pad}{UnknownPoint_new[i].Height,pad - 4:#0.0000}{x[i, 0] * 1000,pad:#0.00}{X[i, 0],pad - 2:#0.0000}{Mh_P[i],pad:#0.00}");
+                sb.AppendLine($"{i + 3,pad}{UnknownPoint_new[i].Number,pad}{UnknownPoint_new[i].Height,pad - 4:#0.00000}{x[i, 0] * 1000,pad:#0.00}{X[i, 0],pad - 2:#0.00000}{Mh_P[i],pad:#0.00}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "观测值平差值及其精度");
@@ -328,13 +342,15 @@ namespace LevelnetAdjustment {
                 sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{L[i],pad - 5:#0.00000}{ObservedDatas[i].Distance,pad:#0.0000}{Mh_L[i],pad:#0.00}");
             }
             sb.AppendLine(split);
-            sb.AppendLine(space + "精度评定");
+            sb.AppendLine(space + "    高程网总体信息");
             sb.AppendLine(split);
-            sb.AppendLine("PVV：   " + PVV.ToString("#0.000"));
-            sb.AppendLine("单位权中误差：   " + sigma0.ToString("#0.000"));
-            sb.AppendLine("观测总距离：   " + totalS.ToString("#0.000") + "(km)");
-            sb.AppendLine("总点数：   " + AllPoint_array.Count);
-            sb.AppendLine("观测边数：   " + ObservedDatasNoRep.Count);
+            sb.AppendLine(space + "已知高程点数：".PadRight(8) + KnownPoints.Count);
+            sb.AppendLine(space + "未知高程点数：".PadRight(8) + UnknownPoint.Count);
+            sb.AppendLine(space + "高差观测数：".PadRight(8) + ObservedDatas.Count);
+            sb.AppendLine(space + "观测总距离：".PadRight(8) + totalS.ToString("#0.000") + "(km)");
+            sb.AppendLine(space + "PVV：".PadRight(8) + PVV.ToString("#0.000"));
+            sb.AppendLine(space + "验后单位权中误差：".PadRight(8) + sigma0.ToString("#0.000"));
+
             sb.AppendLine(split);
 
 
