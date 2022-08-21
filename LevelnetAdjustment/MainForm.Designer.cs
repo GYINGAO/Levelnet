@@ -69,21 +69,21 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(100, 22);
             this.NewDropItem.Text = "新建";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
             // OpenDropItem
             // 
             this.OpenDropItem.Name = "OpenDropItem";
-            this.OpenDropItem.Size = new System.Drawing.Size(180, 22);
+            this.OpenDropItem.Size = new System.Drawing.Size(100, 22);
             this.OpenDropItem.Text = "打开";
             this.OpenDropItem.Click += new System.EventHandler(this.OpenDropItem_Click);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(100, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
@@ -100,21 +100,21 @@ namespace LevelnetAdjustment {
             // ClosureErrorDropItem
             // 
             this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-            this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ClosureErrorDropItem.Size = new System.Drawing.Size(136, 22);
             this.ClosureErrorDropItem.Text = "计算闭合差";
             this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
             // 
             // LevelnetDropItem
             // 
             this.LevelnetDropItem.Name = "LevelnetDropItem";
-            this.LevelnetDropItem.Size = new System.Drawing.Size(180, 22);
+            this.LevelnetDropItem.Size = new System.Drawing.Size(136, 22);
             this.LevelnetDropItem.Text = "平差";
             this.LevelnetDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
             // 
             // OptionDropItem
             // 
             this.OptionDropItem.Name = "OptionDropItem";
-            this.OptionDropItem.Size = new System.Drawing.Size(180, 22);
+            this.OptionDropItem.Size = new System.Drawing.Size(136, 22);
             this.OptionDropItem.Text = "选项";
             this.OptionDropItem.Visible = false;
             // 

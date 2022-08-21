@@ -17,6 +17,7 @@ namespace LevelnetAdjustment.form {
         }
         public string FilePath { get; set; }
         public string SaveFilePath { get; set; }
+        public bool isModified { get; set; } = false;
 
         private void FileView_Load(object sender, EventArgs e) {
             rtb.Clear();
@@ -52,12 +53,46 @@ namespace LevelnetAdjustment.form {
                 Title = "另存为",
                 Filter = "观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
                 FilterIndex = 1,
-                RestoreDirectory = true
+                RestoreDirectory = true,
+                FileName = Path.GetFileName(SaveFilePath),
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 SaveFilePath = saveFileDialog.FileName;
                 rtb.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
+                isModified = false;
                 this.Close();
+            }
+        }
+
+        private void rtb_TextChanged(object sender, EventArgs e) {
+            isModified = true;
+        }
+
+        /// <summary>
+        /// 未保存事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FileView_FormClosing(object sender, FormClosingEventArgs e) {
+            if (isModified) {
+                var res = MessageBox.Show("文件尚未保存，是否保存？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                if (res == DialogResult.Yes) {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog {
+                        Title = "另存为",
+                        Filter = "观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                        FilterIndex = 1,
+                        RestoreDirectory = true,
+                        FileName = Path.GetFileName(SaveFilePath),
+                    };
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                        SaveFilePath = saveFileDialog.FileName;
+                        rtb.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
+                        isModified = false;
+                    }
+                }
+                else if (res == DialogResult.Cancel) {
+                    e.Cancel = true;
+                }
             }
         }
     }

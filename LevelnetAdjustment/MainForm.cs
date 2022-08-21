@@ -16,21 +16,51 @@ using System.Windows.Forms;
 
 namespace LevelnetAdjustment {
     public partial class MainForm : Form {
-        public MainForm() {
-            InitializeComponent();
-        }
 
-        public List<ObservedData> ObservedDatas { get; set; } //观测数据列表
-        public List<PointData> KnownPoints { get; set; } //已知点列表(点号，高程)
-        public List<PointData> UnknownPoint { get; set; } // 定义列表存储近似高程(点号，高程)
-        public List<PointData> UnknownPoint_new { get; set; } // 定义列表存储近似高程(按照unknownPoints_array点号顺序排列)
-        public List<PointData> AllKnownPoint { get; set; } // 所有点的信息(点号，高程)
-        public List<ObservedData> ObservedDatasNoRep { get; set; } // 去除重复边的观测数据
-        public ArrayList UnknownPoints_array { get; set; } //未知点点号数组
-        public ArrayList KnownPoints_array { get; set; } //已知点点号数组
-        public ArrayList AllPoint_array { get; set; } //所有点号数组
-        public int Level { get; set; } //水准等级
-        private int coefficient; //闭合差限差系数
+        /// <summary>
+        /// 观测数据列表
+        /// </summary>
+        public List<ObservedData> ObservedDatas { get; set; }
+        /// <summary>
+        /// 已知点列表(点号，高程)
+        /// </summary>
+        public List<PointData> KnownPoints { get; set; }
+        /// <summary>
+        /// 定义列表存储近似高程(点号，高程)
+        /// </summary>
+        public List<PointData> UnknownPoint { get; set; }
+        /// <summary>
+        /// 定义列表存储近似高程(按照unknownPoints_array点号顺序排列)
+        /// </summary>
+        public List<PointData> UnknownPoint_new { get; set; }
+        /// <summary>
+        /// 所有点的信息(点号，高程)
+        /// </summary>
+        public List<PointData> AllKnownPoint { get; set; }
+        /// <summary>
+        /// 去除重复边的观测数据
+        /// </summary>
+        public List<ObservedData> ObservedDatasNoRep { get; set; }
+        /// <summary>
+        /// 未知点点号数组
+        /// </summary>
+        public ArrayList UnknownPoints_array { get; set; }
+        /// <summary>
+        /// 已知点点号数组
+        /// </summary>
+        public ArrayList KnownPoints_array { get; set; }
+        /// <summary>
+        /// 所有点号数组
+        /// </summary>
+        public ArrayList AllPoint_array { get; set; }
+        /// <summary>
+        /// 水准等级
+        /// </summary>
+        public int Level { get; set; }
+        /// <summary>
+        /// 闭合差限差系数
+        /// </summary>
+        private int coefficient;
         public int Coefficient {
             get => coefficient;
 
@@ -56,21 +86,69 @@ namespace LevelnetAdjustment {
                 coefficient = c;
             }
         }
-        public int N { get; set; } //观测数
-        public int T { get; set; } //必要观测数
-        public int R { get; set; } //多余观测数
-        public string Path { get; set; } //文件路径
-
+        /// <summary>
+        /// 观测数
+        /// </summary>
+        public int N { get; set; }
+        /// <summary>
+        /// 必要观测数
+        /// </summary>
+        public int T { get; set; }
+        /// <summary>
+        /// 多余观测数
+        /// </summary>
+        public int R { get; set; }
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string Path { get; set; }
+        /// <summary>
+        /// 输出文件格式
+        /// </summary>
         readonly string split = "---------------------------------------------------------------------------------";
         readonly string space = "                             ";
+        /// <summary>
+        /// 闭合差文件输出路径
+        /// </summary>
+        public string OutpathClosure { get; set; }
+        /// <summary>
+        /// 平差文件输出路径
+        /// </summary>
+        public string OutpathAdj { get; set; }
+        /// <summary>
+        /// 增加一个变量来记录线程状态
+        /// </summary>
+        private bool IsClosureThreadRunning = false;
+        private BackgroundWorker ClosureWorker = new BackgroundWorker();
 
+        public delegate void RefreshDelegate(string title, int num); // 子窗口声明定义委托 refresh()
+        public event RefreshDelegate refresh;
 
-        enum CoefficientEnum {
-            second = 4,
-            third = 12,
-            forth = 20,
-            fifth = 30
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public MainForm() {
+            InitializeComponent();
+            ClosureWorker.WorkerSupportsCancellation = true; //支持取消
+            ClosureWorker.WorkerReportsProgress = true; //支持报告进度
+            ClosureWorker.DoWork += ClosureWorker_DoWork; //处理过程
+            ClosureWorker.RunWorkerCompleted += ClosureWorker_RunWorkerCompleted; //完成操作
+            ClosureWorker.ProgressChanged += ClosureWorker_ProgressChanged; //报告进度
+
         }
+
+        private void ClosureWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            throw new NotImplementedException();
+        }
+
+        private void ClosureWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            throw new NotImplementedException();
+        }
+
+        private void ClosureWorker_DoWork(object sender, DoWorkEventArgs e) {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// 打开任意文本文件
         /// </summary>
@@ -85,6 +163,8 @@ namespace LevelnetAdjustment {
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
                 Path = openFile.FileName;
+                OutpathAdj = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.ou1");
+                OutpathClosure = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.ou2");
                 KnownPoints = new List<PointData>();
                 ObservedDatas = new List<ObservedData>();
                 ObservedDatasNoRep = new List<ObservedData>();
@@ -125,8 +205,8 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LevelnetDropItem_Click(object sender, EventArgs e) {
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.ou1");
-            if (File.Exists(outPath)) {
+
+            if (File.Exists(OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -134,6 +214,7 @@ namespace LevelnetAdjustment {
             if (ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
+
             AllPoint_array = null;
             AllPoint_array = Commom.Clone(KnownPoints_array);
             for (int i = 0; i < UnknownPoints_array.Count; i++) {
@@ -354,8 +435,8 @@ namespace LevelnetAdjustment {
             sb.AppendLine(split);
 
 
-            FileHelper.WriteStrToTxt(sb.ToString(), outPath);
-            FileView fileView = new FileView(outPath) {
+            FileHelper.WriteStrToTxt(sb.ToString(), OutpathAdj);
+            FileView fileView = new FileView(OutpathAdj) {
                 MdiParent = this,
             };
             MessageBox.Show("水准网平差完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -368,12 +449,13 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.ou2");
-            if (File.Exists(outPath)) {
+
+            if (File.Exists(OutpathClosure)) {
                 if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
             }
+
             // 点的集合
             AllPoint_array = null;
             AllPoint_array = Commom.Clone(KnownPoints_array);
@@ -495,8 +577,8 @@ namespace LevelnetAdjustment {
             string strLoop = LoopClosure(Coefficient);
             string strLine = LineClosure(Coefficient);
 
-            FileHelper.WriteStrToTxt(strLine + strLoop, outPath);
-            FileView fileView = new FileView(outPath) {
+            FileHelper.WriteStrToTxt(strLine + strLoop, OutpathClosure);
+            FileView fileView = new FileView(OutpathClosure) {
                 MdiParent = this,
             };
             MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -648,9 +730,6 @@ namespace LevelnetAdjustment {
             double[] diff = new double[m_Pnumber]; //高差累加值数组
             double[] S = new double[m_Pnumber];    //路线长累加值数组
 
-
-
-
             for (int ii = 0; ii < KnownPoints_array.Count; ii++) {
                 FindShortPath(ii, -1, neighbor, diff, S); //搜索最短路线，用所有观测值
                 for (int jj = ii + 1; jj < KnownPoints_array.Count; jj++) {
@@ -660,6 +739,7 @@ namespace LevelnetAdjustment {
                     }
                     // 输出附合路线上的点号
                     line_N++;
+                    refresh("附合水准路线：", line_N);
                     strClosure.AppendLine("线路号：" + line_N);
                     strClosure.Append("线路点号：");
                     int k = jj;
@@ -713,6 +793,7 @@ namespace LevelnetAdjustment {
             About about = new About();
             about.ShowDialog();
         }
+
     }
 }
 
