@@ -169,7 +169,7 @@ namespace LevelnetAdjustment {
                 ObservedDatas = new List<ObservedData>();
                 ObservedDatasNoRep = new List<ObservedData>();
 
-                Level = FileHelper.readOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
+                Level = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
                 Coefficient = Level;
                 Console.WriteLine(Coefficient);
                 UnknownPoints_array = new ArrayList();

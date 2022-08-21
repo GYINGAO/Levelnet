@@ -16,7 +16,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="knownPoints"></param>
         /// <param name="observedDatas"></param>
         /// <param name="fileName"></param>
-        public static int readOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
+        public static int ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
             try {
                 int level = 2;
                 using (StreamReader sr = new StreamReader(fileName)) {
@@ -61,6 +61,28 @@ namespace LevelnetAdjustment.utils {
             }
         }
 
+        /// <summary>
+        /// 读取DAT
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static void ReadDAT(string filename, List<DAT> dats, List<ObservedData> ods) {
+            try {
+                using (StreamReader sr = new StreamReader(filename)) {
+                    while (sr.Peek() > -1) {
+                        DAT dat = new DAT();
+                        string line = sr.ReadLine().Trim();
+                        string[] arr1 = Regex.Split(line, "(?:\\s*[|]\\s*)", RegexOptions.IgnoreCase);
+                        string[] point_arr = Regex.Split(arr1[2], "[\\s+]", RegexOptions.IgnoreCase);
+                    }
+                }
+            }
+            catch (Exception) {
+
+                throw;
+            }
+        }
+
 
         /// <summary>
         /// 写入txt
@@ -80,7 +102,7 @@ namespace LevelnetAdjustment.utils {
             fileStream.Close();
         }
 
-        public static void matrix2Txt(double[,] matrix) {
+        public static void Matrix2Txt(double[,] matrix) {
             var file = @"C:\Users\GaoYing\Desktop\矩阵.txt";
             // 如果存在要保存的文件,则删除
             if (File.Exists(file)) {
