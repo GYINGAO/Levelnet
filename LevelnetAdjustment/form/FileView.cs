@@ -21,7 +21,7 @@ namespace LevelnetAdjustment.form {
         private void FileView_Load(object sender, EventArgs e) {
             rtb.Clear();
             if (string.IsNullOrEmpty(FilePath)) {
-                this.Text = "Undefined.OUP*";
+                this.Text = "Undefined.ou1*";
                 return;
             }
             else {
@@ -41,7 +41,6 @@ namespace LevelnetAdjustment.form {
             if (e.Control && e.KeyCode == Keys.S) {
                 SaveFile();
                 this.Text = Path.GetFileName(SaveFilePath);
-                this.Close();
             }
         }
 
@@ -51,13 +50,14 @@ namespace LevelnetAdjustment.form {
         private void SaveFile() {
             SaveFileDialog saveFileDialog = new SaveFileDialog {
                 Title = "另存为",
-                Filter = "观测文件(*.INP)|*.INP|所有文件(*.*)|*.*",
+                Filter = "观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 SaveFilePath = saveFileDialog.FileName;
                 rtb.SaveFile(saveFileDialog.FileName, RichTextBoxStreamType.PlainText);
+                this.Close();
             }
         }
     }

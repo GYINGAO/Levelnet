@@ -23,3 +23,5 @@ F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\bin\Debug\System.Runtime.C
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.exe.manifest
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.application
 F:\source\repos\LevelnetAdjustment\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.Fody.CopyLocal.cache
+F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.exe
+F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.pdb

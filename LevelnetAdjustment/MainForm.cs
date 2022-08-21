@@ -80,7 +80,7 @@ namespace LevelnetAdjustment {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = false,
                 Title = "打开",
-                Filter = "水准观测文件(*.INP)|*.INP|所有文件(*.*)|*.*",
+                Filter = "水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
@@ -125,7 +125,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LevelnetDropItem_Click(object sender, EventArgs e) {
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.OU2");
+            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.ou1");
             if (File.Exists(outPath)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
@@ -368,7 +368,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
-            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.OU1");
+            string outPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.ou2");
             if (File.Exists(outPath)) {
                 if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
