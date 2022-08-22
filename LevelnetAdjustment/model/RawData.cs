@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LevelnetAdjustment.model {
-    public class DAT {
+    public class RawData {
         public string BackPoint { get; set; } //测站后视点
         public string FrontPoint { get; set; } //测站前视点
 
@@ -33,7 +33,7 @@ namespace LevelnetAdjustment.model {
         /// </summary>
         /// <param name="diff1"></param>
         /// <param name="diff2"></param>
-        private void Calc() {
+        public void Calc() {
             Diff1 = BackDiff1 - FrontDiff1;
             Diff2 = BackDiff2 - FrontDiff2;
             DiffAve = (Diff1 + Diff2) / 2;

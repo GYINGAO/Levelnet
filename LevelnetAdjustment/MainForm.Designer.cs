@@ -38,6 +38,7 @@ namespace LevelnetAdjustment {
             this.OriginalDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RawDataDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +62,8 @@ namespace LevelnetAdjustment {
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NewDropItem,
             this.OpenDropItem,
-            this.ExitDropItem});
+            this.ExitDropItem,
+            this.RawDataDropItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.FileToolStripMenuItem.Text = "文件";
@@ -69,21 +71,21 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(100, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
             this.NewDropItem.Text = "新建";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
             // OpenDropItem
             // 
             this.OpenDropItem.Name = "OpenDropItem";
-            this.OpenDropItem.Size = new System.Drawing.Size(100, 22);
+            this.OpenDropItem.Size = new System.Drawing.Size(180, 22);
             this.OpenDropItem.Text = "打开";
             this.OpenDropItem.Click += new System.EventHandler(this.OpenDropItem_Click);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(100, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
@@ -155,6 +157,13 @@ namespace LevelnetAdjustment {
             this.AboutDropItem.Text = "关于";
             this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
             // 
+            // RawDataDropItem
+            // 
+            this.RawDataDropItem.Name = "RawDataDropItem";
+            this.RawDataDropItem.Size = new System.Drawing.Size(180, 22);
+            this.RawDataDropItem.Text = "读取原始文件";
+            this.RawDataDropItem.Click += new System.EventHandler(this.RawDataDropItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -190,6 +199,7 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ClosureErrorDropItem;
         private System.Windows.Forms.ToolStripMenuItem AboutDropItem;
+        private System.Windows.Forms.ToolStripMenuItem RawDataDropItem;
     }
 }
 

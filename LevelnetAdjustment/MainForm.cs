@@ -54,6 +54,10 @@ namespace LevelnetAdjustment {
         /// </summary>
         public ArrayList AllPoint_array { get; set; }
         /// <summary>
+        /// 原始观测数据
+        /// </summary>
+        public List<RawData> RawDatas { get; set; }
+        /// <summary>
         /// 水准等级
         /// </summary>
         public int Level { get; set; }
@@ -101,7 +105,7 @@ namespace LevelnetAdjustment {
         /// <summary>
         /// 文件路径
         /// </summary>
-        public string Path { get; set; }
+        public string FilePath { get; set; }
         /// <summary>
         /// 输出文件格式
         /// </summary>
@@ -162,9 +166,9 @@ namespace LevelnetAdjustment {
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
-                Path = openFile.FileName;
-                OutpathAdj = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "平差结果.ou1");
-                OutpathClosure = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path) + "闭合差计算结果.ou2");
+                FilePath = openFile.FileName;
+                OutpathAdj = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), System.IO.Path.GetFileNameWithoutExtension(FilePath) + "平差结果.ou1");
+                OutpathClosure = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), System.IO.Path.GetFileNameWithoutExtension(FilePath) + "闭合差计算结果.ou2");
                 KnownPoints = new List<PointData>();
                 ObservedDatas = new List<ObservedData>();
                 ObservedDatasNoRep = new List<ObservedData>();
@@ -794,6 +798,32 @@ namespace LevelnetAdjustment {
             about.ShowDialog();
         }
 
+        private void RawDataDropItem_Click(object sender, EventArgs e) {
+            if (RawDatas == null) {
+                RawDatas = new List<RawData>();
+            }
+            if (ObservedDatas == null) {
+                ObservedDatas = new List<ObservedData>();
+            }
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = true,
+                Title = "打开",
+                Filter = "DAT观测文件|*.dat;*.DAT|GSI观测文件|*.gsi;*.GSI|所有文件(*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+                foreach (var item in openFile.FileNames) {
+                    if (Path.GetExtension(item).ToLower() == ".dat") {
+                        FileHelper.ReadDAT(item, RawDatas, ObservedDatas);
+                    }
+                    else if (Path.GetExtension(item).ToLower() == ".gsi") {
+                        FileHelper.ReadGSI(item, RawDatas, ObservedDatas);
+                    }
+                }
+                Console.WriteLine("123");
+            }
+        }
     }
 }
 
