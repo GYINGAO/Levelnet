@@ -67,11 +67,11 @@ namespace LevelnetAdjustment.utils {
         /// <param name="filename"></param>
         /// <returns></returns>
         internal static void ReadDAT(string filename, List<RawData> dats, List<ObservedData> ods) {
-
+            dats.Add(new RawData());
             using (StreamReader sr = new StreamReader(filename)) {
                 int stationIdx = 0;//测站索引,记录一个测站观测索引
 
-                string method;//观测方式 aBFFB aFBBF BFBF BBFF FBBF
+                // string method;//观测方式 aBFFB aFBBF BFBF BBFF FBBF
                 while (sr.Peek() > -1) {
                     string line = sr.ReadLine().Trim();
                     //跳过空行
@@ -83,8 +83,12 @@ namespace LevelnetAdjustment.utils {
                         ods.Add(new ObservedData());
                         continue;
                     }
-                    //测段结束，输出整个测段信息
+                    //测段结束
                     if (line.Contains("End-Line") || line.Contains("End")) {
+                        continue;
+                    }
+                    // 不要的测量数据
+                    if (line.Contains("#####")) {
                         continue;
                     }
                     //整个测站重新测量
@@ -95,16 +99,14 @@ namespace LevelnetAdjustment.utils {
                     }
                     //单次重新测量
                     if (line.Contains("Measurement repeated")) {
-
+                        continue;
                     }
                     string[] arr = Regex.Split(line, "(?:\\s*[|]\\s*)", RegexOptions.IgnoreCase);
                     var str3 = arr[3].Trim();
                     var str2 = arr[2].Trim();
+                    // 读取测量数据
                     if (str3.Contains("Rb") || str3.Contains("Rf")) {
                         stationIdx++;
-                        if (stationIdx == 1) {
-                            dats.Add(new RawData());
-                        }
                         var arr3 = Regex.Split(str3, "[\\s]+", RegexOptions.IgnoreCase);
                         var arr2 = Regex.Split(str2, "[\\s]+", RegexOptions.IgnoreCase);
                         var arr4 = Regex.Split(arr[4].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
@@ -145,13 +147,20 @@ namespace LevelnetAdjustment.utils {
 
 
                     }
-                    // 包含测段数的一行
+                    // 一个测站最后一个数据读取完
+                    if (stationIdx == 4) {
+                        dats[dats.Count - 1].Calc();
+                        dats[dats.Count - 1].IsLast = true;
+                        stationIdx = 0;
+                        dats.Add(new RawData());
+                    }
+                    // 包含测段数的一行，计算测段数据
                     if (str3.Contains("Db") || str3.Contains("Df")) {
                         var arr2 = Regex.Split(arr[2].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
                         int stationNum = int.Parse(arr2[2]);//测段测站数
                         //ods[ods.Count - 1].End = arr2[1];//测段终点
-                        ods[ods.Count - 1].Start = dats[dats.Count - stationNum].BackPoint;
-                        ods[ods.Count - 1].End = dats[dats.Count - 1].FrontPoint;
+                        ods[ods.Count - 1].Start = dats[dats.Count - stationNum - 1].BackPoint;
+                        ods[ods.Count - 1].End = dats[dats.Count - 2].FrontPoint;
                         //计算测段数据
                         double totalDis = 0;
                         double totalDiff = 0;
@@ -162,11 +171,6 @@ namespace LevelnetAdjustment.utils {
                         ods[ods.Count - 1].HeightDiff = totalDiff;
                         ods[ods.Count - 1].Distance = totalDis;
                     }
-                    if (stationIdx == 4) {
-                        dats[dats.Count - 1].Calc();
-                        stationIdx = 0;
-                    }
-
                 }
             }
 
@@ -182,20 +186,26 @@ namespace LevelnetAdjustment.utils {
             throw new NotImplementedException();
         }
 
-
         /// <summary>
         /// 写入txt
         /// </summary>
         /// <param name="str"></param>
         /// <param name="file"></param>
-        public static void WriteStrToTxt(string str, string file) {
-            // 如果存在要保存的文件,则删除
-            if (File.Exists(file)) {
-                File.Delete(file);
-            }
+        internal static void WriteStrToTxt(string str, string file) {
             FileStream fileStream = new FileStream(file, FileMode.Create);
             StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
             streamWriter.Write(str + "\r\n");
+            streamWriter.Flush();
+            streamWriter.Close();
+            fileStream.Close();
+        }
+
+        internal static void ExportCOSA(List<ObservedData> ods, string path) {
+            FileStream fileStream = new FileStream(path, FileMode.Create);
+            StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+            ods.ForEach(l => {
+                streamWriter.WriteLine($"{l.Start},{l.End},{l.HeightDiff},{l.Distance}");
+            });
             streamWriter.Flush();
             streamWriter.Close();
             fileStream.Close();
@@ -218,6 +228,28 @@ namespace LevelnetAdjustment.utils {
             streamWriter.Flush();
             streamWriter.Close();
             fileStream.Close();
+        }
+
+        /// <summary>
+        /// 读取已知点数据
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="knownPoints"></param>
+        internal static void ReadGSI(string fileName, List<PointData> knownPoints) {
+            using (StreamReader sr = new StreamReader(fileName)) {
+                while (sr.Peek() > -1) {
+                    string line = sr.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(line)) {
+                        continue;
+                    }
+                    var arr = Regex.Split(line, "[\\s]+|[,]+|[，]+", RegexOptions.IgnoreCase);
+                    PointData pd = new PointData {
+                        Number = arr[0],
+                        Height = Convert.ToDouble(arr[1]),
+                    };
+                    knownPoints.Add(pd);
+                }
+            }
         }
     }
 }

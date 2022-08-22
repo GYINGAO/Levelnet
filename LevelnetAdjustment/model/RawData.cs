@@ -28,6 +28,8 @@ namespace LevelnetAdjustment.model {
         public double Dis2 { get; set; } //第二个观测距离
         public double DisAve { get; set; } //观测距离平均值
 
+        public bool IsLast { get; set; } = false;//是否是最后一个测站 
+
         /// <summary>
         /// 计算高差、视距、观测距离
         /// </summary>

@@ -21,8 +21,8 @@ namespace LevelnetAdjustment {
         /// 观测数据列表
         /// </summary>
         public List<ObservedData> ObservedDatas { get; set; }
-        /// <summary>
-        /// 已知点列表(点号，高程)
+        /// <summary>                                        
+        /// 已知点列表(点号，高程) 
         /// </summary>
         public List<PointData> KnownPoints { get; set; }
         /// <summary>
@@ -105,7 +105,7 @@ namespace LevelnetAdjustment {
         /// <summary>
         /// 文件路径
         /// </summary>
-        public string FilePath { get; set; }
+        public string FilePath { get; set; } = "";
         /// <summary>
         /// 输出文件格式
         /// </summary>
@@ -114,30 +114,17 @@ namespace LevelnetAdjustment {
         /// <summary>
         /// 闭合差文件输出路径
         /// </summary>
-        public string OutpathClosure { get; set; }
+        public string OutpathClosure { get; set; } = "";
         /// <summary>
         /// 平差文件输出路径
         /// </summary>
-        public string OutpathAdj { get; set; }
-        /// <summary>
-        /// 增加一个变量来记录线程状态
-        /// </summary>
-        private bool IsClosureThreadRunning = false;
-        private BackgroundWorker ClosureWorker = new BackgroundWorker();
-
-        public delegate void RefreshDelegate(string title, int num); // 子窗口声明定义委托 refresh()
-        public event RefreshDelegate refresh;
+        public string OutpathAdj { get; set; } = "";
 
         /// <summary>
         /// 构造函数
         /// </summary>
         public MainForm() {
             InitializeComponent();
-            ClosureWorker.WorkerSupportsCancellation = true; //支持取消
-            ClosureWorker.WorkerReportsProgress = true; //支持报告进度
-            ClosureWorker.DoWork += ClosureWorker_DoWork; //处理过程
-            ClosureWorker.RunWorkerCompleted += ClosureWorker_RunWorkerCompleted; //完成操作
-            ClosureWorker.ProgressChanged += ClosureWorker_ProgressChanged; //报告进度
 
         }
 
@@ -153,6 +140,34 @@ namespace LevelnetAdjustment {
             throw new NotImplementedException();
         }
 
+        private void CalcParams() {
+            OutpathAdj = Path.Combine(Path.GetDirectoryName(FilePath), Path.GetFileNameWithoutExtension(FilePath) + "平差结果.ou1");
+            OutpathClosure = Path.Combine(Path.GetDirectoryName(FilePath), Path.GetFileNameWithoutExtension(FilePath) + "闭合差计算结果.ou2");
+            Coefficient = Level;//闭合差系数
+            UnknownPoints_array = new ArrayList();
+            KnownPoints_array = new ArrayList();
+            KnownPoints.ForEach(item => {
+                KnownPoints_array.Add(item.Number);
+            });
+            ObservedDatas.ForEach(item => {
+                if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
+                    UnknownPoints_array.Add(item.Start);
+                }
+                if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
+                    UnknownPoints_array.Add(item.End);
+                }
+            });
+            N = ObservedDatas.Count; //观测数
+            T = UnknownPoints_array.Count; //必要观测数
+            R = N - T; //多余观测数
+            AllPoint_array = null;
+            AllPoint_array = Commom.Clone(KnownPoints_array);
+            for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                AllPoint_array.Add(UnknownPoints_array[i]);
+            }
+            Console.WriteLine($"观测数：{N}\n必要观测数：{T}\n多余观测数：{R}");
+        }
+
         /// <summary>
         /// 打开任意文本文件
         /// </summary>
@@ -162,37 +177,20 @@ namespace LevelnetAdjustment {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = false,
                 Title = "打开",
-                Filter = "水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                Filter = "COSA文件(*.in1)|*.in1|所有文件(*.*)|*.*",
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
-                FilePath = openFile.FileName;
-                OutpathAdj = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), System.IO.Path.GetFileNameWithoutExtension(FilePath) + "平差结果.ou1");
-                OutpathClosure = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), System.IO.Path.GetFileNameWithoutExtension(FilePath) + "闭合差计算结果.ou2");
+                if (string.IsNullOrEmpty(FilePath)) {
+                    FilePath = openFile.FileName;
+                }
+
                 KnownPoints = new List<PointData>();
                 ObservedDatas = new List<ObservedData>();
                 ObservedDatasNoRep = new List<ObservedData>();
-
                 Level = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
-                Coefficient = Level;
-                Console.WriteLine(Coefficient);
-                UnknownPoints_array = new ArrayList();
-                KnownPoints_array = new ArrayList();
-                KnownPoints.ForEach(item => {
-                    KnownPoints_array.Add(item.Number);
-                });
-                ObservedDatas.ForEach(item => {
-                    if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
-                        UnknownPoints_array.Add(item.Start);
-                    }
-                    if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
-                        UnknownPoints_array.Add(item.End);
-                    }
-                });
-                N = ObservedDatas.Count; //观测数
-                T = UnknownPoints_array.Count; //必要观测数
-                R = N - T; //多余观测数
-                Console.WriteLine($"观测数：{N}\n必要观测数：{T}\n多余观测数：{R}");
+
+                CalcParams();
                 FileView fileView = new FileView(openFile.FileName) {
                     MdiParent = this,
                 };
@@ -204,12 +202,11 @@ namespace LevelnetAdjustment {
         }
 
         /// <summary>
-        /// 打开原始观测数据，进行平差
+        /// 平差
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LevelnetDropItem_Click(object sender, EventArgs e) {
-
             if (File.Exists(OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
@@ -219,11 +216,7 @@ namespace LevelnetAdjustment {
                 throw new Exception("请打开观测文件");
             }
 
-            AllPoint_array = null;
-            AllPoint_array = Commom.Clone(KnownPoints_array);
-            for (int i = 0; i < UnknownPoints_array.Count; i++) {
-                AllPoint_array.Add(UnknownPoints_array[i]);
-            }
+
 
             #region 1.求未知点的近似高程
             AllKnownPoint = Commom.Clone(KnownPoints);
@@ -460,12 +453,6 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            // 点的集合
-            AllPoint_array = null;
-            AllPoint_array = Commom.Clone(KnownPoints_array);
-            for (int i = 0; i < UnknownPoints_array.Count; i++) {
-                AllPoint_array.Add(UnknownPoints_array[i]);
-            }
             #region 根据观测数据生成邻接表
             var pointNum = AllPoint_array.Count;
             const int inf = 100000000;
@@ -743,7 +730,6 @@ namespace LevelnetAdjustment {
                     }
                     // 输出附合路线上的点号
                     line_N++;
-                    refresh("附合水准路线：", line_N);
                     strClosure.AppendLine("线路号：" + line_N);
                     strClosure.Append("线路点号：");
                     int k = jj;
@@ -798,6 +784,11 @@ namespace LevelnetAdjustment {
             about.ShowDialog();
         }
 
+        /// <summary>
+        /// 读取水准仪原始数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RawDataDropItem_Click(object sender, EventArgs e) {
             if (RawDatas == null) {
                 RawDatas = new List<RawData>();
@@ -813,6 +804,9 @@ namespace LevelnetAdjustment {
                 RestoreDirectory = true,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
+                if (string.IsNullOrEmpty(FilePath)) {
+                    FilePath = openFile.FileNames[0];
+                }
                 foreach (var item in openFile.FileNames) {
                     if (Path.GetExtension(item).ToLower() == ".dat") {
                         FileHelper.ReadDAT(item, RawDatas, ObservedDatas);
@@ -823,6 +817,80 @@ namespace LevelnetAdjustment {
                 }
                 Console.WriteLine("123");
             }
+        }
+
+        /// <summary>
+        /// 导出COSA
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CPSADropItem_Click(object sender, EventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog {
+                Title = "另存为",
+                Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
+                InitialDirectory = Path.GetDirectoryName(FilePath),
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                FileHelper.ExportCOSA(ObservedDatas, saveFileDialog.FileName);
+                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        /// <summary>
+        /// 读取已知点数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KnDropItem_Click(object sender, EventArgs e) {
+            if (KnownPoints == null) {
+                KnownPoints = new List<PointData>();
+            }
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = true,
+                Title = "打开",
+                Filter = "文本文件|*.txt;*.TXT|所有文件(*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+                FileHelper.ReadGSI(openFile.FileName, KnownPoints);
+            }
+        }
+
+        /// <summary>
+        /// 导出观测手簿
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HandbookDropItem_Click(object sender, EventArgs e) {
+
+        }
+
+        /// <summary>
+        /// 清空数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearDropItem_Click(object sender, EventArgs e) {
+            ObservedDatas = null;
+            KnownPoints = null;
+            UnknownPoint = null;
+            UnknownPoint_new = null;
+            AllKnownPoint = null;
+            ObservedDatasNoRep = null;
+            UnknownPoints_array = null;
+            UnknownPoints_array = null;
+            KnownPoints_array = null;
+            AllPoint_array = null;
+            RawDatas = null;
+            Level = 2;
+            Coefficient = Level;
+            FilePath = null;
+            OutpathClosure = null;
+            OutpathAdj = null;
         }
     }
 }
