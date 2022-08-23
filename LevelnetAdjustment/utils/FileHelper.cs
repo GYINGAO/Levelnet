@@ -180,13 +180,43 @@ namespace LevelnetAdjustment.utils {
         }
 
         /// <summary>
-        /// 读取GSI
+        /// 读取GSI-8
         /// </summary>
         /// <param name="item"></param>
         /// <param name="rawDatas"></param>
         /// <param name="observedDatas"></param>
-        internal static void ReadGSI(string filename, List<RawData> rawDatas, List<ObservedData> observedDatas) {
-            throw new NotImplementedException();
+        internal static void ReadGSI(string filename, List<RawData> rds, List<ObservedData> ods, List<PointData> kps) {
+            using (StreamReader sr = new StreamReader(filename)) {
+                while (sr.Peek() > -1) {
+                    string line = sr.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(line)) {
+                        continue;
+                    }
+                    var arr = Regex.Split(line, "[\\s]+", RegexOptions.IgnoreCase);
+                    if (arr.Length == 1) {
+                        ods.Add(new ObservedData());
+                    }
+                    else if (arr.Length == 2) {
+                        rds.Add(new RawData());
+                        var pn = Regex.Split(arr[0], "[+]|[-]", RegexOptions.IgnoreCase)[1];
+                        var h = double.Parse(arr[1].Remove(0, 6));
+                        PointData pd = new PointData();
+                    }
+                    else if (arr.Length == 5) { }
+                }
+            }
+        }
+
+        // 331.28+00097996
+        private double Convert2Double(string str) {
+            double res = 0;
+            if (str.Contains("+")) {
+
+            }
+            else if (str.Contains("-")) {
+
+            }
+            return res;
         }
 
         /// <summary>
@@ -253,6 +283,17 @@ namespace LevelnetAdjustment.utils {
                     knownPoints.Add(pd);
                 }
             }
+        }
+
+        internal static void ExportCOSAStationPower(List<ObservedData> observedDatas, string fileName) {
+            FileStream fileStream = new FileStream(fileName, FileMode.Create);
+            StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+            observedDatas.ForEach(l => {
+                streamWriter.WriteLine($"{l.Start},{l.End},{l.HeightDiff},{l.Distance},{l.StationNum}");
+            });
+            streamWriter.Flush();
+            streamWriter.Close();
+            fileStream.Close();
         }
     }
 }

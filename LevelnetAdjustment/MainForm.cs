@@ -812,32 +812,14 @@ namespace LevelnetAdjustment {
                         FileHelper.ReadDAT(item, RawDatas, ObservedDatas);
                     }
                     else if (Path.GetExtension(item).ToLower() == ".gsi") {
-                        FileHelper.ReadGSI(item, RawDatas, ObservedDatas);
+                        FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints);
                     }
                 }
                 Console.WriteLine("123");
             }
         }
 
-        /// <summary>
-        /// 导出COSA
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CPSADropItem_Click(object sender, EventArgs e) {
-            SaveFileDialog saveFileDialog = new SaveFileDialog {
-                Title = "另存为",
-                Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
-                FilterIndex = 1,
-                RestoreDirectory = true,
-                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
-                InitialDirectory = Path.GetDirectoryName(FilePath),
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                FileHelper.ExportCOSA(ObservedDatas, saveFileDialog.FileName);
-                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
+
 
         /// <summary>
         /// 读取已知点数据
@@ -903,6 +885,41 @@ namespace LevelnetAdjustment {
             FilePath = null;
             OutpathClosure = null;
             OutpathAdj = null;
+        }
+
+        /// <summary>
+        /// 导出COSA按距离定权
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DisPower_Click(object sender, EventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog {
+                Title = "另存为",
+                Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
+                InitialDirectory = Path.GetDirectoryName(FilePath),
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                FileHelper.ExportCOSA(ObservedDatas, saveFileDialog.FileName);
+                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void StationPower_Click(object sender, EventArgs e) {
+            SaveFileDialog saveFileDialog = new SaveFileDialog {
+                Title = "另存为",
+                Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
+                InitialDirectory = Path.GetDirectoryName(FilePath),
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                FileHelper.ExportCOSAStationPower(ObservedDatas, saveFileDialog.FileName);
+                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

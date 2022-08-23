@@ -39,10 +39,12 @@ namespace LevelnetAdjustment {
             this.ReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ResultDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OriginalDropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.CPSADropItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.COSADropItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DisPower = new System.Windows.Forms.ToolStripMenuItem();
+            this.StationPower = new System.Windows.Forms.ToolStripMenuItem();
+            this.HandbookDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.HandbookDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,42 +79,42 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(160, 22);
             this.NewDropItem.Text = "新建";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
             // OpenDropItem
             // 
             this.OpenDropItem.Name = "OpenDropItem";
-            this.OpenDropItem.Size = new System.Drawing.Size(180, 22);
+            this.OpenDropItem.Size = new System.Drawing.Size(160, 22);
             this.OpenDropItem.Text = "读取COSA文件";
             this.OpenDropItem.Click += new System.EventHandler(this.OpenDropItem_Click);
             // 
             // RawDataDropItem
             // 
             this.RawDataDropItem.Name = "RawDataDropItem";
-            this.RawDataDropItem.Size = new System.Drawing.Size(180, 22);
+            this.RawDataDropItem.Size = new System.Drawing.Size(160, 22);
             this.RawDataDropItem.Text = "读取原始文件";
             this.RawDataDropItem.Click += new System.EventHandler(this.RawDataDropItem_Click);
             // 
             // KnDropItem
             // 
             this.KnDropItem.Name = "KnDropItem";
-            this.KnDropItem.Size = new System.Drawing.Size(180, 22);
+            this.KnDropItem.Size = new System.Drawing.Size(160, 22);
             this.KnDropItem.Text = "读取已知点数据";
             this.KnDropItem.Click += new System.EventHandler(this.KnDropItem_Click);
             // 
             // ClearDropItem
             // 
             this.ClearDropItem.Name = "ClearDropItem";
-            this.ClearDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ClearDropItem.Size = new System.Drawing.Size(160, 22);
             this.ClearDropItem.Text = "清空数据";
             this.ClearDropItem.Click += new System.EventHandler(this.ClearDropItem_Click);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(160, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
@@ -152,7 +154,7 @@ namespace LevelnetAdjustment {
             this.ReportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ResultDropItem,
             this.OriginalDropItem,
-            this.CPSADropItem,
+            this.COSADropItem,
             this.HandbookDropItem});
             this.ReportToolStripMenuItem.Name = "ReportToolStripMenuItem";
             this.ReportToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
@@ -170,12 +172,35 @@ namespace LevelnetAdjustment {
             this.OriginalDropItem.Size = new System.Drawing.Size(180, 22);
             this.OriginalDropItem.Text = "原始观测数据";
             // 
-            // CPSADropItem
+            // COSADropItem
             // 
-            this.CPSADropItem.Name = "CPSADropItem";
-            this.CPSADropItem.Size = new System.Drawing.Size(180, 22);
-            this.CPSADropItem.Text = "COSA数据格式";
-            this.CPSADropItem.Click += new System.EventHandler(this.CPSADropItem_Click);
+            this.COSADropItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DisPower,
+            this.StationPower});
+            this.COSADropItem.Name = "COSADropItem";
+            this.COSADropItem.Size = new System.Drawing.Size(180, 22);
+            this.COSADropItem.Text = "COSA数据格式";
+            // 
+            // DisPower
+            // 
+            this.DisPower.Name = "DisPower";
+            this.DisPower.Size = new System.Drawing.Size(180, 22);
+            this.DisPower.Text = "按距离定权";
+            this.DisPower.Click += new System.EventHandler(this.DisPower_Click);
+            // 
+            // StationPower
+            // 
+            this.StationPower.Name = "StationPower";
+            this.StationPower.Size = new System.Drawing.Size(180, 22);
+            this.StationPower.Text = "按测站数定权";
+            this.StationPower.Click += new System.EventHandler(this.StationPower_Click);
+            // 
+            // HandbookDropItem
+            // 
+            this.HandbookDropItem.Name = "HandbookDropItem";
+            this.HandbookDropItem.Size = new System.Drawing.Size(180, 22);
+            this.HandbookDropItem.Text = "观测手簿";
+            this.HandbookDropItem.Click += new System.EventHandler(this.HandbookDropItem_Click);
             // 
             // HelpToolStripMenuItem
             // 
@@ -191,13 +216,6 @@ namespace LevelnetAdjustment {
             this.AboutDropItem.Size = new System.Drawing.Size(100, 22);
             this.AboutDropItem.Text = "关于";
             this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
-            // 
-            // HandbookDropItem
-            // 
-            this.HandbookDropItem.Name = "HandbookDropItem";
-            this.HandbookDropItem.Size = new System.Drawing.Size(180, 22);
-            this.HandbookDropItem.Text = "观测手簿";
-            this.HandbookDropItem.Click += new System.EventHandler(this.HandbookDropItem_Click);
             // 
             // MainForm
             // 
@@ -235,10 +253,12 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem ClosureErrorDropItem;
         private System.Windows.Forms.ToolStripMenuItem AboutDropItem;
         private System.Windows.Forms.ToolStripMenuItem RawDataDropItem;
-        private System.Windows.Forms.ToolStripMenuItem CPSADropItem;
+        private System.Windows.Forms.ToolStripMenuItem COSADropItem;
         private System.Windows.Forms.ToolStripMenuItem KnDropItem;
         private System.Windows.Forms.ToolStripMenuItem ClearDropItem;
         private System.Windows.Forms.ToolStripMenuItem HandbookDropItem;
+        private System.Windows.Forms.ToolStripMenuItem DisPower;
+        private System.Windows.Forms.ToolStripMenuItem StationPower;
     }
 }
 
