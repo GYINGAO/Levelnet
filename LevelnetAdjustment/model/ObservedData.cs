@@ -25,5 +25,10 @@ namespace LevelnetAdjustment.model {
         /// 距离
         /// </summary>
         public double Distance { get; set; }
+
+        /// <summary>
+        /// 测站数
+        /// </summary>
+        public int StationNum { get; set; }
     }
 }

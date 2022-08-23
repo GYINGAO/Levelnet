@@ -150,14 +150,16 @@ namespace LevelnetAdjustment.utils {
                     // 一个测站最后一个数据读取完
                     if (stationIdx == 4) {
                         dats[dats.Count - 1].Calc();
-                        dats[dats.Count - 1].IsLast = true;
                         stationIdx = 0;
                         dats.Add(new RawData());
                     }
                     // 包含测段数的一行，计算测段数据
                     if (str3.Contains("Db") || str3.Contains("Df")) {
+                        dats[dats.Count - 2].IsEnd = true;
                         var arr2 = Regex.Split(arr[2].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
                         int stationNum = int.Parse(arr2[2]);//测段测站数
+                        ods[ods.Count - 1].StationNum = stationNum;
+                        dats[dats.Count - stationNum - 1].IsStart = true;
                         //ods[ods.Count - 1].End = arr2[1];//测段终点
                         ods[ods.Count - 1].Start = dats[dats.Count - stationNum - 1].BackPoint;
                         ods[ods.Count - 1].End = dats[dats.Count - 2].FrontPoint;
@@ -172,6 +174,7 @@ namespace LevelnetAdjustment.utils {
                         ods[ods.Count - 1].Distance = totalDis;
                     }
                 }
+                dats.RemoveAt(dats.Count - 1);
             }
 
         }

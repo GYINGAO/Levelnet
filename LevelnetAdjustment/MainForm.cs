@@ -801,7 +801,7 @@ namespace LevelnetAdjustment {
                 Title = "打开",
                 Filter = "DAT观测文件|*.dat;*.DAT|GSI观测文件|*.gsi;*.GSI|所有文件(*.*)|*.*",
                 FilterIndex = 1,
-                RestoreDirectory = true,
+                RestoreDirectory = false,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
                 if (string.IsNullOrEmpty(FilePath)) {
@@ -867,6 +867,18 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void HandbookDropItem_Click(object sender, EventArgs e) {
 
+            SaveFileDialog saveFileDialog = new SaveFileDialog {
+                Title = "另存为",
+                Filter = "Excel 工作簿(*.xlsx)|*.xlsx|Excel 97-2003 工作簿(*.xls)|*.xls",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
+                InitialDirectory = Path.GetDirectoryName(FilePath) == null ? Path.GetDirectoryName(FilePath) : Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                ExceHelperl.ExportHandbook(RawDatas, ObservedDatas, saveFileDialog.FileName);
+                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         /// <summary>
