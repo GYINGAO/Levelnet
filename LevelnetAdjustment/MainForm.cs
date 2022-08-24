@@ -216,8 +216,6 @@ namespace LevelnetAdjustment {
                 throw new Exception("请打开观测文件");
             }
 
-
-
             #region 1.求未知点的近似高程
             AllKnownPoint = Commom.Clone(KnownPoints);
             UnknownPoint = new List<PointData>();
@@ -796,10 +794,16 @@ namespace LevelnetAdjustment {
             if (ObservedDatas == null) {
                 ObservedDatas = new List<ObservedData>();
             }
+            if (KnownPoints == null) {
+                KnownPoints = new List<PointData>();
+            }
+            if (ObservedDatasNoRep == null) {
+                ObservedDatasNoRep = new List<ObservedData>();
+            }
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "DAT观测文件|*.dat;*.DAT|GSI观测文件|*.gsi;*.GSI|所有文件(*.*)|*.*",
+                Filter = "DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|所有文件(*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = false,
             };
@@ -815,6 +819,7 @@ namespace LevelnetAdjustment {
                         FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints);
                     }
                 }
+                CalcParams();
                 Console.WriteLine("123");
             }
         }
