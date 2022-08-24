@@ -54,3 +54,4 @@ F:\编程\项目\LevelnetAdjustment\bin\Release\NPOI.xml
 F:\编程\项目\LevelnetAdjustment\bin\Release\NPOI.OOXML.xml
 F:\编程\项目\LevelnetAdjustment\bin\Release\NPOI.OpenXml4Net.xml
 F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
+F:\编程\项目\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.Setting.resources

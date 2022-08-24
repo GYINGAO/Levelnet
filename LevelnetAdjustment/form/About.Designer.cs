@@ -24,6 +24,7 @@ namespace LevelnetAdjustment.form {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(About));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -114,12 +115,13 @@ namespace LevelnetAdjustment.form {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 251);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(400, 290);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 290);
             this.Name = "About";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "关于";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.About_KeyUp);
             this.splitContainer1.Panel1.ResumeLayout(false);

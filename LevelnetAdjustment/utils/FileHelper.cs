@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace LevelnetAdjustment.utils {
     public class FileHelper {
         /// <summary>
-        /// 读取原始观测文件
+        /// 读取COSA文件
         /// </summary>
         /// <param name="knownPoints"></param>
         /// <param name="observedDatas"></param>
@@ -45,6 +45,9 @@ namespace LevelnetAdjustment.utils {
                                 HeightDiff = double.Parse(dataArray[2]),
                                 Distance = double.Parse(dataArray[3])
                             };
+                            if (dataArray.Length >= 5) {
+                                observedData.StationNum = int.Parse(dataArray[4]);
+                            }
                             observedDatas.Add(observedData);
                             if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
                                 continue;
@@ -323,11 +326,22 @@ namespace LevelnetAdjustment.utils {
             fileStream.Close();
         }
 
-        internal static void ExportCOSA(List<ObservedData> ods, string path) {
+        /// <summary>
+        /// 导出cosa 按距离定权
+        /// </summary>
+        /// <param name="ods"></param>
+        /// <param name="pds"></param>
+        /// <param name="path"></param>
+        internal static void ExportCOSA(List<ObservedData> ods, List<PointData> pds, string path) {
             FileStream fileStream = new FileStream(path, FileMode.Create);
             StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+            if (pds != null && pds.Count > 0) {
+                pds.ForEach(l => {
+                    streamWriter.WriteLine($"{l.Number},{l.Height}");
+                });
+            }
             ods.ForEach(l => {
-                streamWriter.WriteLine($"{l.Start},{l.End},{l.HeightDiff},{l.Distance}");
+                streamWriter.WriteLine($"{l.Start},{l.End},{Math.Round(l.HeightDiff, 5)},{Math.Round(l.Distance, 5)}");
             });
             streamWriter.Flush();
             streamWriter.Close();
@@ -375,11 +389,22 @@ namespace LevelnetAdjustment.utils {
             }
         }
 
-        internal static void ExportCOSAStationPower(List<ObservedData> observedDatas, string fileName) {
+        /// <summary>
+        /// 导出cosa 按测站数定权
+        /// </summary>
+        /// <param name="observedDatas"></param>
+        /// <param name="pds"></param>
+        /// <param name="fileName"></param>
+        internal static void ExportCOSAStationPower(List<ObservedData> observedDatas, List<PointData> pds, string fileName) {
             FileStream fileStream = new FileStream(fileName, FileMode.Create);
             StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
+            if (pds != null && pds.Count > 0) {
+                pds.ForEach(l => {
+                    streamWriter.WriteLine($"{l.Number},{l.Height}");
+                });
+            }
             observedDatas.ForEach(l => {
-                streamWriter.WriteLine($"{l.Start},{l.End},{l.HeightDiff},{l.Distance},{l.StationNum}");
+                streamWriter.WriteLine($"{l.Start},{l.End},{Math.Round(l.HeightDiff, 5)},{Math.Round(l.Distance, 5)},{l.StationNum}");
             });
             streamWriter.Flush();
             streamWriter.Close();

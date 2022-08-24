@@ -54,7 +54,7 @@ namespace LevelnetAdjustment {
             if (ex != null) {
                 sb.AppendLine("【异常类型】：" + ex.GetType().Name);
                 sb.AppendLine("【异常信息】：" + ex.Message);
-                sb.AppendLine("【堆栈调用】：" + ex.StackTrace);
+                //sb.AppendLine("【堆栈调用】：" + ex.StackTrace);
             }
             else {
                 sb.AppendLine("【未处理异常】：" + backStr);
