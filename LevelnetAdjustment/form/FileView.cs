@@ -11,24 +11,40 @@ using System.IO;
 
 namespace LevelnetAdjustment.form {
     public partial class FileView : Form {
-        public FileView(string _filePath) {
+        private bool kd = false;
+
+        public FileView(string[] _filePath) {
             InitializeComponent();
             this.FilePath = _filePath;
         }
-        public string FilePath { get; set; }
+        public string[] FilePath { get; set; }
         public string SaveFilePath { get; set; }
         public bool isModified { get; set; } = false;
 
         private void FileView_Load(object sender, EventArgs e) {
             rtb.Clear();
-            if (string.IsNullOrEmpty(FilePath)) {
-                this.Text = "Undefined.ou1*";
-                return;
+            if (FilePath.Length > 1) {
+                foreach (var item in FilePath) {
+                    //打开并且读取文件数据
+                    using (FileStream fs = new FileStream(item, FileMode.Open, FileAccess.Read)) {
+                        //文字编码需要设置为Default，不能设置为utf-8否则乱码（richtextbox的问题）
+                        using (StreamReader sr = new StreamReader(fs, Encoding.Default)) {
+                            rtb.Text += sr.ReadToEnd();
+                        }
+                    }
+                }
+
             }
             else {
-                rtb.LoadFile(FilePath, RichTextBoxStreamType.PlainText);
-                rtb.Show();
-                this.Text = Path.GetFileName(FilePath);
+                if (string.IsNullOrEmpty(FilePath[0])) {
+                    this.Text = "Undefined.ou1*";
+                    return;
+                }
+                else {
+                    rtb.LoadFile(FilePath[0], RichTextBoxStreamType.PlainText);
+                    rtb.Show();
+                    this.Text = Path.GetFileName(FilePath[0]);
+                }
             }
         }
 
@@ -39,6 +55,7 @@ namespace LevelnetAdjustment.form {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void rtb_KeyDown(object sender, KeyEventArgs e) {
+            kd = true;
             if (e.Control && e.KeyCode == Keys.S) {
                 SaveFile();
                 this.Text = Path.GetFileName(SaveFilePath);
@@ -65,7 +82,9 @@ namespace LevelnetAdjustment.form {
         }
 
         private void rtb_TextChanged(object sender, EventArgs e) {
-            isModified = true;
+            if (kd) {
+                isModified = true;
+            }
         }
 
         /// <summary>

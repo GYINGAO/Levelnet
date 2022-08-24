@@ -191,7 +191,7 @@ namespace LevelnetAdjustment {
                 Level = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
 
                 CalcParams();
-                FileView fileView = new FileView(openFile.FileName) {
+                FileView fileView = new FileView(new string[] { openFile.FileName }) {
                     MdiParent = this,
                 };
                 fileView.Show();
@@ -431,7 +431,7 @@ namespace LevelnetAdjustment {
 
 
             FileHelper.WriteStrToTxt(sb.ToString(), OutpathAdj);
-            FileView fileView = new FileView(OutpathAdj) {
+            FileView fileView = new FileView(new string[] { OutpathAdj }) {
                 MdiParent = this,
             };
             MessageBox.Show("水准网平差完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -567,7 +567,7 @@ namespace LevelnetAdjustment {
             string strLine = LineClosure(Coefficient);
 
             FileHelper.WriteStrToTxt(strLine + strLoop, OutpathClosure);
-            FileView fileView = new FileView(OutpathClosure) {
+            FileView fileView = new FileView(new string[] { OutpathClosure }) {
                 MdiParent = this,
             };
             MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -771,7 +771,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void NewDropItem_Click(object sender, EventArgs e) {
-            FileView fileView = new FileView("") {
+            FileView fileView = new FileView(new string[] { "" }) {
                 MdiParent = this,
             };
             fileView.Show();
@@ -821,6 +821,8 @@ namespace LevelnetAdjustment {
                 }
                 CalcParams();
                 Console.WriteLine("123");
+                FileView fv = new FileView(openFile.FileNames) { MdiParent = this };
+                fv.Show();
             }
         }
 
