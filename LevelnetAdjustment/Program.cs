@@ -49,7 +49,7 @@ namespace LevelnetAdjustment {
         /// <returns>异常字符串文本</returns>
         static string GetExceptionMsg(Exception ex, string backStr) {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("****************************异常文本****************************");
+            sb.AppendLine("*************************异常文本*************************");
             sb.AppendLine("【出现时间】：" + DateTime.Now.ToString());
             if (ex != null) {
                 sb.AppendLine("【异常类型】：" + ex.GetType().Name);
@@ -59,7 +59,7 @@ namespace LevelnetAdjustment {
             else {
                 sb.AppendLine("【未处理异常】：" + backStr);
             }
-            sb.AppendLine("***************************************************************");
+            sb.AppendLine("*********************************************************");
             return sb.ToString();
         }
 

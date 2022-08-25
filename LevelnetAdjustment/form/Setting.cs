@@ -10,27 +10,49 @@ using System.Windows.Forms;
 
 namespace LevelnetAdjustment.form {
     //声明委托 和 事件
-    public delegate void TransfDelegate(int method, double limit);
+    public delegate void TransfDelegate(int method, double limit, int level);
     public partial class Setting : Form {
         public int _power { get; set; }
         public double _limit { get; set; }
+        public int _level { get; set; }
 
         public event TransfDelegate TransfEvent;
-        public Setting(int power, double limit) {
+        public Setting(int power, double limit, int level) {
             this._power = power;
             this._limit = limit;
+            this._level = level;
             InitializeComponent();
         }
 
         private void Setting_Load(object sender, EventArgs e) {
-            if (_power == 0) {
-                this.rbtn_dis.Checked = true;
-                this.rbtn_num.Checked = false;
+            switch (_power) {
+                case 0:
+                    this.rbtn_dis.Checked = true;
+                    break;
+                case 1:
+                    this.rbtn_num.Checked = true;
+                    break;
+                default:
+                    break;
             }
-            else {
-                this.rbtn_dis.Checked = false;
-                this.rbtn_num.Checked = true;
+
+            switch (_level) {
+                case 1:
+                    this.rbtn1.Checked = true;
+                    break;
+                case 2:
+                    this.rbtn2.Checked = true;
+                    break;
+                case 3:
+                    this.rbtn3.Checked = true;
+                    break;
+                case 4:
+                    this.rbtn4.Checked = true;
+                    break;
+                default:
+                    break;
             }
+
             this.tb_limit.Text = _limit.ToString();
         }
 
@@ -39,12 +61,10 @@ namespace LevelnetAdjustment.form {
         }
 
         private void btn_confirm_Click(object sender, EventArgs e) {
-            if (rbtn_dis.Checked) {
-                TransfEvent(0, double.Parse(tb_limit.Text));
-            }
-            else if (rbtn_num.Checked) {
-                TransfEvent(1, double.Parse(tb_limit.Text));
-            }
+            this._level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+            this._power = rbtn_dis.Checked ? 0 : 1;
+            this._limit = double.Parse(tb_limit.Text);
+            TransfEvent(_power, _limit, _level);
             this.Close();
         }
     }

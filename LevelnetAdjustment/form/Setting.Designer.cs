@@ -35,9 +35,15 @@ namespace LevelnetAdjustment.form {
             this.label1 = new System.Windows.Forms.Label();
             this.tb_limit = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbtn4 = new System.Windows.Forms.RadioButton();
+            this.rbtn3 = new System.Windows.Forms.RadioButton();
+            this.rbtn2 = new System.Windows.Forms.RadioButton();
+            this.rbtn1 = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -49,6 +55,7 @@ namespace LevelnetAdjustment.form {
             this.tableLayoutPanel1.Controls.Add(this.btn_confirm, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.btn_cancel, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -163,6 +170,63 @@ namespace LevelnetAdjustment.form {
             this.label2.TabIndex = 2;
             this.label2.Text = "厘米";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.rbtn4);
+            this.groupBox2.Controls.Add(this.rbtn3);
+            this.groupBox2.Controls.Add(this.rbtn2);
+            this.groupBox2.Controls.Add(this.rbtn1);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(10, 105);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(10);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(162, 75);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "水准测量等级";
+            // 
+            // rbtn4
+            // 
+            this.rbtn4.AutoSize = true;
+            this.rbtn4.Location = new System.Drawing.Point(92, 50);
+            this.rbtn4.Name = "rbtn4";
+            this.rbtn4.Size = new System.Drawing.Size(47, 16);
+            this.rbtn4.TabIndex = 3;
+            this.rbtn4.Text = "四等";
+            this.rbtn4.UseVisualStyleBackColor = true;
+            // 
+            // rbtn3
+            // 
+            this.rbtn3.AutoSize = true;
+            this.rbtn3.Location = new System.Drawing.Point(19, 50);
+            this.rbtn3.Name = "rbtn3";
+            this.rbtn3.Size = new System.Drawing.Size(47, 16);
+            this.rbtn3.TabIndex = 2;
+            this.rbtn3.Text = "三等";
+            this.rbtn3.UseVisualStyleBackColor = true;
+            // 
+            // rbtn2
+            // 
+            this.rbtn2.AutoSize = true;
+            this.rbtn2.Checked = true;
+            this.rbtn2.Location = new System.Drawing.Point(92, 20);
+            this.rbtn2.Name = "rbtn2";
+            this.rbtn2.Size = new System.Drawing.Size(47, 16);
+            this.rbtn2.TabIndex = 1;
+            this.rbtn2.TabStop = true;
+            this.rbtn2.Text = "二等";
+            this.rbtn2.UseVisualStyleBackColor = true;
+            // 
+            // rbtn1
+            // 
+            this.rbtn1.AutoSize = true;
+            this.rbtn1.Location = new System.Drawing.Point(19, 20);
+            this.rbtn1.Name = "rbtn1";
+            this.rbtn1.Size = new System.Drawing.Size(47, 16);
+            this.rbtn1.TabIndex = 0;
+            this.rbtn1.Text = "一等";
+            this.rbtn1.UseVisualStyleBackColor = true;
+            // 
             // Setting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -183,6 +247,8 @@ namespace LevelnetAdjustment.form {
             this.groupBox1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -199,5 +265,10 @@ namespace LevelnetAdjustment.form {
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tb_limit;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton rbtn4;
+        private System.Windows.Forms.RadioButton rbtn3;
+        private System.Windows.Forms.RadioButton rbtn2;
+        private System.Windows.Forms.RadioButton rbtn1;
     }
 }

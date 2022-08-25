@@ -16,9 +16,10 @@ namespace LevelnetAdjustment.utils {
         /// <param name="knownPoints"></param>
         /// <param name="observedDatas"></param>
         /// <param name="fileName"></param>
-        internal static int ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
+        internal static Tuple<int, int> ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
             try {
                 int level = 2;
+                int method = 0;//默认按距离定权
                 using (StreamReader sr = new StreamReader(fileName)) {
                     string line;
                     string[] dataArray;
@@ -47,6 +48,7 @@ namespace LevelnetAdjustment.utils {
                             };
                             if (dataArray.Length >= 5) {
                                 observedData.StationNum = int.Parse(dataArray[4]);
+                                method = 1;
                             }
                             observedDatas.Add(observedData);
                             if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
@@ -57,7 +59,7 @@ namespace LevelnetAdjustment.utils {
                         }
                     }
                 }
-                return level;
+                return new Tuple<int, int>(level, method);
             }
             catch (Exception) {
                 throw new Exception("文件格式有误");

@@ -16,6 +16,7 @@ namespace LevelnetAdjustment.form {
         public FileView(string[] _filePath) {
             InitializeComponent();
             this.FilePath = _filePath;
+            this.ShowIcon = false;
         }
         public string[] FilePath { get; set; }
         public string SaveFilePath { get; set; }
