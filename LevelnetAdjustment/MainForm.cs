@@ -333,9 +333,8 @@ namespace LevelnetAdjustment {
             Qxx = B.Inverse();
             //Console.WriteLine(Qxx.ToString());
 
-            // 求观测值协因数矩阵
-            /*var Qll = C * Qxx * C.Transpose();
-            Console.WriteLine(Qll.ToString());*/
+
+
 
             // 求高程平差值中误差
             Mh_P = new double[T];
@@ -372,6 +371,11 @@ namespace LevelnetAdjustment {
             /* for (int i = 0; i < N; i++) {
                  PVV += P[i, i] * L[i] * L[i];
              }*/
+
+            // 求观测值协因数矩阵
+            var Qll = C * B.Inverse() * C.Transpose();
+
+            var Qvv = Qll - C * B.Inverse() * C.Transpose();
         }
 
         // 是否满足限差，满足返回true
