@@ -251,12 +251,12 @@ namespace LevelnetAdjustment.utils {
                             var pointCode = arr[2].Substring(0, 3);
                             switch (pointCode) {
                                 case "331":
-                                    rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8);
+                                    rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
                                     rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
                                     rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
                                     break;
                                 case "332":
-                                    rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8);
+                                    rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
                                     rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
                                     rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
                                     break;

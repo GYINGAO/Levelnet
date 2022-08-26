@@ -53,7 +53,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            this.tb_limit.Text = _limit.ToString();
+            this.tb_limit.Text = (_limit * 100).ToString();
         }
 
         private void btn_cancel_Click(object sender, EventArgs e) {
@@ -63,7 +63,7 @@ namespace LevelnetAdjustment.form {
         private void btn_confirm_Click(object sender, EventArgs e) {
             this._level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
             this._power = rbtn_dis.Checked ? 0 : 1;
-            this._limit = double.Parse(tb_limit.Text);
+            this._limit = double.Parse(tb_limit.Text) / 100;
             TransfEvent(_power, _limit, _level);
             this.Close();
         }
