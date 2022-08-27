@@ -247,6 +247,7 @@ namespace LevelnetAdjustment.form {
             // rbtn_constraint
             // 
             this.rbtn_constraint.AutoSize = true;
+            this.rbtn_constraint.Checked = true;
             this.rbtn_constraint.Location = new System.Drawing.Point(33, 20);
             this.rbtn_constraint.Name = "rbtn_constraint";
             this.rbtn_constraint.Size = new System.Drawing.Size(83, 16);
@@ -262,7 +263,6 @@ namespace LevelnetAdjustment.form {
             this.rbtn_quasi_stable.Name = "rbtn_quasi_stable";
             this.rbtn_quasi_stable.Size = new System.Drawing.Size(71, 16);
             this.rbtn_quasi_stable.TabIndex = 1;
-            this.rbtn_quasi_stable.TabStop = true;
             this.rbtn_quasi_stable.Text = "拟稳平差";
             this.rbtn_quasi_stable.UseVisualStyleBackColor = true;
             // 
