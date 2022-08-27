@@ -14,6 +14,6 @@ namespace LevelnetAdjustment.model {
         /// <summary>
         /// 已知点高程
         /// </summary>
-        public double Height { get; set; }
+        public double Height { get; set; } = 0;
     }
 }

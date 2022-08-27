@@ -322,7 +322,7 @@ namespace LevelnetAdjustment.utils {
         internal static void WriteStrToTxt(string str, string file) {
             FileStream fileStream = new FileStream(file, FileMode.Create);
             StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
-            streamWriter.Write(str + "\r\n");
+            streamWriter.Write(str);
             streamWriter.Flush();
             streamWriter.Close();
             fileStream.Close();

@@ -27,5 +27,18 @@ namespace LevelnetAdjustment.utils {
                 return (T)formatter.Deserialize(objectStream);
             }
         }
+
+        /// <summary>
+        /// 合并两个集合的函数
+        /// </summary>
+        /// <param name="list1">第一个集合</param>
+        /// <param name="list2">第二个集合</param>
+        /// <returns>返回第union的合并结果</returns>
+        public static List<T> Merge<T>(List<T> list1, List<T> list2) where T : class {
+            List<T> listMerge1 = list1.Union(list2).ToList();//不允许有重复项
+            List<T> listMerge2 = list1.Concat(list2).ToList();//允许出现重复项
+            return listMerge2;
+        }
+
     }
 }

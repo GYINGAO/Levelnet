@@ -210,12 +210,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\Calc.cs" />
+    <Compile Include="utils\ClevelingAdjust.cs" />
     <Compile Include="utils\Commom.cs" />
     <Compile Include="utils\Dijkstra.cs" />
     <Compile Include="utils\ExceHelperl.cs" />
     <Compile Include="utils\FileHelper.cs" />
     <Compile Include="utils\DFSAlgorithm.cs" />
-    <Compile Include="utils\Graph1.cs" />
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
