@@ -40,10 +40,14 @@ namespace LevelnetAdjustment.form {
             this.rbtn3 = new System.Windows.Forms.RadioButton();
             this.rbtn2 = new System.Windows.Forms.RadioButton();
             this.rbtn1 = new System.Windows.Forms.RadioButton();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.rbtn_constraint = new System.Windows.Forms.RadioButton();
+            this.rbtn_quasi_stable = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -56,6 +60,7 @@ namespace LevelnetAdjustment.form {
             this.tableLayoutPanel1.Controls.Add(this.btn_cancel, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox3, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -227,6 +232,40 @@ namespace LevelnetAdjustment.form {
             this.rbtn1.Text = "一等";
             this.rbtn1.UseVisualStyleBackColor = true;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.rbtn_quasi_stable);
+            this.groupBox3.Controls.Add(this.rbtn_constraint);
+            this.groupBox3.Location = new System.Drawing.Point(192, 105);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(10);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(162, 75);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "平差方法";
+            // 
+            // rbtn_constraint
+            // 
+            this.rbtn_constraint.AutoSize = true;
+            this.rbtn_constraint.Location = new System.Drawing.Point(33, 20);
+            this.rbtn_constraint.Name = "rbtn_constraint";
+            this.rbtn_constraint.Size = new System.Drawing.Size(83, 16);
+            this.rbtn_constraint.TabIndex = 0;
+            this.rbtn_constraint.TabStop = true;
+            this.rbtn_constraint.Text = "约束网平差";
+            this.rbtn_constraint.UseVisualStyleBackColor = true;
+            // 
+            // rbtn_quasi_stable
+            // 
+            this.rbtn_quasi_stable.AutoSize = true;
+            this.rbtn_quasi_stable.Location = new System.Drawing.Point(33, 50);
+            this.rbtn_quasi_stable.Name = "rbtn_quasi_stable";
+            this.rbtn_quasi_stable.Size = new System.Drawing.Size(71, 16);
+            this.rbtn_quasi_stable.TabIndex = 1;
+            this.rbtn_quasi_stable.TabStop = true;
+            this.rbtn_quasi_stable.Text = "拟稳平差";
+            this.rbtn_quasi_stable.UseVisualStyleBackColor = true;
+            // 
             // Setting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -249,6 +288,8 @@ namespace LevelnetAdjustment.form {
             this.tableLayoutPanel2.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -270,5 +311,8 @@ namespace LevelnetAdjustment.form {
         private System.Windows.Forms.RadioButton rbtn3;
         private System.Windows.Forms.RadioButton rbtn2;
         private System.Windows.Forms.RadioButton rbtn1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton rbtn_quasi_stable;
+        private System.Windows.Forms.RadioButton rbtn_constraint;
     }
 }

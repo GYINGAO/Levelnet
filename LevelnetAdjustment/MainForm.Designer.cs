@@ -46,6 +46,7 @@ namespace LevelnetAdjustment {
             this.HandbookDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GrossErrorDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -123,6 +124,7 @@ namespace LevelnetAdjustment {
             // 
             this.AdjToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClosureErrorDropItem,
+            this.GrossErrorDropItem,
             this.LevelnetDropItem,
             this.OptionDropItem});
             this.AdjToolStripMenuItem.Name = "AdjToolStripMenuItem";
@@ -164,13 +166,13 @@ namespace LevelnetAdjustment {
             // ResultDropItem
             // 
             this.ResultDropItem.Name = "ResultDropItem";
-            this.ResultDropItem.Size = new System.Drawing.Size(157, 22);
+            this.ResultDropItem.Size = new System.Drawing.Size(180, 22);
             this.ResultDropItem.Text = "平差结果";
             // 
             // OriginalDropItem
             // 
             this.OriginalDropItem.Name = "OriginalDropItem";
-            this.OriginalDropItem.Size = new System.Drawing.Size(157, 22);
+            this.OriginalDropItem.Size = new System.Drawing.Size(180, 22);
             this.OriginalDropItem.Text = "原始观测数据";
             // 
             // COSADropItem
@@ -179,7 +181,7 @@ namespace LevelnetAdjustment {
             this.DisPower,
             this.StationPower});
             this.COSADropItem.Name = "COSADropItem";
-            this.COSADropItem.Size = new System.Drawing.Size(157, 22);
+            this.COSADropItem.Size = new System.Drawing.Size(180, 22);
             this.COSADropItem.Text = "COSA数据格式";
             // 
             // DisPower
@@ -199,7 +201,7 @@ namespace LevelnetAdjustment {
             // HandbookDropItem
             // 
             this.HandbookDropItem.Name = "HandbookDropItem";
-            this.HandbookDropItem.Size = new System.Drawing.Size(157, 22);
+            this.HandbookDropItem.Size = new System.Drawing.Size(180, 22);
             this.HandbookDropItem.Text = "观测手簿";
             this.HandbookDropItem.Click += new System.EventHandler(this.HandbookDropItem_Click);
             // 
@@ -217,6 +219,13 @@ namespace LevelnetAdjustment {
             this.AboutDropItem.Size = new System.Drawing.Size(100, 22);
             this.AboutDropItem.Text = "关于";
             this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
+            // 
+            // GrossErrorDropItem
+            // 
+            this.GrossErrorDropItem.Name = "GrossErrorDropItem";
+            this.GrossErrorDropItem.Size = new System.Drawing.Size(180, 22);
+            this.GrossErrorDropItem.Text = "粗差探测";
+            this.GrossErrorDropItem.Click += new System.EventHandler(this.GrossErrorDropItem_Click);
             // 
             // MainForm
             // 
@@ -261,6 +270,7 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem HandbookDropItem;
         private System.Windows.Forms.ToolStripMenuItem DisPower;
         private System.Windows.Forms.ToolStripMenuItem StationPower;
+        private System.Windows.Forms.ToolStripMenuItem GrossErrorDropItem;
     }
 }
 
