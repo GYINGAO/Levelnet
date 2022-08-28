@@ -134,6 +134,8 @@ namespace LevelnetAdjustment {
                     //将Loaing窗口，注入到 SplashScreenManager 来管理
                     GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                     loading.ShowLoading();
+                    ClAdj.FreeNetAdjust();
+                    loading.CloseWaitForm();
                 }
 
             }

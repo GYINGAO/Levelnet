@@ -41,8 +41,8 @@ namespace LevelnetAdjustment.form {
             this.rbtn2 = new System.Windows.Forms.RadioButton();
             this.rbtn1 = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rbtn_constraint = new System.Windows.Forms.RadioButton();
             this.rbtn_quasi_stable = new System.Windows.Forms.RadioButton();
+            this.rbtn_constraint = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -244,6 +244,16 @@ namespace LevelnetAdjustment.form {
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "平差方法";
             // 
+            // rbtn_quasi_stable
+            // 
+            this.rbtn_quasi_stable.AutoSize = true;
+            this.rbtn_quasi_stable.Location = new System.Drawing.Point(33, 50);
+            this.rbtn_quasi_stable.Name = "rbtn_quasi_stable";
+            this.rbtn_quasi_stable.Size = new System.Drawing.Size(83, 16);
+            this.rbtn_quasi_stable.TabIndex = 1;
+            this.rbtn_quasi_stable.Text = "秩亏网平差";
+            this.rbtn_quasi_stable.UseVisualStyleBackColor = true;
+            // 
             // rbtn_constraint
             // 
             this.rbtn_constraint.AutoSize = true;
@@ -255,16 +265,6 @@ namespace LevelnetAdjustment.form {
             this.rbtn_constraint.TabStop = true;
             this.rbtn_constraint.Text = "约束网平差";
             this.rbtn_constraint.UseVisualStyleBackColor = true;
-            // 
-            // rbtn_quasi_stable
-            // 
-            this.rbtn_quasi_stable.AutoSize = true;
-            this.rbtn_quasi_stable.Location = new System.Drawing.Point(33, 50);
-            this.rbtn_quasi_stable.Name = "rbtn_quasi_stable";
-            this.rbtn_quasi_stable.Size = new System.Drawing.Size(71, 16);
-            this.rbtn_quasi_stable.TabIndex = 1;
-            this.rbtn_quasi_stable.Text = "拟稳平差";
-            this.rbtn_quasi_stable.UseVisualStyleBackColor = true;
             // 
             // Setting
             // 

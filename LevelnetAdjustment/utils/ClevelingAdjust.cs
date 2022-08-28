@@ -238,18 +238,18 @@ namespace LevelnetAdjustment.utils {
         /// <summary>
         /// 求权阵
         /// </summary>
-        void Cal_P() {
+        void Calc_P() {
             // 求权阵P
             double[] powerArray = new double[N];// 定义数据存储权的值
             if (PowerMethod == 1) {
                 for (int i = 0; i < N; i++) {
-                    powerArray[i] = 1 / ObservedDatas[i].StationNum;
+                    powerArray[i] = 1.0 / ObservedDatas[i].StationNum;
                 }
 
             }
             else {
                 for (int i = 0; i < N; i++) {
-                    powerArray[i] = 1 / ObservedDatas[i].Distance;
+                    powerArray[i] = 1.0 / ObservedDatas[i].Distance;
                 }
             }
             P = Matrix<double>.Build.DenseOfDiagonalArray(powerArray);// 根据数组生成权阵
@@ -259,29 +259,54 @@ namespace LevelnetAdjustment.utils {
         /// 求误差方程系数阵B
         /// </summary>
         void Calc_B() {
-            B = Matrix<double>.Build.Dense(N, M, 0); //生成n*m矩阵
-            for (int i = 0; i < N; i++) {
-                var startIndex = AllPoint_array.IndexOf(ObservedDatas[i].Start);
-                var endIndex = AllPoint_array.IndexOf(ObservedDatas[i].End);
-                if (startIndex > -1) {
-                    B[i, startIndex] = -1;
+            if (AdjustmentMethod == 0) {
+                B = Matrix<double>.Build.Dense(N, M, 0); //生成n*m矩阵
+                for (int i = 0; i < N; i++) {
+                    var startIndex = AllPoint_array.IndexOf(ObservedDatas[i].Start);
+                    var endIndex = AllPoint_array.IndexOf(ObservedDatas[i].End);
+                    if (startIndex > -1) {
+                        B[i, startIndex] = -1;
+                    }
+                    if (endIndex > -1) {
+                        B[i, endIndex] = 1;
+                    }
                 }
-                if (endIndex > -1) {
-                    B[i, endIndex] = 1;
+            }
+            else {
+                B = Matrix<double>.Build.Dense(N, T, 0); //生成n*m矩阵
+                for (int i = 0; i < N; i++) {
+                    var startIndex = UnknownPoints_array.IndexOf(ObservedDatas[i].Start);
+                    var endIndex = UnknownPoints_array.IndexOf(ObservedDatas[i].End);
+                    if (startIndex > -1) {
+                        B[i, startIndex] = -1;
+                    }
+                    if (endIndex > -1) {
+                        B[i, endIndex] = 1;
+                    }
                 }
             }
         }
+
+
 
         /// <summary>
         /// 求误差方程常数项l
         /// </summary>
         void Calc_l() {
             double[] ls = new double[N];
-            for (int i = 0; i < N; i++) {
-                var startH = X[AllPoint_array.IndexOf(ObservedDatas[i].Start), 0];
-                var endH = X[AllPoint_array.IndexOf(ObservedDatas[i].End), 0];
-                ls[i] = startH + ObservedDatas[i].HeightDiff - endH;
-            }// 计算每个常数项的值      
+            if (AdjustmentMethod == 0) {
+                for (int i = 0; i < N; i++) {
+                    var startH = X[AllPoint_array.IndexOf(ObservedDatas[i].Start), 0];
+                    var endH = X[AllPoint_array.IndexOf(ObservedDatas[i].End), 0];
+                    ls[i] = startH + ObservedDatas[i].HeightDiff - endH;
+                }// 计算每个常数项的值      
+            }
+            else {
+                for (int i = 0; i < N; i++) {
+                    ls[i] = ObservedDatas[i].HeightDiff;
+                }// 计算每个常数项的值      
+            }
+
             l = Matrix<double>.Build.DenseOfColumnArrays(ls);
         }
 
@@ -291,14 +316,19 @@ namespace LevelnetAdjustment.utils {
         void Calc_NBB() {
 
             NBB = B.Transpose() * P * B;
-            //法方程系数阵已知点对角线加上很大的常数，使得已知点改正数为0
-            for (int i = 0; i < KnownPoints.Count; i++) {
-                NBB[i, i] = 10e20;
+            if (AdjustmentMethod == 0) {
+                //法方程系数阵已知点对角线加上很大的常数，使得已知点改正数为0
+                for (int i = 0; i < KnownPoints.Count; i++) {
+                    NBB[i, i] = 10e20;
+                }
+            }
+            else {
+                for (int i = 0; i < T; i++) {
+                    NBB[i, i] += 1.0 / T;
+                }
             }
             W = B.Transpose() * P * l;
         }
-
-
 
         /// <summary>
         /// 平差值计算
@@ -388,7 +418,7 @@ namespace LevelnetAdjustment.utils {
         /// <returns>迭代次数</returns>
         public int LS_Adjustment() {
             CalcApproximateHeight();
-            Cal_P();
+            Calc_P();
             Calc_B();
             Calc_l();
             Calc_NBB();
@@ -684,7 +714,7 @@ namespace LevelnetAdjustment.utils {
             ArrayList V_err = new ArrayList();
             ArrayList threshold_err = new ArrayList();
             for (k = 0; ; k++) {
-                Cal_P();
+                Calc_P();
                 Calc_B();
                 Calc_l();
                 Calc_NBB();
@@ -739,8 +769,34 @@ namespace LevelnetAdjustment.utils {
             FileHelper.WriteStrToTxt(sb.ToString(), path);
         }
 
-        void QuasiStable() {
+        /// <summary>
+        /// 拟稳平差
+        /// </summary>
+        public void QuasiStable() {
 
+        }
+
+        /// <summary>
+        /// 自由网平差
+        /// </summary>
+        public void FreeNetAdjust() {
+            // 自由网平差要求每个点有先验高程值
+            double[] Xs = new double[T];
+            for (int i = 0; i < T; i++) {
+                Xs[i] = UnknownPoints[i].Height;
+            }
+            X = Matrix<double>.Build.DenseOfColumnArrays(Xs);
+            Calc_P();
+            Calc_B();
+            Calc_l();
+            Calc_NBB();
+
+
+            Cal_dX();
+            for (int i = 0; i < T; i++) {
+                NBB[i, i] -= 1.0 / T;
+            }
+            Calc_PVV();
         }
     }
 }
