@@ -85,7 +85,7 @@ namespace LevelnetAdjustment {
         }
 
         /// <summary>
-        /// 约束网平差
+        /// 平差按钮
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -99,15 +99,46 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
+            int i = 0;
+            if (ClAdj.AdjustmentMethod == 0) {
+                SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
+                //将Loaing窗口，注入到 SplashScreenManager 来管理
+                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                loading.ShowLoading();
 
-            var i = ClAdj.LS_Adjustment();
-            ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
+                i = ClAdj.LS_Adjustment();
+                ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
 
-            loading.CloseWaitForm();
+                loading.CloseWaitForm();
+            }
+            else {
+                if (MessageBox.Show("是否导入拟稳点点号？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    // 拟稳平差
+                    OpenFileDialog openFile = new OpenFileDialog {
+                        Multiselect = false,
+                        Title = "打开",
+                        Filter = "文本文件(*.txt)|*.txt|所有文件(*.*)|*.*",
+                        FilterIndex = 1,
+                    };
+                    if (openFile.ShowDialog() == DialogResult.OK) {
+                        FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
+                        SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
+                        //将Loaing窗口，注入到 SplashScreenManager 来管理
+                        GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                        loading.ShowLoading();
+                    }
+                }
+                else {
+                    // 自由网平差
+                    SimpleLoading loadingfrm = new SimpleLoading(this, "自由网平差中，请稍等...");
+                    //将Loaing窗口，注入到 SplashScreenManager 来管理
+                    GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                    loading.ShowLoading();
+                }
+
+            }
+
+
             FileView fileView = new FileView(new string[] { OutpathAdj }) {
                 MdiParent = this,
             };

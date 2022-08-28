@@ -125,6 +125,16 @@ namespace LevelnetAdjustment.utils {
         public int StablePnumber { get; set; } = 0; //拟稳点数
 
         public ArrayList Threshold { get; set; } //阈值
+        ArrayList stablePoints;
+        public ArrayList StablePoints {
+            get {
+                return stablePoints;
+            }
+            set {
+                stablePoints = value;
+                StablePnumber = value.Count;
+            }
+        }
 
         const int pad = -13;
         const int titlePad = -11;
@@ -727,6 +737,10 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(space + $"    μ = ±{Mu}");
 
             FileHelper.WriteStrToTxt(sb.ToString(), path);
+        }
+
+        void QuasiStable() {
+
         }
     }
 }

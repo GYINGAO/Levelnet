@@ -1,6 +1,7 @@
 ﻿using LevelnetAdjustment.model;
 using MathNet.Numerics.LinearAlgebra;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -387,6 +388,30 @@ namespace LevelnetAdjustment.utils {
                         Height = Convert.ToDouble(arr[1]),
                     };
                     knownPoints.Add(pd);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 读取拟稳点数据文件
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="points"></param>
+        /// <param name="pds"></param>
+        internal static void ReadStablePoint(string filename, ArrayList points, List<PointData> pds) {
+            using (StreamReader sr = new StreamReader(filename)) {
+                while (sr.Peek() > -1) {
+                    string line = sr.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(line)) {
+                        continue;
+                    }
+                    points.Add(line);
+                    try {
+                        pds.Find(p => p.Number == line).IsStable = true;
+                    }
+                    catch (Exception) {
+                        throw new Exception("出现数据文件中没有的点名");
+                    }
                 }
             }
         }
