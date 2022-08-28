@@ -2,6 +2,7 @@
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
 using MathNet.Numerics.LinearAlgebra;
+using SplashScreenDemo;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ namespace LevelnetAdjustment {
         public string OutpathGrossError { get; set; } // 粗差探测结果
         public string OutpathAdj { get; set; } = "";// 平差文件输出路径
         public ClevelingAdjust ClAdj { get; set; }
+
+        public static bool flag = true;
 
         /// <summary>
         /// 构造函数
@@ -87,17 +90,24 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LevelnetDropItem_Click(object sender, EventArgs e) {
+            if (ClAdj.ObservedDatas == null) {
+                throw new Exception("请打开观测文件");
+            }
             if (File.Exists(OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
             }
-            if (ClAdj.ObservedDatas == null) {
-                throw new Exception("请打开观测文件");
-            }
+
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+
             var i = ClAdj.LS_Adjustment();
             ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
 
+            loading.CloseWaitForm();
             FileView fileView = new FileView(new string[] { OutpathAdj }) {
                 MdiParent = this,
             };
@@ -116,7 +126,16 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
+
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+
             ClAdj.CalcClosureError(OutpathClosure, split, space);
+
+            loading.CloseWaitForm();
+
             FileView fileView = new FileView(new string[] { OutpathClosure }) {
                 MdiParent = this,
             };
@@ -130,10 +149,18 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void GrossErrorDropItem_Click(object sender, EventArgs e) {
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+
             ClAdj.FindGrossError(split, space, OutpathGrossError);
             FileView fileView = new FileView(new string[] { OutpathGrossError }) {
                 MdiParent = this,
             };
+
+            loading.CloseWaitForm();
+
             MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             fileView.Show();
         }
@@ -224,6 +251,12 @@ namespace LevelnetAdjustment {
                 if (string.IsNullOrEmpty(FilePath)) {
                     FilePath = openFile.FileNames[0];
                 }
+
+                SimpleLoading loadingfrm = new SimpleLoading(this, "读取中，请稍等...");
+                //将Loaing窗口，注入到 SplashScreenManager 来管理
+                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                loading.ShowLoading();
+
                 foreach (var item in openFile.FileNames) {
                     if (Path.GetExtension(item).ToLower() == ".dat") {
                         FileHelper.ReadDAT(item, RawDatas, ObservedDatas);
@@ -232,10 +265,11 @@ namespace LevelnetAdjustment {
                         FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints);
                     }
                 }
-                Commom.Merge(ClAdj.RawDatas, RawDatas);
-                Commom.Merge(ClAdj.ObservedDatas, ObservedDatas);
-                Commom.Merge(ClAdj.KnownPoints, KnownPoints);
+                ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+                ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
+                ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
 
+                loading.CloseWaitForm();
                 FileView fv = new FileView(openFile.FileNames) { MdiParent = this };
                 fv.Show();
             }
@@ -260,7 +294,7 @@ namespace LevelnetAdjustment {
             if (openFile.ShowDialog() == DialogResult.OK) {
                 FileHelper.ReadGSI(openFile.FileName, KnownPoints);
             }
-            Commom.Merge(ClAdj.KnownPoints, KnownPoints);
+            ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
         }
 
         /// <summary>
@@ -279,7 +313,12 @@ namespace LevelnetAdjustment {
                 InitialDirectory = FilePath != "" ? Path.GetDirectoryName(FilePath) : Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
+                //将Loaing窗口，注入到 SplashScreenManager 来管理
+                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                loading.ShowLoading();
                 ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName);
+                loading.CloseWaitForm();
                 MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -291,7 +330,6 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void ClearDropItem_Click(object sender, EventArgs e) {
             ClAdj = new ClevelingAdjust();
-            FilePath = null;
         }
 
         /// <summary>

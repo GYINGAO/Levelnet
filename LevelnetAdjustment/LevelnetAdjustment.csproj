@@ -186,17 +186,23 @@
     <Compile Include="form\FileView.Designer.cs">
       <DependentUpon>FileView.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\MultiFuncLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\MultiFuncLoading.Designer.cs">
+      <DependentUpon>MultiFuncLoading.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\Setting.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="form\Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
-    <Compile Include="form\Wait.cs">
+    <Compile Include="form\SimpleLoading.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="form\Wait.Designer.cs">
-      <DependentUpon>Wait.cs</DependentUpon>
+    <Compile Include="form\SimpleLoading.Designer.cs">
+      <DependentUpon>SimpleLoading.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -216,17 +222,21 @@
     <Compile Include="utils\ExceHelperl.cs" />
     <Compile Include="utils\FileHelper.cs" />
     <Compile Include="utils\DFSAlgorithm.cs" />
+    <Compile Include="utils\SplashScreenManager.cs" />
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\FileView.resx">
       <DependentUpon>FileView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="form\MultiFuncLoading.resx">
+      <DependentUpon>MultiFuncLoading.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="form\Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="form\Wait.resx">
-      <DependentUpon>Wait.cs</DependentUpon>
+    <EmbeddedResource Include="form\SimpleLoading.resx">
+      <DependentUpon>SimpleLoading.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -270,6 +280,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading3.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="control\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.6.5.2\build\Fody.targets" Condition="Exists('..\packages\Fody.6.5.2\build\Fody.targets')" />

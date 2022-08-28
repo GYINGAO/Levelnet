@@ -40,7 +40,6 @@ F:\编程\项目\LevelnetAdjustment\bin\Debug\System.ValueTuple.xml
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.AssemblyReference.cache
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.About.resources
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FileView.resources
-F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.Wait.resources
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.MainForm.resources
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.Properties.Resources.resources
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.GenerateResource.cache
@@ -55,3 +54,5 @@ F:\编程\项目\LevelnetAdjustment\bin\Debug\NPOI.xml
 F:\编程\项目\LevelnetAdjustment\bin\Debug\NPOI.OOXML.xml
 F:\编程\项目\LevelnetAdjustment\bin\Debug\NPOI.OpenXml4Net.xml
 F:\编程\项目\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.Setting.resources
+F:\编程\项目\LevelnetAdjustment\obj\Debug\SplashScreenDemo.MultiFuncLoading.resources
+F:\编程\项目\LevelnetAdjustment\obj\Debug\SplashScreenDemo.SimpleLoading.resources

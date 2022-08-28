@@ -49,13 +49,13 @@ namespace LevelnetAdjustment.utils {
             }
         }
         // 所有点的信息(点号，高程)
-        public List<PointData> UnknownPoints { get; set; }// 定义列表存储近似高程(点号，高程)
-        public ArrayList UnknownPoints_array { get; set; }// 未知点点号数组
-        public ArrayList KnownPoints_array { get; set; }// 已知点点号数组
-        public List<PointData> AllPoints { get; set; } //所有点数据
-        public ArrayList AllPoint_array { get; set; }// 所有点号数组
+        public List<PointData> UnknownPoints { get; set; } = new List<PointData>();// 定义列表存储近似高程(点号，高程)
+        public ArrayList UnknownPoints_array { get; set; } = new ArrayList();// 未知点点号数组
+        public ArrayList KnownPoints_array { get; set; } = new ArrayList();// 已知点点号数组
+        public List<PointData> AllPoints { get; set; } = new List<PointData>(); //所有点数据
+        public ArrayList AllPoint_array { get; set; } = new ArrayList();// 所有点号数组
         public List<ObservedData> ObservedDatasNoRep { get; set; } = new List<ObservedData>();// 去除重复边的观测数据
-        public List<RawData> RawDatas { get; set; }// 原始观测数据
+        public List<RawData> RawDatas { get; set; } = new List<RawData>();// 原始观测数据
         // 水准等级
         private int level;
         public int Level {
@@ -124,6 +124,11 @@ namespace LevelnetAdjustment.utils {
 
         public int StablePnumber { get; set; } = 0; //拟稳点数
 
+        public ArrayList Threshold { get; set; } //阈值
+
+        const int pad = -13;
+        const int titlePad = -11;
+
 
         public ClevelingAdjust() {
 
@@ -136,7 +141,24 @@ namespace LevelnetAdjustment.utils {
             M = AllPoints.Count;
             KnPnumber = knownPoints.Count;
 
+            UnknownPoints_array = new ArrayList();
+            observedDatas.ForEach(item => {
+                if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
+                    UnknownPoints_array.Add(item.Start);
+                }
+                if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
+                    UnknownPoints_array.Add(item.End);
+                }
+                TotalDistence += item.Distance;
+            });
+
+            AllPoint_array = Commom.Clone(KnownPoints_array);
+            for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                AllPoint_array.Add(UnknownPoints_array[i]);
+            }
+
             // 重新计算不含重复测段的额观测数据
+
         }
 
         /// <summary>
@@ -384,8 +406,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="OutpathAdj"></param>
         public void ExportConstraintNetworkResult(string OutpathAdj, string split, string space) {
             // 保存文件
-            const int pad = -13;
-            const int titlePad = -11;
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(split);
             sb.AppendLine(space + "已知点高程");
@@ -650,6 +671,8 @@ namespace LevelnetAdjustment.utils {
             PVV = 0;
             int k;
             List<ObservedData> odError = new List<ObservedData>(); //保存含有粗差的观测数据
+            ArrayList V_err = new ArrayList();
+            ArrayList threshold_err = new ArrayList();
             for (k = 0; ; k++) {
                 Cal_P();
                 Calc_B();
@@ -676,6 +699,8 @@ namespace LevelnetAdjustment.utils {
                 }
                 if (max_v > U) {
                     odError.Add(observedDatas[max_i]);
+                    V_err.Add(V[max_i, 0]);
+                    threshold_err.Add(max_v);
                     observedDatas.RemoveAt(max_i);
                     Calc_Params();
                 }
@@ -683,20 +708,23 @@ namespace LevelnetAdjustment.utils {
             }
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(split);
-            sb.AppendLine(space + "粗差探测结果");
+            sb.AppendLine(space + "    粗差探测结果");
             sb.AppendLine(split);
             if (k > 0) {
-                sb.AppendLine($"粗差总数：{k}");
-                sb.AppendLine("粗差估值：");
+                sb.AppendLine(space + $"    粗差总数：{k}");
+                sb.AppendLine(split);
+                sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差(m)",titlePad}{"距离(km)",titlePad}{"改正数(mm)",titlePad}");
+                sb.AppendLine(split);
                 for (int i = 0; i < odError.Count; i++) {
                     //if (P[i, i] > 1E-10) continue;
                     //sb.AppendLine($"{i + 1},{observedDatas[i].Start},{observedDatas[i].End},{V[i, 0]}");
-                    sb.AppendLine($"{i + 1},{odError[i].Start},{odError[i].End},{odError[i].HeightDiff},{odError[i].Distance}");
+                    sb.AppendLine($"{i + 1,pad}{odError[i].Start,pad}{odError[i].End,pad}{odError[i].HeightDiff,pad:#0.00000}{odError[i].Distance,pad:#0.0000}{Convert.ToDouble(V_err[i]) * 1000,pad:#0.0000}");
                 }
+                sb.AppendLine(split);
             }
             else sb.AppendLine("未发现粗差");
             Mu = Math.Sqrt(PVV / (R - k));
-            sb.AppendLine($"验后单位权中误差=±{Mu}");
+            sb.AppendLine(space + $"    μ = ±{Mu}");
 
             FileHelper.WriteStrToTxt(sb.ToString(), path);
         }
