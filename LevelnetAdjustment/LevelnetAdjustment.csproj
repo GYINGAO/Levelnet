@@ -213,6 +213,7 @@
     <Compile Include="model\RawData.cs" />
     <Compile Include="model\PointData.cs" />
     <Compile Include="model\ObservedData.cs" />
+    <Compile Include="model\Option.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\Calc.cs" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LevelnetAdjustment.model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,25 +11,18 @@ using System.Windows.Forms;
 
 namespace LevelnetAdjustment.form {
     //声明委托 和 事件
-    public delegate void TransfDelegate(int method, double limit, int level, int adj);
+    public delegate void TransfDelegate(Option option);
     public partial class Setting : Form {
-        public int _power { get; set; }
-        public double _limit { get; set; }
-        public int _level { get; set; }
-
-        public int _adjustmentMethod { get; set; } //平差方法 0约束网平差
+        public Option option { get; set; }
 
         public event TransfDelegate TransfEvent;
-        public Setting(int power, double limit, int level, int adj) {
-            this._power = power;
-            this._limit = limit;
-            this._level = level;
-            this._adjustmentMethod = adj;
+        public Setting(Option _option) {
+            this.option = _option;
             InitializeComponent();
         }
 
         private void Setting_Load(object sender, EventArgs e) {
-            switch (_power) {
+            switch (option.PowerMethod) {
                 case 0:
                     this.rbtn_dis.Checked = true;
                     break;
@@ -39,7 +33,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            switch (_level) {
+            switch (option.Level) {
                 case 1:
                     this.rbtn1.Checked = true;
                     break;
@@ -56,7 +50,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            switch (_adjustmentMethod) {
+            switch (option.AdjustMethod) {
                 case 0:
                     this.rbtn_constraint.Checked = true;
                     break;
@@ -67,7 +61,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            this.tb_limit.Text = (_limit * 100).ToString();
+            this.tb_limit.Text = (option.Limit * 100).ToString();
         }
 
         private void btn_cancel_Click(object sender, EventArgs e) {
@@ -75,11 +69,11 @@ namespace LevelnetAdjustment.form {
         }
 
         private void btn_confirm_Click(object sender, EventArgs e) {
-            this._level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-            this._power = rbtn_dis.Checked ? 0 : 1;
-            this._limit = double.Parse(tb_limit.Text) / 100;
-            this._adjustmentMethod = rbtn_constraint.Checked ? 0 : 1;
-            TransfEvent(_power, _limit, _level, _adjustmentMethod);
+            this.option.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+            this.option.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+            this.option.Limit = double.Parse(tb_limit.Text) / 100;
+            this.option.AdjustMethod = rbtn_constraint.Checked ? 0 : 1;
+            TransfEvent(option);
             this.Close();
         }
     }

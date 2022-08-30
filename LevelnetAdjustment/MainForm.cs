@@ -69,8 +69,8 @@ namespace LevelnetAdjustment {
                 var ObservedDatas = new List<ObservedData>();
                 var ObservedDatasNoRep = new List<ObservedData>();
                 var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
-                ClAdj.Level = tup.Item1;
-                ClAdj.PowerMethod = tup.Item2;
+                ClAdj.Options.Level = tup.Item1;
+                ClAdj.Options.PowerMethod = tup.Item2;
                 ClAdj.KnownPoints = KnownPoints;
                 ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
                 ClAdj.ObservedDatasNoRep = ClAdj.ObservedDatasNoRep != null ? Commom.Merge(ClAdj.ObservedDatasNoRep, ObservedDatasNoRep) : ObservedDatasNoRep;
@@ -99,47 +99,17 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            int i = 0;
-            if (ClAdj.AdjustmentMethod == 0) {
-                SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
-                //将Loaing窗口，注入到 SplashScreenManager 来管理
-                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                loading.ShowLoading();
+            ClAdj.Options.AdjustMethod = 0;
 
-                i = ClAdj.LS_Adjustment();
-                ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
+            SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
 
-                loading.CloseWaitForm();
-            }
-            else {
-                if (MessageBox.Show("是否导入拟稳点点号？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    // 拟稳平差
-                    OpenFileDialog openFile = new OpenFileDialog {
-                        Multiselect = false,
-                        Title = "打开",
-                        Filter = "文本文件(*.txt)|*.txt|所有文件(*.*)|*.*",
-                        FilterIndex = 1,
-                    };
-                    if (openFile.ShowDialog() == DialogResult.OK) {
-                        FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
-                        SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
-                        //将Loaing窗口，注入到 SplashScreenManager 来管理
-                        GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                        loading.ShowLoading();
-                    }
-                }
-                else {
-                    // 自由网平差
-                    SimpleLoading loadingfrm = new SimpleLoading(this, "自由网平差中，请稍等...");
-                    //将Loaing窗口，注入到 SplashScreenManager 来管理
-                    GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                    loading.ShowLoading();
-                    ClAdj.FreeNetAdjust();
-                    loading.CloseWaitForm();
-                }
+            int i = ClAdj.LS_Adjustment();
+            ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
 
-            }
-
+            loading.CloseWaitForm();
 
             FileView fileView = new FileView(new string[] { OutpathAdj }) {
                 MdiParent = this,
@@ -204,18 +174,14 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OptionDropItem_Click(object sender, EventArgs e) {
-            Setting setting = new Setting(ClAdj.PowerMethod, ClAdj.Limit, ClAdj.Level, ClAdj.AdjustmentMethod);
+            Setting setting = new Setting(ClAdj.Options);
             setting.TransfEvent += frm_TransfEvent;
             setting.ShowDialog();
         }
 
         //事件处理方法
-        void frm_TransfEvent(int method, double limit, int level, int adj) {
-            this.ClAdj.PowerMethod = method;
-            this.ClAdj.Limit = limit;
-            this.ClAdj.Level = level;
-            this.ClAdj.Coefficient = level;
-            this.ClAdj.AdjustmentMethod = adj;
+        void frm_TransfEvent(Option option) {
+            this.ClAdj.Options = option;
         }
 
         /// <summary>
@@ -403,6 +369,55 @@ namespace LevelnetAdjustment {
                 FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPoints, saveFileDialog.FileName);
                 MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void RankDefectNetworkDropItem_Click(object sender, EventArgs e) {
+            if (ClAdj.ObservedDatas == null) {
+                throw new Exception("请打开观测文件");
+            }
+            if (File.Exists(OutpathAdj)) {
+                if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    return;
+                }
+            }
+
+
+
+            int i = 0;
+            ClAdj.Options.AdjustMethod = 1;
+
+            if (MessageBox.Show("是否导入拟稳点点号？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                // 拟稳平差
+                OpenFileDialog openFile = new OpenFileDialog {
+                    Multiselect = false,
+                    Title = "打开",
+                    Filter = "文本文件(*.txt)|*.txt|所有文件(*.*)|*.*",
+                    FilterIndex = 1,
+                };
+                if (openFile.ShowDialog() == DialogResult.OK) {
+                    FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
+                    SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
+                    //将Loaing窗口，注入到 SplashScreenManager 来管理
+                    GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                    loading.ShowLoading();
+                }
+            }
+            else {
+                // 自由网平差
+                SimpleLoading loadingfrm = new SimpleLoading(this, "自由网平差中，请稍等...");
+                //将Loaing窗口，注入到 SplashScreenManager 来管理
+                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                loading.ShowLoading();
+                ClAdj.FreeNetAdjust();
+                ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                loading.CloseWaitForm();
+            }
+
+            FileView fileView = new FileView(new string[] { OutpathAdj }) {
+                MdiParent = this,
+            };
+            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            fileView.Show();
         }
     }
 }

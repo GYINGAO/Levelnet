@@ -414,6 +414,9 @@ namespace LevelnetAdjustment.utils {
                     }
                 }
             }
+            if (points.Count > pds.Count || points.Count < 1) {
+                throw new Exception("拟稳点数错误");
+            }
         }
 
         /// <summary>

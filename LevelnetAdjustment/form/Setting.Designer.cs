@@ -96,12 +96,10 @@ namespace LevelnetAdjustment.form {
             // rbtn_dis
             // 
             this.rbtn_dis.AutoSize = true;
-            this.rbtn_dis.Checked = true;
             this.rbtn_dis.Location = new System.Drawing.Point(22, 20);
             this.rbtn_dis.Name = "rbtn_dis";
             this.rbtn_dis.Size = new System.Drawing.Size(83, 16);
             this.rbtn_dis.TabIndex = 0;
-            this.rbtn_dis.TabStop = true;
             this.rbtn_dis.Text = "按距离定权";
             this.rbtn_dis.UseVisualStyleBackColor = true;
             // 
@@ -213,12 +211,10 @@ namespace LevelnetAdjustment.form {
             // rbtn2
             // 
             this.rbtn2.AutoSize = true;
-            this.rbtn2.Checked = true;
             this.rbtn2.Location = new System.Drawing.Point(92, 20);
             this.rbtn2.Name = "rbtn2";
             this.rbtn2.Size = new System.Drawing.Size(47, 16);
             this.rbtn2.TabIndex = 1;
-            this.rbtn2.TabStop = true;
             this.rbtn2.Text = "二等";
             this.rbtn2.UseVisualStyleBackColor = true;
             // 
@@ -257,12 +253,10 @@ namespace LevelnetAdjustment.form {
             // rbtn_constraint
             // 
             this.rbtn_constraint.AutoSize = true;
-            this.rbtn_constraint.Checked = true;
             this.rbtn_constraint.Location = new System.Drawing.Point(33, 20);
             this.rbtn_constraint.Name = "rbtn_constraint";
             this.rbtn_constraint.Size = new System.Drawing.Size(83, 16);
             this.rbtn_constraint.TabIndex = 0;
-            this.rbtn_constraint.TabStop = true;
             this.rbtn_constraint.Text = "约束网平差";
             this.rbtn_constraint.UseVisualStyleBackColor = true;
             // 
