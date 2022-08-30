@@ -264,19 +264,11 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         void Calc_l() {
             double[] ls = new double[N];
-            if (Options.AdjustMethod == 0) {
-                for (int i = 0; i < N; i++) {
-                    var startH = X[AllPoints.FindIndex(p => p.Number == ObservedDatas[i].Start), 0];
-                    var endH = X[AllPoints.FindIndex(p => p.Number == ObservedDatas[i].End), 0];
-                    ls[i] = startH + ObservedDatas[i].HeightDiff - endH;
-                }// 计算每个常数项的值      
-            }
-            else {
-                for (int i = 0; i < N; i++) {
-                    ls[i] = ObservedDatas[i].HeightDiff;
-                }// 计算每个常数项的值      
-            }
-
+            for (int i = 0; i < N; i++) {
+                var startH = X[AllPoints.FindIndex(p => p.Number == ObservedDatas[i].Start), 0];
+                var endH = X[AllPoints.FindIndex(p => p.Number == ObservedDatas[i].End), 0];
+                ls[i] = startH + ObservedDatas[i].HeightDiff - endH;
+            }// 计算每个常数项的值      
             l = Matrix<double>.Build.DenseOfColumnArrays(ls);
         }
 
@@ -374,7 +366,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="i"></param>
         /// <returns></returns>
         int GetStartIdx(int i) {
-            return AllPoints.FindIndex(p => p.Number == ObservedDatas[i].Start);
+            return Options.AdjustMethod == 0 ? AllPoints.FindIndex(p => p.Number == ObservedDatas[i].Start) : UnknownPoints.FindIndex(p => p.Number == ObservedDatas[i].Start);
         }
 
         /// <summary>
@@ -383,7 +375,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="i"></param>
         /// <returns></returns>
         int GetEndIdx(int i) {
-            return AllPoints.FindIndex(p => p.Number == ObservedDatas[i].End);
+            return Options.AdjustMethod == 0 ? AllPoints.FindIndex(p => p.Number == ObservedDatas[i].End) : UnknownPoints.FindIndex(p => p.Number == ObservedDatas[i].End);
         }
 
         /// <summary>
@@ -438,7 +430,6 @@ namespace LevelnetAdjustment.utils {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(split);
             sb.AppendLine(space + "约束网平差结果");
-            sb.AppendLine(split);
             sb.AppendLine(split);
             sb.AppendLine(space + "已知点高程");
             sb.AppendLine(split);
@@ -792,28 +783,46 @@ namespace LevelnetAdjustment.utils {
         /// <summary>
         /// 自由网平差
         /// </summary>
-        public void FreeNetAdjust() {
+        public int FreeNetAdjust() {
             // 自由网平差要求每个点有先验高程值
             CalcApproximateHeight();
             // 生成高程近似值矩阵
             Calc_P();
             Calc_B();
+
+
             Calc_l();
             Calc_NBB();
 
-            for (int i = 0; i < T; i++) {
-                for (int j = 0; j < T; j++) {
+            for (int i = 0; i < M; i++) {
+                for (int j = 0; j < M; j++) {
                     NBB[i, j] += 1.0 / T;
                 }
             }
-
-
             Calc_dX();
+            x_total = x;
+            V_total = V;
+
+            int iteration_count = 1;
+            // 迭代计算，直到未知数改正数为0
+            while (!isLimit(x)) {
+                iteration_count++;
+                Calc_l();
+                Calc_NBB();
+                for (int i = 0; i < M; i++) {
+                    for (int j = 0; j < M; j++) {
+                        NBB[i, j] += 1.0 / T;
+                    }
+                }
+                Calc_dX();
+                x_total += x;
+                V_total += V;
+            }
 
             //求出权逆阵Qx
-            Qxx = Matrix<double>.Build.Dense(T, T, 0);
-            for (int i = 0; i < T; i++) {
-                for (int j = 0; j < T; j++) {
+            Qxx = Matrix<double>.Build.Dense(M, M, 0);
+            for (int i = 0; i < M; i++) {
+                for (int j = 0; j < M; j++) {
                     Qxx[i, j] = NBB[i, j] - 1.0 / T;
                 }
             }
@@ -821,8 +830,8 @@ namespace LevelnetAdjustment.utils {
             Mu = Math.Sqrt(PVV / (R - 1));
 
             // 求高程平差值中误差
-            Mh_P = new double[T];
-            for (int i = 0; i < T; i++) {
+            Mh_P = new double[M];
+            for (int i = 0; i < M; i++) {
                 Mh_P[i] = Math.Sqrt(Qxx[i, i]) * Mu;
             }
 
@@ -838,7 +847,8 @@ namespace LevelnetAdjustment.utils {
             Qll = B * NBB.Inverse() * B.Transpose();
 
             var Qvv = Qll - B * NBB.Inverse() * B.Transpose();
-            Console.WriteLine("123");
+
+            return iteration_count;
         }
 
         /// <summary>

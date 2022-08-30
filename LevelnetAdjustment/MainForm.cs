@@ -316,8 +316,15 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName);
-                loading.CloseWaitForm();
+                try {
+                    ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName);
+                    loading.CloseWaitForm();
+                }
+                catch (Exception ex) {
+                    loading.CloseWaitForm();
+                    throw ex;
+                }
+
                 MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -329,10 +336,14 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void ClearDropItem_Click(object sender, EventArgs e) {
             ClAdj = new ClevelingAdjust();
+            FormCollection childCollection = Application.OpenForms;
+            for (int i = childCollection.Count; i-- > 0;) {
+                if (childCollection[i].Name != this.Name) childCollection[i].Close();
+            }
         }
 
         /// <summary>
-        /// 导出COSA按距离定权
+        /// 导出COSA按距离定权 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -371,6 +382,11 @@ namespace LevelnetAdjustment {
             }
         }
 
+        /// <summary>
+        /// 秩亏网平差
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RankDefectNetworkDropItem_Click(object sender, EventArgs e) {
             if (ClAdj.ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
@@ -381,10 +397,9 @@ namespace LevelnetAdjustment {
                 }
             }
 
+            ClAdj.Options.AdjustMethod = 0;
 
-
-            int i = 0;
-            ClAdj.Options.AdjustMethod = 1;
+            var i = 0;
 
             if (MessageBox.Show("是否导入拟稳点点号？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 // 拟稳平差
@@ -408,7 +423,7 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                ClAdj.FreeNetAdjust();
+                i = ClAdj.FreeNetAdjust();
                 ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
                 loading.CloseWaitForm();
             }

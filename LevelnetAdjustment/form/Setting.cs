@@ -13,16 +13,16 @@ namespace LevelnetAdjustment.form {
     //声明委托 和 事件
     public delegate void TransfDelegate(Option option);
     public partial class Setting : Form {
-        public Option option { get; set; }
+        public Option Options { get; set; }
 
         public event TransfDelegate TransfEvent;
         public Setting(Option _option) {
-            this.option = _option;
+            this.Options = _option;
             InitializeComponent();
         }
 
         private void Setting_Load(object sender, EventArgs e) {
-            switch (option.PowerMethod) {
+            switch (Options.PowerMethod) {
                 case 0:
                     this.rbtn_dis.Checked = true;
                     break;
@@ -33,7 +33,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            switch (option.Level) {
+            switch (Options.Level) {
                 case 1:
                     this.rbtn1.Checked = true;
                     break;
@@ -50,7 +50,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            switch (option.AdjustMethod) {
+            switch (Options.AdjustMethod) {
                 case 0:
                     this.rbtn_constraint.Checked = true;
                     break;
@@ -61,7 +61,7 @@ namespace LevelnetAdjustment.form {
                     break;
             }
 
-            this.tb_limit.Text = (option.Limit * 100).ToString();
+            this.tb_limit.Text = (Options.Limit * 100).ToString();
         }
 
         private void btn_cancel_Click(object sender, EventArgs e) {
@@ -69,11 +69,11 @@ namespace LevelnetAdjustment.form {
         }
 
         private void btn_confirm_Click(object sender, EventArgs e) {
-            this.option.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-            this.option.PowerMethod = rbtn_dis.Checked ? 0 : 1;
-            this.option.Limit = double.Parse(tb_limit.Text) / 100;
-            this.option.AdjustMethod = rbtn_constraint.Checked ? 0 : 1;
-            TransfEvent(option);
+            this.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+            this.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+            this.Options.Limit = double.Parse(tb_limit.Text) / 100;
+            this.Options.AdjustMethod = rbtn_constraint.Checked ? 0 : 1;
+            TransfEvent(Options);
             this.Close();
         }
     }

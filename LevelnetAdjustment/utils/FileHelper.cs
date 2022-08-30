@@ -244,6 +244,9 @@ namespace LevelnetAdjustment.utils {
                             continue;
                         }
                         else if (arr.Length == 5) {
+                            if (arr[2].Substring(0, 3) == "333") {
+                                continue;
+                            }
                             if (stationIdx == 0) {
                                 rds.Add(new RawData());
                             }
