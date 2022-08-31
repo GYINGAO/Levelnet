@@ -48,6 +48,8 @@ namespace LevelnetAdjustment.model {
             }
         }
 
+        public bool IsSplit { get; set; } = true; //导入原始数据时是否分割测段,默认分割
+
         public Option() {
             this.Level = 2;
         }

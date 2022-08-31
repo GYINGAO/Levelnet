@@ -754,9 +754,8 @@ namespace LevelnetAdjustment.utils {
         /// <summary>
         /// 拟稳平差
         /// </summary>
-        public void QuasiStable() {
+        public int QuasiStable() {
             // 自由网平差要求每个点有先验高程值
-
             Calc_P();
             Calc_B();
             Calc_l();
@@ -769,7 +768,24 @@ namespace LevelnetAdjustment.utils {
                 }
             }
             Calc_dX();
-
+            x_total = x;
+            V_total = V;
+            int iteration_count = 1;
+            while (!isLimit(x)) {
+                iteration_count++;
+                Calc_l();
+                Calc_NBB();
+                for (int i = 0; i < T; i++) {
+                    for (int j = 0; j <= i; j++) {
+                        if (UnknownPoints[i].IsStable && UnknownPoints[j].IsStable) {
+                            NBB[i, j] += 1.0 / StablePnumber;
+                        }
+                    }
+                }
+                Calc_dX();
+                x_total += x;
+                V_total += V;
+            }
             //求出权逆阵Qx
             for (int i = 0; i < T; i++) {
                 for (int j = 0; j <= i; j++) {
@@ -778,6 +794,7 @@ namespace LevelnetAdjustment.utils {
             }
             Calc_PVV();
             Mu = Math.Sqrt(PVV / (R - 1));
+            return iteration_count;
         }
 
         /// <summary>

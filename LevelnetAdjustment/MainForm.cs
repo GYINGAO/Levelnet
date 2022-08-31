@@ -105,17 +105,21 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
+            try {
+                int i = ClAdj.LS_Adjustment();
+                ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
+                loading.CloseWaitForm();
+                FileView fileView = new FileView(new string[] { OutpathAdj }) {
+                    MdiParent = this,
+                };
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
 
-            int i = ClAdj.LS_Adjustment();
-            ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
-
-            loading.CloseWaitForm();
-
-            FileView fileView = new FileView(new string[] { OutpathAdj }) {
-                MdiParent = this,
-            };
-            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
         }
 
         /// <summary>
@@ -134,16 +138,19 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-
-            ClAdj.CalcClosureError(OutpathClosure, split, space);
-
-            loading.CloseWaitForm();
-
-            FileView fileView = new FileView(new string[] { OutpathClosure }) {
-                MdiParent = this,
-            };
-            MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
+            try {
+                ClAdj.CalcClosureError(OutpathClosure, split, space);
+                loading.CloseWaitForm();
+                FileView fileView = new FileView(new string[] { OutpathClosure }) {
+                    MdiParent = this,
+                };
+                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -157,15 +164,20 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
 
-            ClAdj.FindGrossError(split, space, OutpathGrossError);
-            FileView fileView = new FileView(new string[] { OutpathGrossError }) {
-                MdiParent = this,
-            };
+            try {
+                ClAdj.FindGrossError(split, space, OutpathGrossError);
+                loading.CloseWaitForm();
+                FileView fileView = new FileView(new string[] { OutpathGrossError }) {
+                    MdiParent = this,
+                };
+                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
 
-            loading.CloseWaitForm();
-
-            MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
         }
 
         /// <summary>
@@ -239,6 +251,12 @@ namespace LevelnetAdjustment {
             var RawDatas = new List<RawData>();
             var ObservedDatas = new List<ObservedData>();
             var KnownPoints = new List<PointData>();
+            if (MessageBox.Show("是否为CP3水准测量？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                ClAdj.Options.IsSplit = true;
+            }
+            else {
+                ClAdj.Options.IsSplit = false;
+            }
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
@@ -258,10 +276,10 @@ namespace LevelnetAdjustment {
 
                 foreach (var item in openFile.FileNames) {
                     if (Path.GetExtension(item).ToLower() == ".dat") {
-                        FileHelper.ReadDAT(item, RawDatas, ObservedDatas);
+                        FileHelper.ReadDAT(item, RawDatas, ObservedDatas, ClAdj.Options.IsSplit);
                     }
                     else if (Path.GetExtension(item).ToLower() == ".gsi") {
-                        FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints);
+                        FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints, ClAdj.Options.IsSplit);
                     }
                 }
                 ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
@@ -415,6 +433,15 @@ namespace LevelnetAdjustment {
                     //将Loaing窗口，注入到 SplashScreenManager 来管理
                     GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                     loading.ShowLoading();
+                    try {
+                        i = ClAdj.QuasiStable();
+                        ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                        loading.CloseWaitForm();
+                    }
+                    catch (Exception ex) {
+                        loading.CloseWaitForm();
+                        throw ex;
+                    }
                 }
             }
             else {
@@ -423,9 +450,15 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                i = ClAdj.FreeNetAdjust();
-                ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
-                loading.CloseWaitForm();
+                try {
+                    i = ClAdj.FreeNetAdjust();
+                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                    loading.CloseWaitForm();
+                }
+                catch (Exception ex) {
+                    loading.CloseWaitForm();
+                    throw ex;
+                }
             }
 
             FileView fileView = new FileView(new string[] { OutpathAdj }) {

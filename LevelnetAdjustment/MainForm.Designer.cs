@@ -37,6 +37,7 @@ namespace LevelnetAdjustment {
             this.ClosureErrorDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrossErrorDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ConstraintNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RankDefectNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OptionDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ResultDropItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,7 +48,6 @@ namespace LevelnetAdjustment {
             this.HandbookDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RankDefectNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -136,28 +136,35 @@ namespace LevelnetAdjustment {
             // ClosureErrorDropItem
             // 
             this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-            this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ClosureErrorDropItem.Size = new System.Drawing.Size(136, 22);
             this.ClosureErrorDropItem.Text = "闭合差计算";
             this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
             // 
             // GrossErrorDropItem
             // 
             this.GrossErrorDropItem.Name = "GrossErrorDropItem";
-            this.GrossErrorDropItem.Size = new System.Drawing.Size(180, 22);
+            this.GrossErrorDropItem.Size = new System.Drawing.Size(136, 22);
             this.GrossErrorDropItem.Text = "粗差探测";
             this.GrossErrorDropItem.Click += new System.EventHandler(this.GrossErrorDropItem_Click);
             // 
             // ConstraintNetworkDropItem
             // 
             this.ConstraintNetworkDropItem.Name = "ConstraintNetworkDropItem";
-            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(136, 22);
             this.ConstraintNetworkDropItem.Text = "约束网平差";
             this.ConstraintNetworkDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
+            // 
+            // RankDefectNetworkDropItem
+            // 
+            this.RankDefectNetworkDropItem.Name = "RankDefectNetworkDropItem";
+            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(136, 22);
+            this.RankDefectNetworkDropItem.Text = "拟稳平差";
+            this.RankDefectNetworkDropItem.Click += new System.EventHandler(this.RankDefectNetworkDropItem_Click);
             // 
             // OptionDropItem
             // 
             this.OptionDropItem.Name = "OptionDropItem";
-            this.OptionDropItem.Size = new System.Drawing.Size(180, 22);
+            this.OptionDropItem.Size = new System.Drawing.Size(136, 22);
             this.OptionDropItem.Text = "设置与选项";
             this.OptionDropItem.Click += new System.EventHandler(this.OptionDropItem_Click);
             // 
@@ -228,13 +235,6 @@ namespace LevelnetAdjustment {
             this.AboutDropItem.Size = new System.Drawing.Size(100, 22);
             this.AboutDropItem.Text = "关于";
             this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
-            // 
-            // RankDefectNetworkDropItem
-            // 
-            this.RankDefectNetworkDropItem.Name = "RankDefectNetworkDropItem";
-            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(180, 22);
-            this.RankDefectNetworkDropItem.Text = "秩亏网平差";
-            this.RankDefectNetworkDropItem.Click += new System.EventHandler(this.RankDefectNetworkDropItem_Click);
             // 
             // MainForm
             // 

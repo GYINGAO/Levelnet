@@ -8,6 +8,10 @@ namespace LevelnetAdjustment.model {
     public class RawData {
         public string BackPoint { get; set; } //测站后视点
         public string FrontPoint { get; set; } //测站前视点
+        public string MidPoint { get; set; } //测站前视点
+
+        public double MidDiff { get; set; } //中视读数
+        public double MidDis { get; set; } //中视距离
 
         public double BackDiff1 { get; set; } //第一个后视读数
         public double BackDiff2 { get; set; } //第一个前视读数

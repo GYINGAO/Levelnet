@@ -143,10 +143,14 @@ namespace LevelnetAdjustment.utils {
             double totalDisDiff = 0;//累计视距差
             double totalFrontDis = 0;//累计前距
             double totalBackDis = 0;//累计后距
+            double totalDiff = 0;//累计高差
+            double totalDis = 0;//累计距离
+            string start = "", end = "";
 
             for (int i = 0; i < rds.Count; i++) {
                 //添加标头
                 if (rds[i].IsStart) {
+                    start = rds[i].BackPoint;
                     var startRowIdx = 9 * (sectionNum) + i * 3 + 1;
                     sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 4, 0, 0));
                     sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 1, 2, 3));
@@ -176,7 +180,7 @@ namespace LevelnetAdjustment.utils {
                     row1.GetCell(4).SetCellValue("标尺读数");
                     row1.GetCell(6).SetCellValue("读数差(mm)");
                     row1.GetCell(7).SetCellValue("高差(m)");
-                    row1.GetCell(8).SetCellValue("距离(m)");
+                    row1.GetCell(8).SetCellValue("距离(km)");
                     row1.GetCell(9).SetCellValue("高程(m)");
                     //表头第三行
                     var row2 = sheet.CreateRow(startRowIdx + 2);
@@ -216,6 +220,8 @@ namespace LevelnetAdjustment.utils {
                 totalDisDiff += rds[i].DisDiffAve;
                 totalFrontDis += (rds[i].FrontDis1 + rds[i].FrontDis2) / 2;
                 totalBackDis += (rds[i].BackDis1 + rds[i].BackDis2) / 2;
+                totalDiff += rds[i].DiffAve;
+                totalDis += rds[i].DisAve;
                 stationNum++;
 
                 sheet.AddMergedRegion(new CellRangeAddress(sheet.LastRowNum + 1, sheet.LastRowNum + 3, 0, 0));
@@ -264,6 +270,7 @@ namespace LevelnetAdjustment.utils {
 
                 //添加表尾
                 if (rds[i].IsEnd) {
+                    end = rds[i].FrontPoint;
                     var startRowIdx = 1 + (sectionNum) * 9 + (i + 1) * 3 - 4;
                     sheet.AddMergedRegion(new CellRangeAddress(startRowIdx, startRowIdx + 3, 0, 0));
 
@@ -275,7 +282,7 @@ namespace LevelnetAdjustment.utils {
                     }
                     row1.GetCell(0).SetCellValue("测段计算");
                     row1.GetCell(1).SetCellValue("测段起点");
-                    row1.GetCell(2).SetCellValue(ods[sectionNum - 1].Start);
+                    row1.GetCell(2).SetCellValue(start);
                     //表尾第二行
                     var row2 = sheet.CreateRow(startRowIdx + 1);
                     for (int k = 0; k < cellNum; k++) {
@@ -283,7 +290,7 @@ namespace LevelnetAdjustment.utils {
                         row2.GetCell(k).CellStyle = style3;
                     }
                     row2.GetCell(1).SetCellValue("测段终点");
-                    row2.GetCell(2).SetCellValue(ods[sectionNum - 1].End);
+                    row2.GetCell(2).SetCellValue(end);
                     row2.GetCell(4).SetCellValue("累计视距差");
                     row2.GetCell(5).SetCellValue(totalDisDiff * 1000);
                     row2.GetCell(6).SetCellValue("m");
@@ -297,7 +304,7 @@ namespace LevelnetAdjustment.utils {
                     row3.GetCell(2).SetCellValue(totalFrontDis);
                     row3.GetCell(3).SetCellValue("km");
                     row3.GetCell(4).SetCellValue("累计高差");
-                    row3.GetCell(5).SetCellValue(ods[sectionNum - 1].HeightDiff);
+                    row3.GetCell(5).SetCellValue(totalDiff);
                     row3.GetCell(6).SetCellValue("m");
                     //表尾第四行
                     var row4 = sheet.CreateRow(startRowIdx + 3);
@@ -309,7 +316,7 @@ namespace LevelnetAdjustment.utils {
                     row4.GetCell(2).SetCellValue(totalBackDis);
                     row4.GetCell(3).SetCellValue("km");
                     row4.GetCell(4).SetCellValue("测段距离");
-                    row4.GetCell(5).SetCellValue(ods[sectionNum - 1].Distance);
+                    row4.GetCell(5).SetCellValue(totalDis);
                     row4.GetCell(6).SetCellValue("km");
 
                     totalDisDiff = 0;
