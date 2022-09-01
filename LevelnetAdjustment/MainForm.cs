@@ -136,19 +136,19 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            try {
-                ClAdj.CalcClosureError(OutpathClosure, split, space);
-                loading.CloseWaitForm();
-                FileView fileView = new FileView(new string[] { OutpathClosure }) {
-                    MdiParent = this,
-                };
-                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
+            /*  try {*/
+            ClAdj.CalcClosureError(OutpathClosure, split, space);
+            loading.CloseWaitForm();
+            FileView fileView = new FileView(new string[] { OutpathClosure }) {
+                MdiParent = this,
+            };
+            MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            fileView.Show();
+            /*  }
+              catch (Exception ex) {
+                  loading.CloseWaitForm();
+                  throw ex;
+              }*/
         }
 
         /// <summary>
@@ -162,19 +162,19 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
 
-            /*try {*/
-            ClAdj.FindGrossError(split, space, OutpathGrossError);
-            loading.CloseWaitForm();
-            FileView fileView = new FileView(new string[] { OutpathGrossError }) {
-                MdiParent = this,
-            };
-            MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
-            /*  }
-              catch (Exception ex) {
-                  loading.CloseWaitForm();
-                  throw ex;
-              }*/
+            try {
+                ClAdj.FindGrossError(split, space, OutpathGrossError);
+                loading.CloseWaitForm();
+                FileView fileView = new FileView(new string[] { OutpathGrossError }) {
+                    MdiParent = this,
+                };
+                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
 
         }
 
@@ -451,15 +451,15 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                /*try { */
-                i = ClAdj.FreeNetAdjust();
-                ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
-                loading.CloseWaitForm();
-                /*  }
-                  catch (Exception ex) {
-                      loading.CloseWaitForm();
-                      throw ex;
-                  }*/
+                try {
+                    i = ClAdj.FreeNetAdjust();
+                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                    loading.CloseWaitForm();
+                }
+                catch (Exception ex) {
+                    loading.CloseWaitForm();
+                    throw ex;
+                }
             }
 
             FileView fileView = new FileView(new string[] { OutpathAdj }) {
@@ -467,6 +467,10 @@ namespace LevelnetAdjustment {
             };
             MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             fileView.Show();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+
         }
     }
 }

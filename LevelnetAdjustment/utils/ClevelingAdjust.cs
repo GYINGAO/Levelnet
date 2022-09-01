@@ -494,8 +494,8 @@ namespace LevelnetAdjustment.utils {
                 bool successful = true;
                 for (int j = 0; j <= ObservedDatasNoRep.Count - 1; j++) {
                     if (j == exclude) continue;
-                    int p1 = GetStartIdx(j); //起点点号
-                    int p2 = GetEndIdx(j); //终点点号
+                    int p1 = AllPoint_array.IndexOf(ObservedDatasNoRep[j].Start); //起点点号
+                    int p2 = AllPoint_array.IndexOf(ObservedDatasNoRep[j].End); //终点点号
                     double S12 = ObservedDatasNoRep[j].Distance; // p1到p2的距离
                     if (neighbor[p1] < 0 && neighbor[p2] < 0) continue;
 
@@ -543,8 +543,8 @@ namespace LevelnetAdjustment.utils {
                 used[i] = 0;
 
             for (int i = 0; i < m_Lnumber; i++) {
-                int k1 = GetStartIdx(i); //起点点号;
-                int k2 = GetEndIdx(i); //终点点号
+                int k1 = AllPoint_array.IndexOf(ObservedDatasNoRep[i].Start); //起点点号;
+                int k2 = AllPoint_array.IndexOf(ObservedDatasNoRep[i].End); //终点点号
                 if (used[i] != 0) continue;
                 if (k2 == k1)   //后面添加修改的
                     return strClosure.ToString();
@@ -563,7 +563,7 @@ namespace LevelnetAdjustment.utils {
                     while (true)//输出点名
                     {
                         int p2 = neighbor[p1];
-                        strClosure.Append(AllPoints[p1].Number + "-");
+                        strClosure.Append(AllPoint_array[p1] + "-");
 
                         for (int r = 0; r < m_Lnumber; r++)//将用过的观测值标定
                         {
@@ -654,6 +654,7 @@ namespace LevelnetAdjustment.utils {
         /// 计算闭合差
         /// </summary>
         public void CalcClosureError(string OutpathClosure, string split, string space) {
+            Options.AdjustMethod = 0;
             #region 根据观测数据生成邻接表
             var pointNum = AllPoint_array.Count;
             const int inf = 100000000;
