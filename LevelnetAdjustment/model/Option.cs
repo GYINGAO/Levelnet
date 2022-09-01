@@ -9,7 +9,7 @@ namespace LevelnetAdjustment.model {
         public double Sigma { get; set; } = 0.001; //验前单位权中误差
         public double Alpha { get; set; } = 0.003; //粗差检验的显著水平
         public int PowerMethod { get; set; } = 0; //定权方式 0按距离定权 1按测段数定权
-        public double Limit { get; set; } = 0.001; //平差迭代限差 m
+        public double Limit { get; set; } = 0.01; //平差迭代限差 m
         public int AdjustMethod { get; set; } = 0; //平差方法 0约束网平差 1拟稳平差
         // 水准等级
         private int level;

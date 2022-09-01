@@ -66,7 +66,9 @@
             this.Controls.Add(this.lbl_tips_son);
             this.Controls.Add(this.lbl_tips);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SimpleLoading";
             this.Text = "提示";
             this.Load += new System.EventHandler(this.SimpleLoading_Load);

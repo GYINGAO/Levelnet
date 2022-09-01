@@ -99,8 +99,6 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            ClAdj.Options.AdjustMethod = 0;
-
             SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -164,19 +162,19 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
 
-            try {
-                ClAdj.FindGrossError(split, space, OutpathGrossError);
-                loading.CloseWaitForm();
-                FileView fileView = new FileView(new string[] { OutpathGrossError }) {
-                    MdiParent = this,
-                };
-                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
+            /*try {*/
+            ClAdj.FindGrossError(split, space, OutpathGrossError);
+            loading.CloseWaitForm();
+            FileView fileView = new FileView(new string[] { OutpathGrossError }) {
+                MdiParent = this,
+            };
+            MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            fileView.Show();
+            /*  }
+              catch (Exception ex) {
+                  loading.CloseWaitForm();
+                  throw ex;
+              }*/
 
         }
 
@@ -251,11 +249,15 @@ namespace LevelnetAdjustment {
             var RawDatas = new List<RawData>();
             var ObservedDatas = new List<ObservedData>();
             var KnownPoints = new List<PointData>();
-            if (MessageBox.Show("是否为CP3水准测量？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+            var res = MessageBox.Show("是否为CP3水准测量？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (res == DialogResult.Yes) {
                 ClAdj.Options.IsSplit = true;
             }
-            else {
+            else if (res == DialogResult.No) {
                 ClAdj.Options.IsSplit = false;
+            }
+            else {
+                return;
             }
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
@@ -415,8 +417,6 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            ClAdj.Options.AdjustMethod = 0;
-
             var i = 0;
 
             if (MessageBox.Show("是否导入拟稳点点号？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
@@ -428,6 +428,7 @@ namespace LevelnetAdjustment {
                     FilterIndex = 1,
                 };
                 if (openFile.ShowDialog() == DialogResult.OK) {
+                    ClAdj.CalcApproximateHeight();
                     FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
                     SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
                     //将Loaing窗口，注入到 SplashScreenManager 来管理
@@ -450,15 +451,15 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                try {
-                    i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
-                    loading.CloseWaitForm();
-                }
-                catch (Exception ex) {
-                    loading.CloseWaitForm();
-                    throw ex;
-                }
+                /*try { */
+                i = ClAdj.FreeNetAdjust();
+                ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                loading.CloseWaitForm();
+                /*  }
+                  catch (Exception ex) {
+                      loading.CloseWaitForm();
+                      throw ex;
+                  }*/
             }
 
             FileView fileView = new FileView(new string[] { OutpathAdj }) {

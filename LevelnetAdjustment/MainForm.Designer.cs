@@ -82,42 +82,42 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(181, 22);
             this.NewDropItem.Text = "新建";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
             // OpenDropItem
             // 
             this.OpenDropItem.Name = "OpenDropItem";
-            this.OpenDropItem.Size = new System.Drawing.Size(180, 22);
-            this.OpenDropItem.Text = "读取高差观测文件";
+            this.OpenDropItem.Size = new System.Drawing.Size(181, 22);
+            this.OpenDropItem.Text = "读取COSA格式文件";
             this.OpenDropItem.Click += new System.EventHandler(this.OpenDropItem_Click);
             // 
             // RawDataDropItem
             // 
             this.RawDataDropItem.Name = "RawDataDropItem";
-            this.RawDataDropItem.Size = new System.Drawing.Size(180, 22);
+            this.RawDataDropItem.Size = new System.Drawing.Size(181, 22);
             this.RawDataDropItem.Text = "读取原始文件";
             this.RawDataDropItem.Click += new System.EventHandler(this.RawDataDropItem_Click);
             // 
             // KnDropItem
             // 
             this.KnDropItem.Name = "KnDropItem";
-            this.KnDropItem.Size = new System.Drawing.Size(180, 22);
+            this.KnDropItem.Size = new System.Drawing.Size(181, 22);
             this.KnDropItem.Text = "读取已知点数据";
             this.KnDropItem.Click += new System.EventHandler(this.KnDropItem_Click);
             // 
             // ClearDropItem
             // 
             this.ClearDropItem.Name = "ClearDropItem";
-            this.ClearDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ClearDropItem.Size = new System.Drawing.Size(181, 22);
             this.ClearDropItem.Text = "清空数据";
             this.ClearDropItem.Click += new System.EventHandler(this.ClearDropItem_Click);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(181, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
