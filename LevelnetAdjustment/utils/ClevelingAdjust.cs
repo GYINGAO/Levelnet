@@ -38,12 +38,34 @@ namespace LevelnetAdjustment.utils {
         public List<PointData> KnownPoints {
             get => knownPoints;
             set {
+                // 更新已知点
                 KnownPoints_array = new ArrayList();
                 value.ForEach(item => {
                     KnownPoints_array.Add(item.Number);
                 });
                 knownPoints = value;
                 KnPnumber = value.Count;
+
+                // 更新未知点
+                if (observedDatas != null && observedDatas.Count != 0) {
+                    UnknownPoints_array = new ArrayList();
+                    observedDatas.ForEach(item => {
+                        if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
+                            UnknownPoints_array.Add(item.Start);
+                        }
+                        if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
+                            UnknownPoints_array.Add(item.End);
+                        }
+                        TotalDistence += item.Distance;
+                    });
+                    T = UnknownPoints_array.Count;
+                    R = N - T;
+                    AllPoint_array = Commom.Clone(KnownPoints_array);
+                    for (int i = 0; i < UnknownPoints_array.Count; i++) {
+                        AllPoint_array.Add(UnknownPoints_array[i]);
+                    }
+                    M = AllPoint_array.Count;
+                }
             }
         }
         // 所有点的信息(点号，高程)
@@ -127,12 +149,14 @@ namespace LevelnetAdjustment.utils {
             List<PointData> AllPoints_old = Commom.Clone(KnownPoints);
             UnknownPoints = new List<PointData>();
             int count = 0;
+            int idx = 0;
             // 如果未知点近似高程未计算完，重复循环
             while (UnknownPoints.Count < T) {
+                idx++;
                 ObservedDatas.ForEach(item => {
                     //在已知点里面分别查找起点和终点
-                    var startIndex = AllPoints_old.FindIndex(p => p.Number == item.Start);
-                    var endIndex = AllPoints_old.FindIndex(p => p.Number == item.End);
+                    var startIndex = AllPoints_old.FindIndex(p => p.Number.ToLower() == item.Start.ToLower());
+                    var endIndex = AllPoints_old.FindIndex(p => p.Number.ToLower() == item.End.ToLower());
                     //如果起点是已知点，终点是未知点
                     if (startIndex > -1 && endIndex <= -1) {
                         PointData pd = new PointData {
@@ -152,10 +176,15 @@ namespace LevelnetAdjustment.utils {
                         AllPoints_old.Add(pd);
                     }
                 });
-                if (count == UnknownPoints.Count) {
-                    throw new Exception("无法计算未知点近似高程");
+                if (idx == 1) {
+                    count = UnknownPoints.Count;
                 }
-                count = UnknownPoints.Count;
+                if (idx == 5) {
+                    idx = 0;
+                    if (count == UnknownPoints.Count) {
+                        throw new Exception("无法计算未知点近似高程");
+                    }
+                }
             }
 
             // 将未知点按照顺序排列
@@ -449,7 +478,7 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine($"{"序号",titlePad}{"点名",titlePad}{"近似高程(m)",titlePad}{"累计改正数(mm)",titlePad}{"高程平差值(m)",titlePad}{"中误差(mm)",titlePad}");
             sb.AppendLine(split);
             for (int i = 0; i < M; i++) {
-                sb.AppendLine($"{i + 3,pad}{AllPoints[i].Number,pad}{AllPoints[i].Height,pad - 4:#0.00000}{x_total[i, 0] * 1000,pad:#0.00}{X[i, 0],pad - 2:#0.00000}{Mh_P[i],pad:#0.00}");
+                sb.AppendLine($"{i + 1,pad}{AllPoints[i].Number,pad}{AllPoints[i].Height,pad - 4:#0.00000}{x_total[i, 0] * 1000,pad:#0.00}{X[i, 0],pad - 2:#0.00000}{Mh_P[i],pad:#0.00}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "观测值平差值及其精度");

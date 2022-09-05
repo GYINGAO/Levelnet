@@ -249,7 +249,7 @@ namespace LevelnetAdjustment {
             var RawDatas = new List<RawData>();
             var ObservedDatas = new List<ObservedData>();
             var KnownPoints = new List<PointData>();
-            var res = MessageBox.Show("是否为CP3水准测量？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            var res = MessageBox.Show("是否按测段分割？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (res == DialogResult.Yes) {
                 ClAdj.Options.IsSplit = true;
             }
@@ -267,10 +267,7 @@ namespace LevelnetAdjustment {
                 RestoreDirectory = false,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
-                if (string.IsNullOrEmpty(FilePath)) {
-                    FilePath = openFile.FileNames[0];
-                }
-
+                FilePath = openFile.FileNames[0];
                 SimpleLoading loadingfrm = new SimpleLoading(this, "读取中，请稍等...");
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
