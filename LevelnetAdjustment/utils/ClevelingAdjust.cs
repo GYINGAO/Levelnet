@@ -842,7 +842,7 @@ namespace LevelnetAdjustment.utils {
 
             Qvv = Qll - B * NBB.Inverse() * B.Transpose();
 
-            RR = Qxx * P;
+            RR = Qvv * P;
 
             Calc_PVV();
             Mu = Math.Sqrt(PVV / (R - 1));

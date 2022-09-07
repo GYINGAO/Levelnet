@@ -13,12 +13,14 @@ namespace SplashScreenDemo {
         //保存父窗口信息，主要用于居中显示加载窗体
         private Form partentForm = null;
         private string tips = "";
+        //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        Timer timer = new Timer();
+        int seconds = 0;
         public SimpleLoading(Form partentForm, string tips) {
             InitializeComponent();
             this.partentForm = partentForm;
             this.tips = tips;
         }
-
         private void SimpleLoading_Load(object sender, EventArgs e) {
             //设置一些Loading窗体信息
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -33,6 +35,21 @@ namespace SplashScreenDemo {
             int start_x = (int)(parentForm_Position_x + (parentForm_Width - this.Width) / 2);
             int start_y = (int)(parentForm_Position_y + (parentForm_Height - this.Height) / 2);
             this.Location = new System.Drawing.Point(start_x, start_y);
+
+            // 开始计时器
+            timer.Interval = 1000;
+            timer.Tick += new EventHandler(this.timer_Tick);
+            timer.Start();
+
+            //在主窗体加载后开始计时
+            //sw.Start();
+        }
+
+        private void timer_Tick(object sender, EventArgs e) {
+            //TimeSpan ts = sw.Elapsed;
+            seconds++;
+            TimeSpan ts = TimeSpan.FromSeconds(seconds);
+            lbl_tips_son.Text = $"Please Waitting...{ts.Days * 86400 + ts.Hours * 3600 + ts.Minutes * 60 + ts.Seconds}s";
         }
     }
 }

@@ -434,21 +434,21 @@ namespace LevelnetAdjustment {
                     FilterIndex = 1,
                 };
                 if (openFile.ShowDialog() == DialogResult.OK) {
-                    ClAdj.CalcApproximateHeight();
-                    FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
                     SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
                     //将Loaing窗口，注入到 SplashScreenManager 来管理
                     GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                     loading.ShowLoading();
-                    try {
-                        i = ClAdj.QuasiStable();
-                        ClAdj.ExportFreeNetworkResult(split, space, OutpathAdjFree, "拟稳");
-                        loading.CloseWaitForm();
-                    }
-                    catch (Exception ex) {
-                        loading.CloseWaitForm();
-                        throw ex;
-                    }
+                    /*try {*/
+                    ClAdj.CalcApproximateHeight();
+                    FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
+                    i = ClAdj.QuasiStable();
+                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdjFree, "拟稳");
+                    loading.CloseWaitForm();
+                    /*      }
+                          catch (Exception ex) {
+                              loading.CloseWaitForm();
+                              throw ex;
+                          }*/
                 }
                 else {
                     return;
