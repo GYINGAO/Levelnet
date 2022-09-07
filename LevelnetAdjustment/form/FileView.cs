@@ -25,6 +25,7 @@ namespace LevelnetAdjustment.form {
         private void FileView_Load(object sender, EventArgs e) {
             rtb.Clear();
             if (FilePath.Length > 1) {
+                this.Text = Path.GetFileName(FilePath[0]);
                 foreach (var item in FilePath) {
                     //打开并且读取文件数据
                     using (FileStream fs = new FileStream(item, FileMode.Open, FileAccess.Read)) {

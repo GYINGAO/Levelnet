@@ -21,7 +21,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="knownPoints"></param>
         /// <param name="observedDatas"></param>
         /// <param name="fileName"></param>
-        internal static Tuple<int, int> ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, List<ObservedData> observedDatasNoRep, string fileName) {
+        internal static Tuple<int, int> ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, string fileName) {
             try {
                 int level = 2;
                 int method = 0;//默认按距离定权
@@ -56,11 +56,11 @@ namespace LevelnetAdjustment.utils {
                                 method = 1;
                             }
                             observedDatas.Add(observedData);
-                            if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
-                                continue;
-                            }
-                            //过滤重复的测段(往返测)
-                            observedDatasNoRep.Add(observedData);
+                            //if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
+                            //    continue;
+                            //}
+                            ////过滤重复的测段(往返测)
+                            //observedDatasNoRep.Add(observedData);
                         }
                     }
                 }
@@ -476,7 +476,7 @@ namespace LevelnetAdjustment.utils {
                                     // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
                                     ods[ods.Count - 1].StationNum = 1;
                                     ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
-                                    ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;                                   
+                                    ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
                                     //计算测段数据
                                     double totalDisend = 0;
                                     double totalDiffend = 0;

@@ -77,6 +77,8 @@ namespace LevelnetAdjustment.utils {
         public List<ObservedData> ObservedDatasNoRep { get; set; } = new List<ObservedData>();// 去除重复边的观测数据
         public List<RawData> RawDatas { get; set; } = new List<RawData>();// 原始观测数据
 
+        public List<Closure> Closures { get; set; } //闭合差
+
         public int N { get; set; } = 0;// 观测数
         public int T { get; set; } = 0;// 必要观测数
         public int R { get; set; } = 0;// 多余观测数
@@ -95,6 +97,8 @@ namespace LevelnetAdjustment.utils {
         public Matrix<double> x_total { get; set; }//高程累计改正量
         public Matrix<double> V_total { get; set; }//观测值累计改正量
         public Matrix<double> Qll { get; set; }//观测值协因数矩阵
+        public Matrix<double> Qvv { get; set; }//改正数协因数矩阵
+        public Matrix<double> RR { get; set; }
         public double PVV { get; set; } //观测值残差
         public double[] L { get; set; } //真实观测值
         public double[] Mh_P { get; set; } //高差中误差
@@ -381,9 +385,11 @@ namespace LevelnetAdjustment.utils {
             }
 
             // 求观测值协因数矩阵
-            Qll = B * NBB.Inverse() * B.Transpose();
+            Qll = P.Inverse();
 
-            var Qvv = Qll - B * NBB.Inverse() * B.Transpose();
+            Qvv = Qll - B * NBB.Inverse() * B.Transpose();
+
+            RR = Qvv * P;
         }
 
         /// <summary>
@@ -483,10 +489,10 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(split);
             sb.AppendLine(space + "观测值平差值及其精度");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差平差值(m)",titlePad}{"距离(km)",titlePad}{"中误差(mm)",titlePad}");
+            sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差平差值(m)",titlePad}{"距离(km)",titlePad}{"中误差(mm)",titlePad}{"多余观测分量",titlePad}");
             sb.AppendLine(split);
             for (int i = 0; i < N; i++) {
-                sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{L[i],pad - 5:#0.00000}{ObservedDatas[i].Distance,pad:#0.0000}{Mh_L[i],pad:#0.00}");
+                sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{L[i],pad - 5:#0.00000}{ObservedDatas[i].Distance,pad:#0.0000}{Mh_L[i],pad:#0.00}{RR[i, i],pad:#0.000}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "    水准网总体信息");
@@ -616,6 +622,7 @@ namespace LevelnetAdjustment.utils {
                     double W = (ObservedDatasNoRep[i].HeightDiff + diff[k1]) * 1000;   //闭合差
                     double SS = S[k1] + ObservedDatasNoRep[i].Distance; //环长
                     double limit = (roundi * Math.Sqrt(SS));
+                    Closures.Add(new Closure { Error = -W, Length = SS });
                     strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("f2") + "(mm)");
                     strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
                     strClosure.AppendLine($"总长度：{SS}(km)");
@@ -639,7 +646,7 @@ namespace LevelnetAdjustment.utils {
             int line_N = 0;
 
             strClosure.AppendLine(split);
-            strClosure.AppendLine(space + "路线闭合差计算结果");
+            strClosure.AppendLine(space + "附合路线闭合差计算结果");
             strClosure.AppendLine(split);
             if (m_knPnumber < 2)
                 return strClosure.AppendLine("已知点数小于2").ToString(); // 已知点数小于2
@@ -669,6 +676,7 @@ namespace LevelnetAdjustment.utils {
                     //闭合差计算，限差计算与输出
                     double W = (KnownPoints[ii].Height + diff[jj] - KnownPoints[jj].Height) * 1000; // 闭合差
                     double limit = roundi * Math.Sqrt(S[jj]);  // 限差
+                    Closures.Add(new Closure { Error = -W, Length = S[jj] });
                     strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("#0.00") + "(mm)");
                     strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
                     strClosure.AppendLine($"总长度：{S[jj]}(km)");
@@ -708,9 +716,12 @@ namespace LevelnetAdjustment.utils {
             });
             #endregion
 
+            Closures = new List<Closure>();
             string strLoop = LoopClosure(Options.Coefficient, split, space);
             string strLine = LineClosure(Options.Coefficient, split, space);
-            FileHelper.WriteStrToTxt(strLine + strLoop, OutpathClosure);
+            double tmse = CalcTMSE();
+            string msg = $"{split}\r\n{space}由闭合差计算的观测值精度\r\n{split}\r\n每公里高程测量的高差全中误差：   {tmse:#0.000}\r\n多边形个数：   {Closures.Count}";
+            FileHelper.WriteStrToTxt(strLine + strLoop + msg, OutpathClosure);
         }
 
         /// <summary>
@@ -952,11 +963,11 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="split"></param>
         /// <param name="space"></param>
-        public void ExportFreeNetworkResult(string split, string space, string path) {
+        public void ExportFreeNetworkResult(string split, string space, string path, string title) {
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(split);
-            sb.AppendLine(space + "秩亏自由网平差结果");
+            sb.AppendLine(space + $"{title}平差结果");
             sb.AppendLine(split);
             sb.AppendLine(space + "高差观测数据");
             sb.AppendLine(split);
@@ -991,6 +1002,18 @@ namespace LevelnetAdjustment.utils {
 
             sb.AppendLine(split);
             FileHelper.WriteStrToTxt(sb.ToString(), path);
+        }
+
+        /// <summary>
+        /// 计算全中误差
+        /// </summary>
+        /// <returns></returns>
+        public double CalcTMSE() {
+            double w = 0;
+            Closures.ForEach(t => {
+                w += t.Error * t.Error / t.Length;
+            });
+            return Math.Sqrt(w / Closures.Count);
         }
 
         public void Prepare4ConstraintNetwork() {

@@ -23,17 +23,19 @@ namespace LevelnetAdjustment {
             get => filePath;
             set {
                 filePath = value;
-                OutpathAdj = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "平差结果.ou1");
+                OutpathAdj = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "约束网平差结果.ou1");
+                OutpathAdjFree = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "拟稳平差结果.ou1");
                 OutpathClosure = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "闭合差计算结果.ou2");
                 OutpathGrossError = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "粗差探测结果.ou2");
             }
         }
         // 输出文件格式
-        public readonly string split = "---------------------------------------------------------------------------------";
+        public readonly string split = "----------------------------------------------------------------------------------------------";
         public readonly string space = "                             ";
         public string OutpathClosure { get; set; } = "";// 闭合差文件输出路径
         public string OutpathGrossError { get; set; } // 粗差探测结果
         public string OutpathAdj { get; set; } = "";// 平差文件输出路径
+        public string OutpathAdjFree { get; set; } = "";// 平差文件输出路径
         public ClevelingAdjust ClAdj { get; set; }
 
         public static bool flag = true;
@@ -67,13 +69,13 @@ namespace LevelnetAdjustment {
 
                 var KnownPoints = new List<PointData>();
                 var ObservedDatas = new List<ObservedData>();
-                var ObservedDatasNoRep = new List<ObservedData>();
-                var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, ObservedDatasNoRep, openFile.FileName);
+                var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, openFile.FileName);
+
                 ClAdj.Options.Level = tup.Item1;
                 ClAdj.Options.PowerMethod = tup.Item2;
                 ClAdj.KnownPoints = KnownPoints;
                 ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
-                ClAdj.ObservedDatasNoRep = ClAdj.ObservedDatasNoRep != null ? Commom.Merge(ClAdj.ObservedDatasNoRep, ObservedDatasNoRep) : ObservedDatasNoRep;
+                ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
                 FileView fileView = new FileView(new string[] { openFile.FileName }) {
                     MdiParent = this,
                 };
@@ -408,7 +410,7 @@ namespace LevelnetAdjustment {
             if (ClAdj.ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-            if (File.Exists(OutpathAdj)) {
+            if (File.Exists(OutpathAdjFree)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -433,13 +435,16 @@ namespace LevelnetAdjustment {
                     loading.ShowLoading();
                     try {
                         i = ClAdj.QuasiStable();
-                        ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                        ClAdj.ExportFreeNetworkResult(split, space, OutpathAdjFree, "拟稳");
                         loading.CloseWaitForm();
                     }
                     catch (Exception ex) {
                         loading.CloseWaitForm();
                         throw ex;
                     }
+                }
+                else {
+                    return;
                 }
             }
             else {
@@ -450,7 +455,7 @@ namespace LevelnetAdjustment {
                 loading.ShowLoading();
                 try {
                     i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdj);
+                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdjFree, "自由网");
                     loading.CloseWaitForm();
                 }
                 catch (Exception ex) {
@@ -459,7 +464,7 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            FileView fileView = new FileView(new string[] { OutpathAdj }) {
+            FileView fileView = new FileView(new string[] { OutpathAdjFree }) {
                 MdiParent = this,
             };
             MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);

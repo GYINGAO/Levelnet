@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LevelnetAdjustment.model;
 
 namespace LevelnetAdjustment.utils {
     public class Calc {
@@ -25,6 +26,21 @@ namespace LevelnetAdjustment.utils {
                 + y * (-0.3231081277E-8 + y * (0.3657763036E-10
                 + y * 0.6936233982E-12))))))))));
             return Math.Sqrt(y);
+        }
+
+        /// <summary>
+        ///  观测数据去除重复边
+        /// </summary>
+        /// <param name="ods"></param>
+        /// <returns></returns>
+        public static List<ObservedData> RemoveDuplicates(List<ObservedData> ods) {
+            List<ObservedData> ods_new = new List<ObservedData>();
+            ods.ForEach(l => {
+                if (!ods_new.Exists(p => (p.Start == l.Start && p.End == l.End) || (p.Start == l.End && p.End == l.Start))) {
+                    ods_new.Add(l);
+                }
+            });
+            return ods_new;
         }
     }
 }
