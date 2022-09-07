@@ -48,8 +48,9 @@ namespace SplashScreenDemo {
         private void timer_Tick(object sender, EventArgs e) {
             //TimeSpan ts = sw.Elapsed;
             seconds++;
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            lbl_tips_son.Text = $"Please Waitting...{ts.Days * 86400 + ts.Hours * 3600 + ts.Minutes * 60 + ts.Seconds}s";
+            /*TimeSpan ts = TimeSpan.FromSeconds(seconds);
+            lbl_tips_son.Text = $"Please Waitting...{ts.Days * 86400 + ts.Hours * 3600 + ts.Minutes * 60 + ts.Seconds}s";*/
+            lbl_tips_son.Text = $"Please Waitting...{seconds}s";
         }
     }
 }
