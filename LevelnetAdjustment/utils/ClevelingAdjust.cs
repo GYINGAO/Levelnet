@@ -836,6 +836,14 @@ namespace LevelnetAdjustment.utils {
                     Qxx[i, j] = NBB[i, j] - 1.0 / StablePoints.Count;
                 }
             }
+
+            // 求观测值协因数矩阵
+            Qll = P.Inverse();
+
+            Qvv = Qll - B * NBB.Inverse() * B.Transpose();
+
+            RR = Qxx * P;
+
             Calc_PVV();
             Mu = Math.Sqrt(PVV / (R - 1));
 
@@ -917,6 +925,13 @@ namespace LevelnetAdjustment.utils {
                     Qxx[i, j] = NBB[i, j] - 1.0 / T;
                 }
             }
+            // 求观测值协因数矩阵
+            Qll = P.Inverse();
+
+            this.Qvv = Qll - B * NBB.Inverse() * B.Transpose();
+
+            RR = this.Qvv * P;
+
             Calc_PVV();
             Mu = Math.Sqrt(PVV / (R - 1));
 
@@ -986,10 +1001,10 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(split);
             sb.AppendLine(space + "观测值平差值及其精度");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差平差值(m)",titlePad}{"距离(km)",titlePad}{"中误差(mm)",titlePad}");
+            sb.AppendLine($"{"序号",titlePad}{"起点",titlePad}{"终点",titlePad}{"高差平差值(m)",titlePad}{"距离(km)",titlePad}{"中误差(mm)",titlePad}{"多余观测分量",titlePad}");
             sb.AppendLine(split);
             for (int i = 0; i < N; i++) {
-                sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{L[i],pad - 5:#0.00000}{ObservedDatas[i].Distance,pad:#0.0000}{Mh_L[i],pad:#0.00}");
+                sb.AppendLine($"{i + 1,pad}{ObservedDatas[i].Start,pad}{ObservedDatas[i].End,pad}{L[i],pad - 5:#0.00000}{ObservedDatas[i].Distance,pad:#0.0000}{Mh_L[i],pad:#0.00}{RR[i, i],pad:#0.000}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "    水准网总体信息");

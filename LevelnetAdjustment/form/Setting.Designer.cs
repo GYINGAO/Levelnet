@@ -245,9 +245,9 @@ namespace LevelnetAdjustment.form {
             this.rbtn_quasi_stable.AutoSize = true;
             this.rbtn_quasi_stable.Location = new System.Drawing.Point(33, 50);
             this.rbtn_quasi_stable.Name = "rbtn_quasi_stable";
-            this.rbtn_quasi_stable.Size = new System.Drawing.Size(83, 16);
+            this.rbtn_quasi_stable.Size = new System.Drawing.Size(71, 16);
             this.rbtn_quasi_stable.TabIndex = 1;
-            this.rbtn_quasi_stable.Text = "秩亏网平差";
+            this.rbtn_quasi_stable.Text = "拟稳平差";
             this.rbtn_quasi_stable.UseVisualStyleBackColor = true;
             // 
             // rbtn_constraint
