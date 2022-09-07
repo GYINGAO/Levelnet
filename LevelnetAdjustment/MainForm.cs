@@ -138,19 +138,19 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            /*  try {*/
-            ClAdj.CalcClosureError(OutpathClosure, split, space);
-            loading.CloseWaitForm();
-            FileView fileView = new FileView(new string[] { OutpathClosure }) {
-                MdiParent = this,
-            };
-            MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
-            /*  }
-              catch (Exception ex) {
-                  loading.CloseWaitForm();
-                  throw ex;
-              }*/
+            try {
+                ClAdj.CalcClosureError(OutpathClosure, split, space);
+                loading.CloseWaitForm();
+                FileView fileView = new FileView(new string[] { OutpathClosure }) {
+                    MdiParent = this,
+                };
+                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -275,19 +275,26 @@ namespace LevelnetAdjustment {
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
 
-                foreach (var item in openFile.FileNames) {
-                    if (Path.GetExtension(item).ToLower() == ".dat") {
-                        FileHelper.ReadDAT(item, RawDatas, ObservedDatas, ClAdj.Options.IsSplit);
+                try {
+                    foreach (var item in openFile.FileNames) {
+                        if (Path.GetExtension(item).ToLower() == ".dat") {
+                            FileHelper.ReadDAT(item, RawDatas, ObservedDatas, ClAdj.Options.IsSplit);
+                        }
+                        else if (Path.GetExtension(item).ToLower() == ".gsi") {
+                            FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints, ClAdj.Options.IsSplit);
+                        }
                     }
-                    else if (Path.GetExtension(item).ToLower() == ".gsi") {
-                        FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints, ClAdj.Options.IsSplit);
-                    }
-                }
-                ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
-                ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
-                ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
+                    ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+                    ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
+                    ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
 
-                loading.CloseWaitForm();
+                    loading.CloseWaitForm();
+                }
+                catch (Exception ex) {
+                    loading.CloseWaitForm();
+                    throw ex;
+                }
+
                 FileView fv = new FileView(openFile.FileNames) { MdiParent = this };
                 fv.Show();
             }

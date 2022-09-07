@@ -40,8 +40,6 @@ namespace LevelnetAdjustment {
             this.RankDefectNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OptionDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ResultDropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OriginalDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.COSADropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisPower = new System.Windows.Forms.ToolStripMenuItem();
             this.StationPower = new System.Windows.Forms.ToolStripMenuItem();
@@ -137,60 +135,46 @@ namespace LevelnetAdjustment {
             // ClosureErrorDropItem
             // 
             this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-            this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ClosureErrorDropItem.Size = new System.Drawing.Size(136, 22);
             this.ClosureErrorDropItem.Text = "闭合差计算";
             this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
             // 
             // GrossErrorDropItem
             // 
             this.GrossErrorDropItem.Name = "GrossErrorDropItem";
-            this.GrossErrorDropItem.Size = new System.Drawing.Size(180, 22);
+            this.GrossErrorDropItem.Size = new System.Drawing.Size(136, 22);
             this.GrossErrorDropItem.Text = "粗差探测";
             this.GrossErrorDropItem.Click += new System.EventHandler(this.GrossErrorDropItem_Click);
             // 
             // ConstraintNetworkDropItem
             // 
             this.ConstraintNetworkDropItem.Name = "ConstraintNetworkDropItem";
-            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(136, 22);
             this.ConstraintNetworkDropItem.Text = "约束网平差";
             this.ConstraintNetworkDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
             // 
             // RankDefectNetworkDropItem
             // 
             this.RankDefectNetworkDropItem.Name = "RankDefectNetworkDropItem";
-            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(180, 22);
+            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(136, 22);
             this.RankDefectNetworkDropItem.Text = "拟稳平差";
             this.RankDefectNetworkDropItem.Click += new System.EventHandler(this.RankDefectNetworkDropItem_Click);
             // 
             // OptionDropItem
             // 
             this.OptionDropItem.Name = "OptionDropItem";
-            this.OptionDropItem.Size = new System.Drawing.Size(180, 22);
+            this.OptionDropItem.Size = new System.Drawing.Size(136, 22);
             this.OptionDropItem.Text = "设置与选项";
             this.OptionDropItem.Click += new System.EventHandler(this.OptionDropItem_Click);
             // 
             // ReportToolStripMenuItem
             // 
             this.ReportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ResultDropItem,
-            this.OriginalDropItem,
             this.COSADropItem,
             this.HandbookDropItem});
             this.ReportToolStripMenuItem.Name = "ReportToolStripMenuItem";
             this.ReportToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.ReportToolStripMenuItem.Text = "报表";
-            // 
-            // ResultDropItem
-            // 
-            this.ResultDropItem.Name = "ResultDropItem";
-            this.ResultDropItem.Size = new System.Drawing.Size(180, 22);
-            this.ResultDropItem.Text = "平差结果";
-            // 
-            // OriginalDropItem
-            // 
-            this.OriginalDropItem.Name = "OriginalDropItem";
-            this.OriginalDropItem.Size = new System.Drawing.Size(180, 22);
-            this.OriginalDropItem.Text = "原始观测数据";
             // 
             // COSADropItem
             // 
@@ -204,14 +188,14 @@ namespace LevelnetAdjustment {
             // DisPower
             // 
             this.DisPower.Name = "DisPower";
-            this.DisPower.Size = new System.Drawing.Size(148, 22);
+            this.DisPower.Size = new System.Drawing.Size(180, 22);
             this.DisPower.Text = "按距离定权";
             this.DisPower.Click += new System.EventHandler(this.DisPower_Click);
             // 
             // StationPower
             // 
             this.StationPower.Name = "StationPower";
-            this.StationPower.Size = new System.Drawing.Size(148, 22);
+            this.StationPower.Size = new System.Drawing.Size(180, 22);
             this.StationPower.Text = "按测站数定权";
             this.StationPower.Click += new System.EventHandler(this.StationPower_Click);
             // 
@@ -268,8 +252,6 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem ConstraintNetworkDropItem;
         private System.Windows.Forms.ToolStripMenuItem OptionDropItem;
         private System.Windows.Forms.ToolStripMenuItem ReportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ResultDropItem;
-        private System.Windows.Forms.ToolStripMenuItem OriginalDropItem;
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ClosureErrorDropItem;
         private System.Windows.Forms.ToolStripMenuItem AboutDropItem;
