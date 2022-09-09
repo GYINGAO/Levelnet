@@ -57,50 +57,29 @@ namespace LevelnetAdjustment {
         }
 
 
+        #region 文件管理
         /// <summary>
-        /// 导入COSA
+        /// 读取数据
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OpenDropItem_Click(object sender, EventArgs e) {
-            OpenFileDialog openFile = new OpenFileDialog {
-                Multiselect = false,
-                Title = "打开in1",
-                Filter = "COSA文件(*.in1)|*.in1|所有文件(*.*)|*.*",
-                FilterIndex = 1,
-            };
-            if (openFile.ShowDialog() == DialogResult.OK) {
-                if (string.IsNullOrEmpty(FilePath)) {
-                    FilePath = openFile.FileName;
-                }
-
-                var KnownPoints = new List<PointData>();
-                var ObservedDatas = new List<ObservedData>();
-                var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, openFile.FileName);
-
-                ClAdj.Options.Level = tup.Item1;
-                ClAdj.Options.PowerMethod = tup.Item2;
-                ClAdj.KnownPoints = KnownPoints;
-                ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
-                ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
-                FileView fileView = new FileView(openFile.FileName) {
-                    MdiParent = this,
-                    //WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
-                };
-                fileView.Show();
-                AddTabPage(fileView);  // 新建窗体同时新建一个标签
-            }
-            else {
-                return;
-            }
+        private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
+            ReadData rd = new ReadData(FileList, ClAdj);
+            rd.TransfEvent += frm_DataTransfEvent;
+            rd.ShowDialog();
         }
 
+        private void frm_DataTransfEvent(List<string> fileList) {
+            this.FileList = fileList;
+            for (int i = 0; i < fileList.Count; i++) {
+                if (Path.GetExtension(fileList[i].ToLower()) != ".txt") {
+                    FilePath = fileList[i];
+                    break;
+                }
+            }
 
-        #region 文件管理
+        }
+
         /// <summary>
         /// 创建新的观测文件
         /// </summary>
@@ -117,93 +96,6 @@ namespace LevelnetAdjustment {
             };
             fileView.Show();
             AddTabPage(fileView);  // 新建窗体同时新建一个标签
-        }
-
-        /// <summary>
-        /// 读取水准仪原始数据
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RawDataDropItem_Click(object sender, EventArgs e) {
-            var RawDatas = new List<RawData>();
-            var ObservedDatas = new List<ObservedData>();
-            var KnownPoints = new List<PointData>();
-            var res = MessageBox.Show("是否按测段分割？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-            if (res == DialogResult.Yes) {
-                ClAdj.Options.IsSplit = true;
-            }
-            else if (res == DialogResult.No) {
-                ClAdj.Options.IsSplit = false;
-            }
-            else {
-                return;
-            }
-            OpenFileDialog openFile = new OpenFileDialog {
-                Multiselect = true,
-                Title = "打开",
-                Filter = "DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|所有文件(*.*)|*.*",
-                FilterIndex = 1,
-                RestoreDirectory = false,
-            };
-            if (openFile.ShowDialog() == DialogResult.OK) {
-                FilePath = openFile.FileNames[0];
-                SimpleLoading loadingfrm = new SimpleLoading(this, "读取中，请稍等...");
-                //将Loaing窗口，注入到 SplashScreenManager 来管理
-                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                loading.ShowLoading();
-
-                try {
-                    foreach (var item in openFile.FileNames) {
-                        if (Path.GetExtension(item).ToLower() == ".dat") {
-                            FileHelper.ReadDAT(item, RawDatas, ObservedDatas, ClAdj.Options.IsSplit);
-                        }
-                        else if (Path.GetExtension(item).ToLower() == ".gsi") {
-                            FileHelper.ReadGSI(item, RawDatas, ObservedDatas, KnownPoints, ClAdj.Options.IsSplit);
-                        }
-                    }
-                    ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
-                    ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
-                    ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
-
-                    loading.CloseWaitForm();
-                }
-                catch (Exception ex) {
-                    loading.CloseWaitForm();
-                    throw ex;
-                }
-                foreach (var item in openFile.FileNames) {
-                    FileView fv = new FileView(item) {
-                        MdiParent = this,//WindowState = FormWindowState.Maximized,
-                        ShowIcon = false,
-                        ShowInTaskbar = false,
-                        Dock = DockStyle.Fill,
-                        FormBorderStyle = FormBorderStyle.None
-                    };
-                    fv.Show();
-                    AddTabPage(fv);  // 新建窗体同时新建一个标签}
-
-                }
-            }
-        }
-
-        /// <summary>
-        /// 读取已知点数据
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void KnDropItem_Click(object sender, EventArgs e) {
-            var KnownPoints = new List<PointData>();
-            OpenFileDialog openFile = new OpenFileDialog {
-                Multiselect = true,
-                Title = "打开",
-                Filter = "文本文件|*.txt;*.TXT|所有文件(*.*)|*.*",
-                FilterIndex = 1,
-                RestoreDirectory = true,
-            };
-            if (openFile.ShowDialog() == DialogResult.OK) {
-                FileHelper.ReadKnPoints(openFile.FileName, KnownPoints);
-            }
-            ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
         }
 
         /// <summary>
@@ -271,26 +163,26 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            try {
-                int i = ClAdj.LS_Adjustment();
-                ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
-                loading.CloseWaitForm();
-                FileView fileView = new FileView(OutpathAdj) {
-                    MdiParent = this,
-                    //WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
-                };
-                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-                AddTabPage(fileView);  // 新建窗体同时新建一个标签
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
+            /*try {*/
+            int i = ClAdj.LS_Adjustment();
+            ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
+            loading.CloseWaitForm();
+            FileView fileView = new FileView(OutpathAdj) {
+                MdiParent = this,
+                //WindowState = FormWindowState.Maximized,
+                ShowIcon = false,
+                ShowInTaskbar = false,
+                Dock = DockStyle.Fill,
+                FormBorderStyle = FormBorderStyle.None
+            };
+            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            fileView.Show();
+            AddTabPage(fileView);  // 新建窗体同时新建一个标签
+            /* }
+             catch (Exception ex) {
+                 loading.CloseWaitForm();
+                 throw ex;
+             }*/
 
         }
 
@@ -447,7 +339,7 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void OptionDropItem_Click(object sender, EventArgs e) {
             Setting setting = new Setting(ClAdj.Options);
-            setting.TransfEvent += frm_TransfEvent;
+            setting.TransfEvent += frm_SettingTransfEvent;
             setting.ShowDialog();
         }
         #endregion
@@ -569,7 +461,7 @@ namespace LevelnetAdjustment {
             if (tabControl1.TabPages.Count == 0) tabControl1.Visible = false;
         }
 
-        private void tabControl1_MouseDoubleClick(object sender, MouseEventArgs e) {
+        private void tabControl1_MouseDoubleClick_1(object sender, MouseEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Left) // 只有左键双击才响应关闭
                 CloseTabPage(tabControl1.SelectedIndex);
         }
@@ -596,7 +488,7 @@ namespace LevelnetAdjustment {
         #endregion
 
         //事件处理方法
-        void frm_TransfEvent(Option option) {
+        void frm_SettingTransfEvent(Option option) {
             this.ClAdj.Options = option;
         }
 
@@ -635,17 +527,17 @@ namespace LevelnetAdjustment {
             about.ShowDialog();
         }
 
-        /// <summary>
-        /// 读取数据
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
-            ReadData rd = new ReadData(FileList, ClAdj);
-            rd.ShowDialog();
+        private void 新建NToolStripButton_Click(object sender, EventArgs e) {
+            NewDropItem_Click(sender, e);
         }
 
+        private void 打开OToolStripButton_Click(object sender, EventArgs e) {
+            toolStripMenuItem_open_Click(sender, e);
+        }
 
+        private void 帮助LToolStripButton_Click(object sender, EventArgs e) {
+            AboutDropItem_Click(sender, e);
+        }
     }
 }
 
