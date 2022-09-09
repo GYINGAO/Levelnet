@@ -40,6 +40,8 @@ namespace LevelnetAdjustment {
 
         public static bool flag = true;
 
+        public List<string> FileList { get; set; } = new List<string>(); //输入文件列表
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -81,7 +83,7 @@ namespace LevelnetAdjustment {
                 ClAdj.KnownPoints = KnownPoints;
                 ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
                 ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
-                FileView fileView = new FileView(new string[] { openFile.FileName }) {
+                FileView fileView = new FileView(openFile.FileName) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -105,7 +107,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void NewDropItem_Click(object sender, EventArgs e) {
-            FileView fileView = new FileView(new string[] { "" }) {
+            FileView fileView = new FileView("") {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
                 ShowIcon = false,
@@ -169,16 +171,18 @@ namespace LevelnetAdjustment {
                     loading.CloseWaitForm();
                     throw ex;
                 }
+                foreach (var item in openFile.FileNames) {
+                    FileView fv = new FileView(item) {
+                        MdiParent = this,//WindowState = FormWindowState.Maximized,
+                        ShowIcon = false,
+                        ShowInTaskbar = false,
+                        Dock = DockStyle.Fill,
+                        FormBorderStyle = FormBorderStyle.None
+                    };
+                    fv.Show();
+                    AddTabPage(fv);  // 新建窗体同时新建一个标签}
 
-                FileView fv = new FileView(openFile.FileNames) {
-                    MdiParent = this,//WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
-                };
-                fv.Show();
-                AddTabPage(fv);  // 新建窗体同时新建一个标签
+                }
             }
         }
 
@@ -197,7 +201,7 @@ namespace LevelnetAdjustment {
                 RestoreDirectory = true,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
-                FileHelper.ReadGSI(openFile.FileName, KnownPoints);
+                FileHelper.ReadKnPoints(openFile.FileName, KnownPoints);
             }
             ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
         }
@@ -224,22 +228,24 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void toolStripMenuItem_open_Click(object sender, EventArgs e) {
             OpenFileDialog openFile = new OpenFileDialog {
-                Multiselect = false,
+                Multiselect = true,
                 Title = "打开",
                 Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
                 "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果结果文件|*.ou4|所有文件(*.*)|*.*",
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
-                FileView fv = new FileView(openFile.FileNames) {
-                    MdiParent = this,//WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
-                };
-                fv.Show();
-                AddTabPage(fv);  // 新建窗体同时新建一个标签
+                foreach (var item in openFile.FileNames) {
+                    FileView fv = new FileView(item) {
+                        MdiParent = this,//WindowState = FormWindowState.Maximized,
+                        ShowIcon = false,
+                        ShowInTaskbar = false,
+                        Dock = DockStyle.Fill,
+                        FormBorderStyle = FormBorderStyle.None
+                    };
+                    fv.Show();
+                    AddTabPage(fv);  // 新建窗体同时新建一个标签
+                }
             }
         }
 
@@ -269,7 +275,7 @@ namespace LevelnetAdjustment {
                 int i = ClAdj.LS_Adjustment();
                 ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
                 loading.CloseWaitForm();
-                FileView fileView = new FileView(new string[] { OutpathAdj }) {
+                FileView fileView = new FileView(OutpathAdj) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -351,7 +357,7 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            FileView fileView = new FileView(new string[] { OutpathAdjFree }) {
+            FileView fileView = new FileView(OutpathAdjFree) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
                 ShowIcon = false,
@@ -383,7 +389,7 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.CalcClosureError(OutpathClosure, split, space);
                 loading.CloseWaitForm();
-                FileView fileView = new FileView(new string[] { OutpathClosure }) {
+                FileView fileView = new FileView(OutpathClosure) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -415,7 +421,7 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.FindGrossError(split, space, OutpathGrossError);
                 loading.CloseWaitForm();
-                FileView fileView = new FileView(new string[] { OutpathGrossError }) {
+                FileView fileView = new FileView(OutpathGrossError) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -551,12 +557,7 @@ namespace LevelnetAdjustment {
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
             if (tabControl1.SelectedIndex > -1)
                 (tabControl1.TabPages[tabControl1.SelectedIndex].Tag as Form).Focus();
-            /* FormCollection childCollection = Application.OpenForms;
-             for (int i = childCollection.Count; i-- > 0;) {
-                 if (childCollection[i].Name != this.Name) childCollection[i].WindowState = FormWindowState.Maximized;
-             }*/
         }
-
 
         /// <summary>
         /// 删除一个标签
@@ -633,6 +634,17 @@ namespace LevelnetAdjustment {
             About about = new About();
             about.ShowDialog();
         }
+
+        /// <summary>
+        /// 读取数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
+            ReadData rd = new ReadData(FileList, ClAdj);
+            rd.ShowDialog();
+        }
+
 
     }
 }

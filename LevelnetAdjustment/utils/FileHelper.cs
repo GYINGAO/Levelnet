@@ -565,7 +565,7 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="knownPoints"></param>
-        internal static void ReadGSI(string fileName, List<PointData> knownPoints) {
+        internal static void ReadKnPoints(string fileName, List<PointData> knownPoints) {
             using (StreamReader sr = new StreamReader(fileName)) {
                 while (sr.Peek() > -1) {
                     string line = sr.ReadLine().Trim();

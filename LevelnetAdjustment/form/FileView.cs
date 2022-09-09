@@ -13,41 +13,28 @@ namespace LevelnetAdjustment.form {
     public partial class FileView : Form {
         private bool kd = false;
 
-        public FileView(string[] _filePath) {
+        public FileView(string _filePath) {
             InitializeComponent();
             this.FilePath = _filePath;
             this.ShowIcon = false;
         }
-        public string[] FilePath { get; set; }
+        public string FilePath { get; set; }
         public string SaveFilePath { get; set; }
         public bool isModified { get; set; } = false;
 
         private void FileView_Load(object sender, EventArgs e) {
             rtb.Clear();
-            if (FilePath.Length > 1) {
-                this.Text = Path.GetFileName(FilePath[0]);
-                foreach (var item in FilePath) {
-                    //打开并且读取文件数据
-                    using (FileStream fs = new FileStream(item, FileMode.Open, FileAccess.Read)) {
-                        //文字编码需要设置为Default，不能设置为utf-8否则乱码（richtextbox的问题）
-                        using (StreamReader sr = new StreamReader(fs, Encoding.Default)) {
-                            rtb.Text += sr.ReadToEnd();
-                        }
-                    }
-                }
 
+            if (string.IsNullOrEmpty(FilePath)) {
+                this.Text = "Undefined.ou1*";
+                return;
             }
             else {
-                if (string.IsNullOrEmpty(FilePath[0])) {
-                    this.Text = "Undefined.ou1*";
-                    return;
-                }
-                else {
-                    rtb.LoadFile(FilePath[0], RichTextBoxStreamType.PlainText);
-                    rtb.Show();
-                    this.Text = Path.GetFileName(FilePath[0]);
-                }
+                rtb.LoadFile(FilePath, RichTextBoxStreamType.PlainText);
+                rtb.Show();
+                this.Text = Path.GetFileName(FilePath);
             }
+
         }
 
 

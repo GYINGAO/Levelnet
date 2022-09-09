@@ -89,3 +89,4 @@ F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.CopyComplete
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.exe
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.pdb
+F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ReadData.resources
