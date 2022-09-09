@@ -109,6 +109,7 @@ namespace LevelnetAdjustment {
             for (int i = childCollection.Count; i-- > 0;) {
                 if (childCollection[i].Name != this.Name) childCollection[i].Close();
             }
+            FileList = new List<string>();
             tabControl1.TabPages.Clear();
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
         }
@@ -310,25 +311,25 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
 
-            try {
-                ClAdj.FindGrossError(split, space, OutpathGrossError);
-                loading.CloseWaitForm();
-                FileView fileView = new FileView(OutpathGrossError) {
-                    MdiParent = this,
-                    //WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
-                };
-                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-                AddTabPage(fileView);  // 新建窗体同时新建一个标签
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
+            /* try {*/
+            ClAdj.FindGrossError(split, space, OutpathGrossError);
+            loading.CloseWaitForm();
+            FileView fileView = new FileView(OutpathGrossError) {
+                MdiParent = this,
+                //WindowState = FormWindowState.Maximized,
+                ShowIcon = false,
+                ShowInTaskbar = false,
+                Dock = DockStyle.Fill,
+                FormBorderStyle = FormBorderStyle.None
+            };
+            MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            fileView.Show();
+            AddTabPage(fileView);  // 新建窗体同时新建一个标签
+            /*        }
+                    catch (Exception ex) {
+                        loading.CloseWaitForm();
+                        throw ex;
+                    }*/
 
         }
 

@@ -343,6 +343,7 @@ namespace LevelnetAdjustment.utils {
         /// 计算观测值残差
         /// </summary>
         void Calc_PVV() {
+            PVV = 0;
             for (int i = 0; i < N; i++) {
                 PVV += P[i, i] * V[i, 0] * 1000 * V[i, 0] * 1000;
             }
@@ -354,8 +355,6 @@ namespace LevelnetAdjustment.utils {
         void PrecisionEstimation() {
 
             // 观测值残差PVV
-            PVV = 0;
-
             Calc_PVV();
             // 求单位权中误差
             VTPV = V.Transpose() * P * V;
@@ -440,6 +439,7 @@ namespace LevelnetAdjustment.utils {
             x_total = x;
             V_total = V;
             double U = Calc.re_norm(1 - Options.Alpha / 2);
+
             int iteration_count = 1;
             // 迭代计算，直到未知数改正数为0
             while (isOverrun(x)) {
@@ -742,7 +742,12 @@ namespace LevelnetAdjustment.utils {
                 Calc_l();
                 Calc_NBB();
                 Calc_dX();
+                // 观测值残差PVV
                 Calc_PVV();
+                // 求单位权中误差
+                VTPV = V.Transpose() * P * V;
+                //sigma0 = Math.Sqrt(double.Parse(VTPV[0, 0].ToString()) / R) * 1000;
+                Mu = Math.Sqrt(PVV / R);
                 double max_v = 0;
                 int max_i = 0;
                 for (int i = 0; i < N; i++) {
@@ -753,7 +758,8 @@ namespace LevelnetAdjustment.utils {
                     double qjj = B[endIdx, endIdx];
                     double qij = B[startIdx, endIdx];
                     double qv = 1 / P[i, i] - (qii + qjj - 2 * qij);
-                    double mv = Math.Sqrt(qv) * Options.Sigma;
+                    //double mv = Math.Sqrt(qv) * Options.Sigma; //用验前单位权中误差
+                    double mv = Math.Sqrt(qv) * Mu; //用验前单位权中误差
                     double vi = V[i, 0] / mv;
                     if (Math.Abs(vi) > max_v) {
                         max_v = Math.Abs(vi);

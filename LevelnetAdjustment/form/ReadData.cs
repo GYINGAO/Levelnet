@@ -19,6 +19,8 @@ namespace LevelnetAdjustment.form {
         public List<string> FileList { get; set; }
         public ClevelingAdjust ClAdj { get; set; }
 
+        public bool IsFileChange { get; set; } = false;
+
         public event TransfDelegate_2 TransfEvent;
 
         public ReadData(List<string> fileList, ClevelingAdjust clAdj) {
@@ -63,9 +65,39 @@ namespace LevelnetAdjustment.form {
 
         private void ReadData_Load(object sender, EventArgs e) {
             FileList.ForEach(t => listBox1.Items.Add(t));
+
+            switch (ClAdj.Options.PowerMethod) {
+                case 0:
+                    this.rbtn_dis.Checked = true;
+                    break;
+                case 1:
+                    this.rbtn_num.Checked = true;
+                    break;
+                default:
+                    break;
+            }
+
+            switch (ClAdj.Options.Level) {
+                case 1:
+                    this.rbtn1.Checked = true;
+                    break;
+                case 2:
+                    this.rbtn2.Checked = true;
+                    break;
+                case 3:
+                    this.rbtn3.Checked = true;
+                    break;
+                case 4:
+                    this.rbtn4.Checked = true;
+                    break;
+                default:
+                    break;
+            }
+            this.tb_limit.Text = (ClAdj.Options.Limit * 100).ToString();
         }
 
         void UpdateList() {
+            this.IsFileChange = true;
             FileList = new List<string>();
             foreach (var item in listBox1.Items) {
                 FileList.Add(item.ToString());
@@ -74,9 +106,19 @@ namespace LevelnetAdjustment.form {
 
         private void button2_Click(object sender, EventArgs e) {
             if (FileList.Count == 0) {
-                throw new Exception("未选择文件");
+                if (MessageBox.Show("没有选择文件，是否重新选择？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.OK) {
+                    return;
+                }
+                else {
+                    Close();
+                    return;
+                }
             }
-
+            //没有改变文件，直接退出
+            if (!IsFileChange) {
+                Close();
+                return;
+            }
             ClAdj.ObservedDatas = new List<ObservedData>();
             ClAdj.KnownPoints = new List<PointData>();
             ClAdj.RawDatas = new List<RawData>();
@@ -133,6 +175,11 @@ namespace LevelnetAdjustment.form {
                 ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
                 loading.CloseWaitForm();
                 TransfEvent(FileList);
+
+                this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
+
                 if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
                     this.Close();
                 }
