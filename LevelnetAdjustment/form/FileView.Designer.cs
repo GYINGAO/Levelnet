@@ -47,12 +47,16 @@ namespace LevelnetAdjustment.form {
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(946, 585);
+            this.ControlBox = false;
             this.Controls.Add(this.rtb);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FileView";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "FileView";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FileView_FormClosing);
             this.Load += new System.EventHandler(this.FileView_Load);
