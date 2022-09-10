@@ -29,6 +29,20 @@ namespace LevelnetAdjustment.utils {
         }
 
         /// <summary>
+        /// 标准正态分布
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public static double norm(double u) {
+            if (u < -5.0) return 0.0;
+            if (u > 5.0) return 1.0;
+            double y = Math.Abs(u) / Math.Sqrt(2);
+            double p = 1.0 + y * (0.0705230784 + y * (0.0422820123 + y * (0.0092705272 + y * (0.0001520143 + y * (0.0002765672 + y * 0.0000430638)))));
+            double er = 1 - Math.Pow(p, -16);
+            return u < 0 ? 0.5 - 0.5 * er : 0.5 + 0.5 * er;
+        }
+
+        /// <summary>
         ///  观测数据去除重复边
         /// </summary>
         /// <param name="ods"></param>

@@ -231,6 +231,7 @@
     <Compile Include="model\Option.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="utils\ByteHelper.cs" />
     <Compile Include="utils\Calc.cs" />
     <Compile Include="utils\ClevelingAdjust.cs" />
     <Compile Include="utils\Commom.cs" />
@@ -287,6 +288,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\help.chm" />
     <None Include="Resources\wallhaven-qd667r_2560x2048.png" />
   </ItemGroup>
   <ItemGroup>

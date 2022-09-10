@@ -12,6 +12,8 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -31,8 +33,8 @@ namespace LevelnetAdjustment {
             }
         }
         // 输出文件格式
-        public readonly string split = "----------------------------------------------------------------------------------------------";
-        public readonly string space = "                             ";
+        public readonly string split = new string('-', 80);
+        public readonly string space = new string(' ', 30);
         public string OutpathClosure { get; set; } = "";// 闭合差文件输出路径
         public string OutpathGrossError { get; set; } // 粗差探测结果
         public string OutpathAdj { get; set; } = "";// 平差文件输出路径
@@ -239,7 +241,7 @@ namespace LevelnetAdjustment {
             loading.ShowLoading();
             /*try {*/
             int i = ClAdj.LS_Adjustment();
-            ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
+            ClAdj.ExportAdjustResult(OutpathAdj, split, space, "约束网");
             loading.CloseWaitForm();
             UpDateMenu(OutpathAdj);
 
@@ -292,17 +294,17 @@ namespace LevelnetAdjustment {
                     //将Loaing窗口，注入到 SplashScreenManager 来管理
                     GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                     loading.ShowLoading();
-                    /*try {*/
-                    ClAdj.CalcApproximateHeight();
-                    FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
-                    i = ClAdj.QuasiStable();
-                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdjFree, "拟稳");
-                    loading.CloseWaitForm();
-                    /*      }
-                          catch (Exception ex) {
-                              loading.CloseWaitForm();
-                              throw ex;
-                          }*/
+                    try {
+                        ClAdj.CalcApproximateHeight();
+                        FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
+                        i = ClAdj.QuasiStable();
+                        ClAdj.ExportAdjustResult(OutpathAdjFree, split, space, "拟稳");
+                        loading.CloseWaitForm();
+                    }
+                    catch (Exception ex) {
+                        loading.CloseWaitForm();
+                        throw ex;
+                    }
                 }
                 else {
                     return;
@@ -316,7 +318,7 @@ namespace LevelnetAdjustment {
                 loading.ShowLoading();
                 try {
                     i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportFreeNetworkResult(split, space, OutpathAdjFree, "自由网");
+                    ClAdj.ExportAdjustResult(OutpathAdjFree, split, space, "自由网");
                     loading.CloseWaitForm();
                 }
                 catch (Exception ex) {
@@ -548,9 +550,49 @@ namespace LevelnetAdjustment {
                 CloseTabPage(tabControl1.SelectedIndex);
         }
 
+        /// <summary>
+        /// 关闭当前页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolStripMenuItem_close_Click(object sender, EventArgs e) {
             int index = GetPageIndexWidthPoint(contextMenuStrip1.Left - this.Left);  // 这里也需要通过弹出菜单的位置来得到当前是哪个项弹出的，注意菜单位置是针对屏幕左边的距离
             CloseTabPage(index);
+        }
+        /// <summary>
+        /// 关闭其他页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToolStripMenuItem_closeothers_Click(object sender, EventArgs e) {
+            int index = GetPageIndexWidthPoint(contextMenuStrip1.Left - this.Left);
+            for (int i = 0; i < index; i++) {
+                CloseTabPage(i);
+            }
+            for (int i = tabControl1.TabPages.Count - 1; i >= 1; i--) {
+                CloseTabPage(i);
+            }
+        }
+        /// <summary>
+        /// 关闭右侧页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToolStripMenuItem_closeright_Click(object sender, EventArgs e) {
+            int index = GetPageIndexWidthPoint(contextMenuStrip1.Left - this.Left);
+            for (int i = tabControl1.TabPages.Count - 1; i > index; i--) {
+                CloseTabPage(i);
+            }
+        }
+        /// <summary>
+        /// 关闭所有页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ToolStripMenuItem_closeall_Click(object sender, EventArgs e) {
+            for (int i = tabControl1.TabPages.Count - 1; i >= 0; i--) {
+                CloseTabPage(i);
+            }
         }
 
 
@@ -618,9 +660,16 @@ namespace LevelnetAdjustment {
         }
 
         private void 帮助LToolStripButton_Click(object sender, EventArgs e) {
-            AboutDropItem_Click(sender, e);
+            使用说明ToolStripMenuItem_Click(sender, e);
         }
 
+        private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e) {
+            var helpFile = Path.Combine(Application.StartupPath, "help.chm");
+            if (!File.Exists(helpFile)) {
+                ByteHelper.WriteByteToFile(Properties.Resources.help, helpFile);
+            }
+            System.Diagnostics.Process.Start(helpFile);
+        }
     }
 }
 

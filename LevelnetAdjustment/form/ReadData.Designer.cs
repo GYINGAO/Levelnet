@@ -170,7 +170,7 @@ namespace LevelnetAdjustment.form {
             // 
             this.textBox1.Location = new System.Drawing.Point(104, 18);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(79, 21);
+            this.textBox1.Size = new System.Drawing.Size(69, 21);
             this.textBox1.TabIndex = 3;
             // 
             // rbtn_after
@@ -282,6 +282,7 @@ namespace LevelnetAdjustment.form {
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox1.Size = new System.Drawing.Size(662, 288);
             this.listBox1.TabIndex = 3;
+            this.listBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
             this.listBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseDoubleClick);
             // 
             // contextMenuStrip1

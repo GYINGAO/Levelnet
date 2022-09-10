@@ -136,6 +136,11 @@ namespace LevelnetAdjustment.form {
             }
             //没有改变文件，直接退出
             if (!IsFileChange) {
+                this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
+                this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
                 Close();
                 return;
             }
@@ -249,5 +254,6 @@ namespace LevelnetAdjustment.form {
                 listBox1.SelectedIndex = -1;//不做任何操作，将ListBox的选中项取消
             }
         }
+
     }
 }
