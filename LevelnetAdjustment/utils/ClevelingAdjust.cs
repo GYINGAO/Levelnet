@@ -456,21 +456,21 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(split);
             sb.AppendLine(space + "已知点高程");
             sb.AppendLine(split);
-            sb.AppendLine($"                  {"序号",-11}{"点名",-11}{"高程(m)",-11}");
+            sb.AppendLine($"                  {"序号",-11}{"点名",-11}{"高程/m",-11}");
             for (int i = 0; i < KnownPoints.Count; i++) {
                 sb.AppendLine($"                  {i + 1,-13}{KnownPoints[i].Number,-13}{KnownPoints[i].Height,-13:#0.00000}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "高差观测数据");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"高差(m)",-11}{"距离(km)",-9}{"权重",-11}");
+            sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"高差/m",-11}{"距离/km",-9}{"权重",-11}");
             for (int i = 0; i < N; i++) {
                 sb.AppendLine($"{i + 1,-7}{ObservedDatas[i].Start,-10}{ObservedDatas[i].End,-10}{ObservedDatas[i].HeightDiff.ToString("#0.00000"),-13}{ObservedDatas[i].Distance.ToString("#0.0000"),-11}{P[i, i].ToString("#0.000"),-13}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "高程平差值及其精度");
             sb.AppendLine(split);
-            sb.AppendLine($"{"序号",-5}{"点名",-8}{"近似高程(m)",-10}{"累计改正数(mm)",-11}{"高程平差值(m)",-10}{"中误差(mm)",-10}");
+            sb.AppendLine($"{"序号",-5}{"点名",-8}{"近似高程/m",-10}{"累计改正数/mm",-11}{"高程平差值/m",-10}{"中误差/mm",-10}");
             sb.AppendLine(split);
 
             if (Options.AdjustMethod == 0) {
@@ -783,7 +783,7 @@ namespace LevelnetAdjustment.utils {
             if (k > 0) {
                 sb.AppendLine(space + $"    粗差总数：{k}");
                 sb.AppendLine(split);
-                sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"距离(km)",-9}{"高差(m)",-10}{"改正数(mm)",-8}");
+                sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"距离/km",-9}{"高差/m",-10}{"改正数/mm",-8}");
                 sb.AppendLine(split);
                 for (int i = 0; i < odError.Count; i++) {
                     //if (P[i, i] > 1E-10) continue;
