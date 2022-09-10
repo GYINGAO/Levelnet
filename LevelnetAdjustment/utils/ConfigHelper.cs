@@ -30,8 +30,9 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool existItem_2(string value) {
+        public static bool existValue(string value) {
             //判断配置文件中是否存在键为keyName的项
+
             foreach (string key in ConfigurationManager.AppSettings) {
                 if (config.AppSettings.Settings[key].Value == value) {
                     //存在
@@ -40,6 +41,23 @@ namespace LevelnetAdjustment.utils {
             }
             return false;
         }
+
+        /// <summary>
+        /// 找出value对应的索引
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static int FindValue(string value) {
+            var keys = ConfigurationManager.AppSettings.AllKeys;
+            for (int i = 0; i < keys.Length; i++) {
+                if (config.AppSettings.Settings[keys[i]].Value == value) {
+                    //存在
+                    return i;
+                }
+            }
+            return -1;
+        }
+
 
         /// <summary>
         /// 获取指定节点的值
@@ -70,7 +88,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="key"></param>
         /// <param name="value"></param>
         public static string AddAppSetting(string value) {
-            if (existItem_2(value)) {
+            if (existValue(value)) {
                 return "";
             }
             int count = ConfigurationManager.AppSettings.Count;

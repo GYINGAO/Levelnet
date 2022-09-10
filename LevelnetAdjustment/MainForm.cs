@@ -105,6 +105,11 @@ namespace LevelnetAdjustment {
                 ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Remove(downItem);
                 return;
             }
+            var idx = FindIndexFromTabControl(downItem.Text);
+            if (idx != -1) {
+                tabControl1.SelectedTab = tabControl1.TabPages[idx];
+                return;
+            }
             FileView fileView = new FileView(downItem.Text) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
@@ -176,6 +181,17 @@ namespace LevelnetAdjustment {
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
         }
 
+        int FindIndexFromTabControl(string value) {
+            var pages = tabControl1.TabPages;
+            for (int i = 0; i < pages.Count; i++) {
+                if (pages[i].Text == Path.GetFileName(value)) {
+                    //(tabControl1.TabPages[i].Tag as Form).Focus();
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         /// <summary>
         /// 打开任意文件
         /// </summary>
@@ -190,7 +206,14 @@ namespace LevelnetAdjustment {
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
+                // 不重复打开相同的文件
                 foreach (var item in openFile.FileNames) {
+                    var idx = FindIndexFromTabControl(item);
+                    if (idx != -1) {
+                        tabControl1.SelectedTab = tabControl1.TabPages[idx];
+                        continue;
+                    }
+
                     UpDateMenu(item);
                     FileView fv = new FileView(item) {
                         MdiParent = this,//WindowState = FormWindowState.Maximized,
@@ -566,12 +589,13 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void ToolStripMenuItem_closeothers_Click(object sender, EventArgs e) {
             int index = GetPageIndexWidthPoint(contextMenuStrip1.Left - this.Left);
-            for (int i = 0; i < index; i++) {
-                CloseTabPage(i);
-            }
             for (int i = tabControl1.TabPages.Count - 1; i >= 1; i--) {
                 CloseTabPage(i);
             }
+            for (int i = tabControl1.TabPages.Count - 2; i >= 0; i--) {
+                CloseTabPage(i);
+            }
+
         }
         /// <summary>
         /// 关闭右侧页面
