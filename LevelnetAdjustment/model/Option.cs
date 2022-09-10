@@ -11,6 +11,7 @@ namespace LevelnetAdjustment.model {
         public int PowerMethod { get; set; } = 0; //定权方式 0按距离定权 1按测段数定权
         public double Limit { get; set; } = 0.01; //平差迭代限差 m
         public int AdjustMethod { get; set; } = 0; //平差方法 0约束网平差 1拟稳平差
+        public int UnitRight { get; set; } = 0; //单位权选择 0先验1后验
         // 水准等级
         private int level;
         public int Level {

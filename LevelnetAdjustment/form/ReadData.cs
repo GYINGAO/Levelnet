@@ -23,6 +23,8 @@ namespace LevelnetAdjustment.form {
 
         public event TransfDelegate_2 TransfEvent;
 
+
+
         public ReadData(List<string> fileList, ClevelingAdjust clAdj) {
             this.FileList = fileList;
             this.ClAdj = clAdj;
@@ -93,7 +95,20 @@ namespace LevelnetAdjustment.form {
                 default:
                     break;
             }
+            switch (ClAdj.Options.UnitRight) {
+                case 0:
+                    this.rbtn_before.Checked = true;
+                    break;
+                case 1:
+                    this.rbtn_after.Checked = true;
+                    break;
+                default:
+                    break;
+            }
+
             this.tb_limit.Text = (ClAdj.Options.Limit * 100).ToString();
+            this.textBox1.Visible = rbtn_before.Checked ? true : false;
+            this.textBox1.Text = ClAdj.Options.Sigma.ToString();
         }
 
         void UpdateList() {
@@ -110,6 +125,11 @@ namespace LevelnetAdjustment.form {
                     return;
                 }
                 else {
+                    this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                    this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                    this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
+                    this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                    this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
                     Close();
                     return;
                 }
@@ -149,7 +169,9 @@ namespace LevelnetAdjustment.form {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
             try {
+                MainForm ff = (MainForm)this.Owner;
                 FileList.ForEach(t => {
+                    ff.UpDateMenu(t);
                     switch (Path.GetExtension(t).ToLower()) {
                         case ".dat":
                             FileHelper.ReadDAT(t, RawDatas, ObservedDatas, ClAdj.Options.IsSplit);
@@ -179,6 +201,13 @@ namespace LevelnetAdjustment.form {
                 this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
                 this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
                 this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
+                this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
+
+
+
+
+
 
                 if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
                     this.Close();
@@ -187,6 +216,37 @@ namespace LevelnetAdjustment.form {
             catch (Exception ex) {
                 loading.CloseWaitForm();
                 throw ex;
+            }
+        }
+
+        private void rbtn_before_CheckedChanged(object sender, EventArgs e) {
+            if ((sender as RadioButton).Checked) {
+                this.textBox1.Visible = true;
+            }
+            else {
+                this.textBox1.Visible = false;
+            }
+
+        }
+
+        /// <summary>
+        /// 双击查看文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listBox1_MouseDoubleClick(object sender, MouseEventArgs e) {
+            int index = this.listBox1.IndexFromPoint(e.Location);
+            if (index != ListBox.NoMatches) {
+                FileView fileView = new FileView(listBox1.SelectedItem.ToString()) {
+                    ControlBox = true,
+                    ShowInTaskbar = true,
+                };
+                fileView.Show();
+                MainForm ff = (MainForm)this.Owner;
+                ff.UpDateMenu(listBox1.SelectedItem.ToString());
+            }
+            else {
+                listBox1.SelectedIndex = -1;//不做任何操作，将ListBox的选中项取消
             }
         }
     }

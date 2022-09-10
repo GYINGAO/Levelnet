@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -42,6 +43,7 @@ namespace LevelnetAdjustment {
 
         public List<string> FileList { get; set; } = new List<string>(); //输入文件列表
 
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -54,6 +56,63 @@ namespace LevelnetAdjustment {
         private void MainForm_Load(object sender, EventArgs e) {
             tabControl1.TabPages.Clear();
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
+
+            //添加最近打开的文件
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var settings = config.AppSettings.Settings;
+            if (settings.Count == 0) {
+                return;
+            }
+            ToolStripMenuItem terMenu;
+            foreach (var key in ConfigurationManager.AppSettings.AllKeys) {
+                terMenu = new ToolStripMenuItem {
+                    Name = key,
+                    Text = settings[key].Value
+                };
+                //注册事件
+                terMenu.Click += new EventHandler(terMenu_Click);
+                ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Add(terMenu);
+            }
+        }
+
+        public void UpDateMenu(string value) {
+            string key = ConfigHelper.AddAppSetting(value);
+            if (key == "") {
+                return;
+            }
+            ToolStripMenuItem terMenu = new ToolStripMenuItem {
+                Name = key,
+                Text = value
+            };
+            //注册事件
+            terMenu.Click += new EventHandler(terMenu_Click);
+            ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"])
+                .DropDownItems.Add(terMenu);
+        }
+
+        /// <summary>
+        /// 动态添加子菜单事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void terMenu_Click(object sender, EventArgs e) {
+            ToolStripMenuItem downItem = sender as ToolStripMenuItem;
+            if (!File.Exists(downItem.Text)) {
+                MessageBox.Show("该文件已被删除！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ConfigHelper.DeleteAppSettings(downItem.Name);
+                ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Remove(downItem);
+                return;
+            }
+            FileView fileView = new FileView(downItem.Text) {
+                MdiParent = this,
+                //WindowState = FormWindowState.Maximized,
+                ShowIcon = false,
+                ShowInTaskbar = false,
+                Dock = DockStyle.Fill,
+                FormBorderStyle = FormBorderStyle.None
+            };
+            fileView.Show();
+            AddTabPage(fileView);  // 新建窗体同时新建一个标签
         }
 
 
@@ -66,7 +125,9 @@ namespace LevelnetAdjustment {
         private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
             ReadData rd = new ReadData(FileList, ClAdj);
             rd.TransfEvent += frm_DataTransfEvent;
+            rd.Owner = this;
             rd.ShowDialog();
+
         }
 
         private void frm_DataTransfEvent(List<string> fileList) {
@@ -77,7 +138,6 @@ namespace LevelnetAdjustment {
                     break;
                 }
             }
-
         }
 
         /// <summary>
@@ -119,16 +179,17 @@ namespace LevelnetAdjustment {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_open_Click(object sender, EventArgs e) {
+        private void toolStripMenuItem_choose_Click(object sender, EventArgs e) {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
                 Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
-                "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果结果文件|*.ou4|所有文件(*.*)|*.*",
+               "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果结果文件|*.ou4|所有文件(*.*)|*.*",
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
                 foreach (var item in openFile.FileNames) {
+                    UpDateMenu(item);
                     FileView fv = new FileView(item) {
                         MdiParent = this,//WindowState = FormWindowState.Maximized,
                         ShowIcon = false,
@@ -139,6 +200,18 @@ namespace LevelnetAdjustment {
                     fv.Show();
                     AddTabPage(fv);  // 新建窗体同时新建一个标签
                 }
+            }
+        }
+
+        /// <summary>
+        /// 清空最近打开的文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripMenuItem_clear_Click(object sender, EventArgs e) {
+            ConfigHelper.DelAllSettings();
+            while (((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Count > 2) {
+                ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.RemoveAt(((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Count - 1);
             }
         }
 
@@ -168,6 +241,8 @@ namespace LevelnetAdjustment {
             int i = ClAdj.LS_Adjustment();
             ClAdj.ExportConstraintNetworkResult(OutpathAdj, split, space);
             loading.CloseWaitForm();
+            UpDateMenu(OutpathAdj);
+
             FileView fileView = new FileView(OutpathAdj) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
@@ -250,6 +325,8 @@ namespace LevelnetAdjustment {
                 }
             }
 
+            UpDateMenu(OutpathAdjFree);
+
             FileView fileView = new FileView(OutpathAdjFree) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
@@ -282,6 +359,8 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.CalcClosureError(OutpathClosure, split, space);
                 loading.CloseWaitForm();
+                UpDateMenu(OutpathClosure);
+
                 FileView fileView = new FileView(OutpathClosure) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
@@ -314,6 +393,8 @@ namespace LevelnetAdjustment {
             /* try {*/
             ClAdj.FindGrossError(split, space, OutpathGrossError);
             loading.CloseWaitForm();
+            UpDateMenu(OutpathGrossError);
+
             FileView fileView = new FileView(OutpathGrossError) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
@@ -533,12 +614,13 @@ namespace LevelnetAdjustment {
         }
 
         private void 打开OToolStripButton_Click(object sender, EventArgs e) {
-            toolStripMenuItem_open_Click(sender, e);
+            toolStripMenuItem_choose_Click(sender, e);
         }
 
         private void 帮助LToolStripButton_Click(object sender, EventArgs e) {
             AboutDropItem_Click(sender, e);
         }
+
     }
 }
 
