@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LevelnetAdjustment.model {
+    [Serializable]
     public class RawData {
         public string BackPoint { get; set; } //测站后视点
         public string FrontPoint { get; set; } //测站前视点
@@ -34,6 +35,9 @@ namespace LevelnetAdjustment.model {
 
         public bool IsEnd { get; set; } = false;//是否是终点测站 
         public bool IsStart { get; set; } = false;//是否是起点测站 
+
+        public bool IsFileFinish { get; set; } = false; //是否文件结束
+        public bool IsFileStart { get; set; } = false; //是否文件开始
 
         /// <summary>
         /// 计算高差、视距、观测距离

@@ -77,6 +77,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="filename"></param>
         /// <returns></returns>
         internal static void ReadDAT(string filename, List<RawData> dats, List<ObservedData> ods, bool isSplit) {
+            int ct = dats.Count;
             if (isSplit) {
                 using (StreamReader sr = new StreamReader(filename)) {
                     int stationIdx = 0;//测站索引,记录一个测站观测索引
@@ -98,15 +99,15 @@ namespace LevelnetAdjustment.utils {
                         if (line.Contains("End-Line") || line.Contains("End")) {
                             continue;
                         }
-                        // 不要的测量数据
-                        if (line.Contains("#####")) {
-                            continue;
-                        }
+
                         //整个测站重新测量
                         if (line.Contains("Station repeated")) {
-                            dats.RemoveAt(dats.Count - 1);//移除最后一站
-                            dats.Add(new RawData());
-                            stationIdx = 0;
+                            //判断是否已经增加了一个测站，如果是，移除
+                            if (stationIdx != 0) {
+                                dats.RemoveAt(dats.Count - 1);//移除最后一站
+                                dats.Add(new RawData());
+                                stationIdx = 0;
+                            }
                             continue;
                         }
                         //单次重新测量
@@ -118,6 +119,10 @@ namespace LevelnetAdjustment.utils {
                         var str2 = arr[2].Trim();
                         // 读取测量数据
                         if (str3.Contains("Rb") || str3.Contains("Rf")) {
+                            // 不要的测量数据
+                            if (line.Contains("#####")) {
+                                continue;
+                            }
                             stationIdx++;
                             if (stationIdx == 1) {
                                 dats.Add(new RawData());
@@ -169,10 +174,10 @@ namespace LevelnetAdjustment.utils {
 
                         // 包含测段数的一行，计算测段数据
                         if (str3.Contains("Db") || str3.Contains("Df")) {
-                            dats[dats.Count - 1].IsEnd = true;
                             var arr2 = Regex.Split(arr[2].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
                             int stationNum = int.Parse(arr2[2]);//测段测站数
                             ods[ods.Count - 1].StationNum = stationNum;
+                            dats[dats.Count - 1].IsEnd = true;
                             dats[dats.Count - stationNum].IsStart = true;
                             //ods[ods.Count - 1].End = arr2[1];//测段终点
                             ods[ods.Count - 1].Start = dats[dats.Count - stationNum].BackPoint;
@@ -209,14 +214,15 @@ namespace LevelnetAdjustment.utils {
                         if (line.Contains("End-Line") || line.Contains("End")) {
                             continue;
                         }
-                        // 不要的测量数据
-                        if (line.Contains("#####")) {
-                            continue;
-                        }
+
                         //整个测站重新测量
                         if (line.Contains("Station repeated")) {
-                            dats.RemoveAt(dats.Count - 1);//移除最后一站
-                            dats.Add(new RawData());
+                            //判断是否已经增加了一个测站，如果是，移除
+                            if (stationIdx != 0) {
+                                dats.RemoveAt(dats.Count - 1);//移除最后一站
+                                dats.Add(new RawData());
+                                stationIdx = 0;
+                            }
                             continue;
                         }
                         //单次重新测量
@@ -228,8 +234,11 @@ namespace LevelnetAdjustment.utils {
                         var str2 = arr[2].Trim();
                         // 读取测量数据
                         if (str3.Contains("Rb") || str3.Contains("Rf")) {
+                            // 不要的测量数据
+                            if (line.Contains("#####")) {
+                                continue;
+                            }
                             stationIdx++;
-
                             if (stationIdx == 1) {
                                 dats.Add(new RawData());
                                 ods.Add(new ObservedData());
@@ -275,10 +284,9 @@ namespace LevelnetAdjustment.utils {
                             if (stationIdx == 4) {
                                 dats[dats.Count - 1].Calc();
                                 stationIdx = 0;
-                                if (dats.Count == 1) {
-                                    dats[dats.Count - 1].IsStart = true;
-                                }
                                 ods[ods.Count - 1].StationNum = 1;
+                                dats[dats.Count - 1].IsEnd = true;
+                                dats[dats.Count - 1].IsStart = true;
                                 ods[ods.Count - 1].Start = dats[dats.Count - 1].BackPoint;
                                 ods[ods.Count - 1].End = dats[dats.Count - 1].FrontPoint;
                                 ods[ods.Count - 1].HeightDiff = dats[dats.Count - 1].DiffAve;
@@ -290,9 +298,11 @@ namespace LevelnetAdjustment.utils {
                             continue;
                         }
                     }
-                    dats[dats.Count - 1].IsEnd = true;
+
                 }
             }
+            dats[ct].IsFileStart = true;
+            dats[dats.Count - 1].IsFileFinish = true;
         }
 
         /// <summary>
@@ -305,6 +315,7 @@ namespace LevelnetAdjustment.utils {
         ///  https://totalopenstation.readthedocs.io/en/stable/input_formats/if_leica_gsi.html
         internal static void ReadGSI(string filename, List<RawData> rds, List<ObservedData> ods, List<PointData> kps, bool isSplit) {
             try {
+                int ct = rds.Count;
                 if (isSplit) {
                     using (StreamReader sr = new StreamReader(filename)) {
                         string method; //观测方式
@@ -480,15 +491,16 @@ namespace LevelnetAdjustment.utils {
                                     }
                                     ods[ods.Count - 1].HeightDiff = totalDiffend;
                                     ods[ods.Count - 1].Distance = totalDisend;
+                                    rds[rds.Count - 1].IsEnd = true;
+                                    rds[rds.Count - stationNum].IsStart = true;
                                 }
                             }
 
                         }
-                        rds[rds.Count - 1].IsEnd = true;
-                        rds[rds.Count - totalStation].IsStart = true;
                     }
                 }
-
+                rds[ct].IsFileStart = true;
+                rds[rds.Count - 1].IsFileFinish = true;
             }
             catch (Exception) {
                 throw new Exception("文件格式有误，读取失败");

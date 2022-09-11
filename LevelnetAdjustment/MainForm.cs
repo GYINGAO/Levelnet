@@ -217,9 +217,9 @@ namespace LevelnetAdjustment {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "所有文件(*.*)|*.*|COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
-               "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果文件|*.ou4",
-                FilterIndex = 1,
+                Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
+               "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果文件|*.ou4|所有文件(*.*)|*.*",
+                FilterIndex = 8,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
                 // 不重复打开相同的文件
@@ -488,14 +488,14 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                try {
-                    ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName);
-                    loading.CloseWaitForm();
-                }
-                catch (Exception ex) {
-                    loading.CloseWaitForm();
-                    throw ex;
-                }
+                /* try {*/
+                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName, ClAdj.Options.FileList);
+                loading.CloseWaitForm();
+                /*           }
+                           catch (Exception ex) {
+                               loading.CloseWaitForm();
+                               throw ex;
+                           }*/
 
                 MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -710,21 +710,6 @@ namespace LevelnetAdjustment {
             }
             System.Diagnostics.Process.Start(helpFile);
         }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) {
-            if (this.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-                this.WindowState = System.Windows.Forms.FormWindowState.Normal;
-        }
-
-        private void 退出ToolStripMenuItem_Click(object sender, EventArgs e) {
-            Application.ExitThread();
-        }
-
-        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (this.WindowState == System.Windows.Forms.FormWindowState.Minimized)
-                this.WindowState = System.Windows.Forms.FormWindowState.Normal;
-        }
-
         private void timer1_Tick(object sender, EventArgs e) {
             this.toolStripStatusLabel3.Text = "系统当前时间：" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }

@@ -36,7 +36,8 @@ namespace LevelnetAdjustment.form {
                 Multiselect = true,
                 Title = "打开",
                 Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|已知点文件|*.txt|所有文件(*.*)|*.*",
-                FilterIndex = 1,
+                FilterIndex = 5,
+                RestoreDirectory = true,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
                 foreach (var item in openFile.FileNames) {

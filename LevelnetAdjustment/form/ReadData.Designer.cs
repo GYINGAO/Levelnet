@@ -50,9 +50,9 @@ namespace LevelnetAdjustment.form {
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.清空ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsSplit = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.清空ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -333,6 +333,7 @@ namespace LevelnetAdjustment.form {
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -352,26 +353,25 @@ namespace LevelnetAdjustment.form {
             this.dataGridView1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dataGridView1_KeyUp);
             this.dataGridView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseClick);
             // 
-            // FileName
-            // 
-            this.FileName.FillWeight = 450F;
-            this.FileName.HeaderText = "文件路径";
-            this.FileName.Name = "FileName";
-            this.FileName.ReadOnly = true;
-            this.FileName.Width = 506;
-            // 
-            // IsSplit
-            // 
-            this.IsSplit.HeaderText = "是否按测段分割";
-            this.IsSplit.Name = "IsSplit";
-            this.IsSplit.Width = 113;
-            // 
             // 清空ToolStripMenuItem
             // 
             this.清空ToolStripMenuItem.Name = "清空ToolStripMenuItem";
             this.清空ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.清空ToolStripMenuItem.Text = "清空";
             this.清空ToolStripMenuItem.Click += new System.EventHandler(this.清空ToolStripMenuItem_Click);
+            // 
+            // FileName
+            // 
+            this.FileName.FillWeight = 450F;
+            this.FileName.HeaderText = "文件路径";
+            this.FileName.Name = "FileName";
+            this.FileName.ReadOnly = true;
+            // 
+            // IsSplit
+            // 
+            this.IsSplit.HeaderText = "是否按测段分割";
+            this.IsSplit.Name = "IsSplit";
+            this.IsSplit.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 
             // ReadData
             // 
@@ -432,8 +432,8 @@ namespace LevelnetAdjustment.form {
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.ToolStripMenuItem 清空ToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsSplit;
-        private System.Windows.Forms.ToolStripMenuItem 清空ToolStripMenuItem;
     }
 }
