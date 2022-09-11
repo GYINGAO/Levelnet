@@ -225,6 +225,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="model\Closure.cs" />
+    <Compile Include="model\FileOption.cs" />
     <Compile Include="model\RawData.cs" />
     <Compile Include="model\PointData.cs" />
     <Compile Include="model\ObservedData.cs" />

@@ -43,7 +43,6 @@ namespace LevelnetAdjustment {
 
         public static bool flag = true;
 
-        public List<string> FileList { get; set; } = new List<string>(); //输入文件列表
 
 
         /// <summary>
@@ -148,18 +147,18 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
-            ReadData rd = new ReadData(FileList, ClAdj);
+            ReadData rd = new ReadData(ClAdj);
             rd.TransfEvent += frm_DataTransfEvent;
             rd.Owner = this;
             rd.ShowDialog();
 
         }
 
-        private void frm_DataTransfEvent(List<string> fileList) {
-            this.FileList = fileList;
+        private void frm_DataTransfEvent(List<FileOption> fileList) {
+            // 更新文件存储路径
             for (int i = 0; i < fileList.Count; i++) {
-                if (Path.GetExtension(fileList[i].ToLower()) != ".txt") {
-                    FilePath = fileList[i];
+                if (Path.GetExtension(fileList[i].FileName.ToLower()) != ".txt") {
+                    FilePath = fileList[i].FileName;
                     break;
                 }
             }
@@ -194,7 +193,6 @@ namespace LevelnetAdjustment {
             for (int i = childCollection.Count; i-- > 0;) {
                 if (childCollection[i].Name != this.Name) childCollection[i].Close();
             }
-            FileList = new List<string>();
             tabControl1.TabPages.Clear();
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
         }

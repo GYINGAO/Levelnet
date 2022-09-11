@@ -48,9 +48,7 @@ namespace LevelnetAdjustment.model {
                 coefficient = c;
             }
         }
-
-        public bool IsSplit { get; set; } = true; //导入原始数据时是否分割测段,默认分割
-
+        public List<FileOption> FileList { get; set; } = new List<FileOption>(); //文件列表
         public Option() {
             this.Level = 2;
         }
