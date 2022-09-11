@@ -278,28 +278,28 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            /*try {*/
-            int i = ClAdj.LS_Adjustment();
-            ClAdj.ExportAdjustResult(OutpathAdj, split, space, "约束网");
-            loading.CloseWaitForm();
-            UpDateMenu(OutpathAdj);
+            try {
+                int i = ClAdj.LS_Adjustment();
+                ClAdj.ExportAdjustResult(OutpathAdj, split, space, "约束网");
+                loading.CloseWaitForm();
+                UpDateMenu(OutpathAdj);
 
-            FileView fileView = new FileView(OutpathAdj) {
-                MdiParent = this,
-                //WindowState = FormWindowState.Maximized,
-                ShowIcon = false,
-                ShowInTaskbar = false,
-                Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None
-            };
-            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
-            AddTabPage(fileView);  // 新建窗体同时新建一个标签
-            /* }
-             catch (Exception ex) {
-                 loading.CloseWaitForm();
-                 throw ex;
-             }*/
+                FileView fileView = new FileView(OutpathAdj) {
+                    MdiParent = this,
+                    //WindowState = FormWindowState.Maximized,
+                    ShowIcon = false,
+                    ShowInTaskbar = false,
+                    Dock = DockStyle.Fill,
+                    FormBorderStyle = FormBorderStyle.None
+                };
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+                AddTabPage(fileView);  // 新建窗体同时新建一个标签
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
 
         }
 
@@ -431,27 +431,27 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
 
-            /* try {*/
-            ClAdj.FindGrossError(split, space, OutpathGrossError);
-            loading.CloseWaitForm();
-            UpDateMenu(OutpathGrossError);
+            try {
+                ClAdj.FindGrossError(split, space, OutpathGrossError);
+                loading.CloseWaitForm();
+                UpDateMenu(OutpathGrossError);
 
-            FileView fileView = new FileView(OutpathGrossError) {
-                MdiParent = this,
-                //WindowState = FormWindowState.Maximized,
-                ShowIcon = false,
-                ShowInTaskbar = false,
-                Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None
-            };
-            MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
-            AddTabPage(fileView);  // 新建窗体同时新建一个标签
-            /*        }
-                    catch (Exception ex) {
-                        loading.CloseWaitForm();
-                        throw ex;
-                    }*/
+                FileView fileView = new FileView(OutpathGrossError) {
+                    MdiParent = this,
+                    //WindowState = FormWindowState.Maximized,
+                    ShowIcon = false,
+                    ShowInTaskbar = false,
+                    Dock = DockStyle.Fill,
+                    FormBorderStyle = FormBorderStyle.None
+                };
+                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileView.Show();
+                AddTabPage(fileView);  // 新建窗体同时新建一个标签
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
 
         }
 
@@ -488,14 +488,14 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
-                /* try {*/
-                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName, ClAdj.Options.FileList);
-                loading.CloseWaitForm();
-                /*           }
-                           catch (Exception ex) {
-                               loading.CloseWaitForm();
-                               throw ex;
-                           }*/
+                try {
+                    ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName, ClAdj.Options.FileList);
+                    loading.CloseWaitForm();
+                }
+                catch (Exception ex) {
+                    loading.CloseWaitForm();
+                    throw ex;
+                }
 
                 MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

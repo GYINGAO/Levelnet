@@ -276,8 +276,10 @@ namespace LevelnetAdjustment.form {
         }
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-
-            // UpdateList();
+            if (e.ColumnIndex != 1) {
+                return;
+            }
+            IsFileChange = true;
         }
 
         /// <summary>
