@@ -129,7 +129,7 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(160, 22);
             this.NewDropItem.Text = "新建";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
@@ -140,7 +140,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear,
             this.toolStripSeparator1});
             this.toolStripMenuItem_open.Name = "toolStripMenuItem_open";
-            this.toolStripMenuItem_open.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_open.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_open.Text = "打开";
             // 
             // toolStripMenuItem_choose
@@ -165,26 +165,26 @@ namespace LevelnetAdjustment {
             // toolStripMenuItem_read
             // 
             this.toolStripMenuItem_read.Name = "toolStripMenuItem_read";
-            this.toolStripMenuItem_read.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_read.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_read.Text = "数据输入与设置";
             this.toolStripMenuItem_read.Click += new System.EventHandler(this.toolStripMenuItem_read_Click);
             // 
             // ClearDropItem
             // 
             this.ClearDropItem.Name = "ClearDropItem";
-            this.ClearDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ClearDropItem.Size = new System.Drawing.Size(160, 22);
             this.ClearDropItem.Text = "清空数据";
             this.ClearDropItem.Click += new System.EventHandler(this.ClearDropItem_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(157, 6);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(160, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
@@ -301,7 +301,7 @@ namespace LevelnetAdjustment {
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1179, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1184, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemAdded += new System.Windows.Forms.ToolStripItemEventHandler(this.menuStrip1_ItemAdded);
@@ -316,7 +316,7 @@ namespace LevelnetAdjustment {
             this.帮助LToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1179, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1184, 25);
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -366,7 +366,7 @@ namespace LevelnetAdjustment {
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(1179, 24);
+            this.tabControl1.Size = new System.Drawing.Size(1184, 24);
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 6;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
@@ -377,7 +377,7 @@ namespace LevelnetAdjustment {
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1171, 0);
+            this.tabPage1.Size = new System.Drawing.Size(1176, 0);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -388,9 +388,9 @@ namespace LevelnetAdjustment {
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 663);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 669);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1179, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1184, 22);
             this.statusStrip1.TabIndex = 9;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -404,7 +404,7 @@ namespace LevelnetAdjustment {
             // 
             this.toolStripStatusLabel2.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)));
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(1024, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(1029, 17);
             this.toolStripStatusLabel2.Spring = true;
             // 
             // toolStripStatusLabel3
@@ -421,7 +421,7 @@ namespace LevelnetAdjustment {
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ClientSize = new System.Drawing.Size(1179, 685);
+            this.ClientSize = new System.Drawing.Size(1184, 691);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.toolStrip1);
@@ -431,10 +431,12 @@ namespace LevelnetAdjustment {
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(2);
+            this.MinimumSize = new System.Drawing.Size(1200, 730);
             this.Name = "MainForm";
             this.Text = "水准网平差程序";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.MdiChildActivate += new System.EventHandler(this.MainForm_MdiChildActivate);
             this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

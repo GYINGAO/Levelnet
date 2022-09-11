@@ -51,6 +51,15 @@ namespace LevelnetAdjustment {
         public MainForm() {
             InitializeComponent();
             ClAdj = new ClevelingAdjust();
+            this.DoubleBuffered = true;//设置本窗体
+
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true); // 禁止擦除背景.
+            SetStyle(ControlStyles.DoubleBuffer, true); // 双缓冲
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+            this.UpdateStyles();
         }
 
 
@@ -92,6 +101,10 @@ namespace LevelnetAdjustment {
                 terMenu.Click += new EventHandler(terMenu_Click);
                 ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Add(terMenu);
             }
+
+            this.BackgroundImage = Properties.Resources.backgroundimage;
+            this.BackgroundImageLayout = ImageLayout.Stretch;
+
         }
 
         public void UpDateMenu(string value) {
@@ -133,7 +146,7 @@ namespace LevelnetAdjustment {
                 ShowIcon = false,
                 ShowInTaskbar = false,
                 Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None
+                FormBorderStyle = FormBorderStyle.None,
             };
             fileView.Show();
             AddTabPage(fileView);  // 新建窗体同时新建一个标签
@@ -176,7 +189,7 @@ namespace LevelnetAdjustment {
                 ShowIcon = false,
                 ShowInTaskbar = false,
                 Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None
+                FormBorderStyle = FormBorderStyle.None,
             };
             fileView.Show();
             AddTabPage(fileView);  // 新建窗体同时新建一个标签
@@ -236,7 +249,7 @@ namespace LevelnetAdjustment {
                         ShowIcon = false,
                         ShowInTaskbar = false,
                         Dock = DockStyle.Fill,
-                        FormBorderStyle = FormBorderStyle.None
+                        FormBorderStyle = FormBorderStyle.None,
                     };
                     fv.Show();
                     AddTabPage(fv);  // 新建窗体同时新建一个标签
@@ -290,7 +303,7 @@ namespace LevelnetAdjustment {
                     ShowIcon = false,
                     ShowInTaskbar = false,
                     Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
+                    FormBorderStyle = FormBorderStyle.None,
                 };
                 MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 fileView.Show();
@@ -374,7 +387,7 @@ namespace LevelnetAdjustment {
                 ShowIcon = false,
                 ShowInTaskbar = false,
                 Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None
+                FormBorderStyle = FormBorderStyle.None,
             };
             MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             fileView.Show();
@@ -408,7 +421,7 @@ namespace LevelnetAdjustment {
                     ShowIcon = false,
                     ShowInTaskbar = false,
                     Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
+                    FormBorderStyle = FormBorderStyle.None,
                 };
                 MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 fileView.Show();
@@ -442,7 +455,7 @@ namespace LevelnetAdjustment {
                     ShowIcon = false,
                     ShowInTaskbar = false,
                     Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None
+                    FormBorderStyle = FormBorderStyle.None,
                 };
                 MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 fileView.Show();
@@ -455,16 +468,6 @@ namespace LevelnetAdjustment {
 
         }
 
-        /// <summary>
-        /// 打开设置窗体
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OptionDropItem_Click(object sender, EventArgs e) {
-            Setting setting = new Setting(ClAdj.Options);
-            setting.TransfEvent += frm_SettingTransfEvent;
-            setting.ShowDialog();
-        }
         #endregion
 
         #region 导出报表
@@ -572,6 +575,10 @@ namespace LevelnetAdjustment {
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
             if (tabControl1.SelectedIndex > -1)
                 (tabControl1.TabPages[tabControl1.SelectedIndex].Tag as Form).Focus();
+            else {
+                this.BackgroundImage = Properties.Resources.backgroundimage;
+                this.BackgroundImageLayout = ImageLayout.Stretch;
+            }
         }
 
         /// <summary>
@@ -713,6 +720,19 @@ namespace LevelnetAdjustment {
         private void timer1_Tick(object sender, EventArgs e) {
             this.toolStripStatusLabel3.Text = "系统当前时间：" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
+
+        private void MainForm_MdiChildActivate(object sender, EventArgs e) {
+
+            this.BackgroundImage = null;
+
+        }
+
+        //public void AddBackgroundImage() {
+        //    if (tabControl1.TabPages.Count == 0) {
+        //        BackgroundImage = Properties.Resources.railway_g348c724a4_1920;
+        //        this.Refresh();
+        //    }
+        //}
     }
 }
 

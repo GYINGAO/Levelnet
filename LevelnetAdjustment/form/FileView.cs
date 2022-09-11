@@ -10,9 +10,9 @@ using System.Windows.Forms;
 using System.IO;
 
 namespace LevelnetAdjustment.form {
+
     public partial class FileView : Form {
         private bool kd = false;
-
         public FileView(string _filePath) {
             InitializeComponent();
             this.FilePath = _filePath;

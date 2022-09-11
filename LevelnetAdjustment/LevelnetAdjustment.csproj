@@ -311,9 +311,6 @@
     <Folder Include="control\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\railway-g348c724a4_1920.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\close.png" />
   </ItemGroup>
   <ItemGroup>
@@ -321,6 +318,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\backgroundimage.png" />
     <None Include="Resources\帮助中心编辑.png" />
     <None Include="Resources\about2.png" />
     <None Include="Resources\TXT.png" />

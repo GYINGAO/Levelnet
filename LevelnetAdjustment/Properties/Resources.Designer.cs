@@ -83,6 +83,16 @@ namespace LevelnetAdjustment.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap backgroundimage {
+            get {
+                object obj = ResourceManager.GetObject("backgroundimage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap clear {
             get {
                 object obj = ResourceManager.GetObject("clear", resourceCulture);
@@ -166,16 +176,6 @@ namespace LevelnetAdjustment.Properties {
         internal static System.Drawing.Bitmap open {
             get {
                 object obj = ResourceManager.GetObject("open", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
-        /// </summary>
-        internal static System.Drawing.Bitmap railway_g348c724a4_1920 {
-            get {
-                object obj = ResourceManager.GetObject("railway_g348c724a4_1920", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
