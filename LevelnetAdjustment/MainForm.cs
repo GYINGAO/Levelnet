@@ -59,6 +59,24 @@ namespace LevelnetAdjustment {
             tabControl1.TabPages.Clear();
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
 
+            //修改其显示为当前时间
+            this.toolStripStatusLabel3.Text = "系统当前时间：" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            //对timer1进行相关设置
+            this.timer1.Interval = 1000;
+            this.timer1.Start();
+
+            //设置菜单图标
+            menuStrip1.RenderMode = ToolStripRenderMode.Professional;
+            NewDropItem.Image = Properties.Resources._new;
+            toolStripMenuItem_open.Image = Properties.Resources.open;
+            toolStripMenuItem_read.Image = Properties.Resources.import2;
+            ClearDropItem.Image = Properties.Resources.clear;
+            ExitDropItem.Image = Properties.Resources.close2;
+            COSADropItem.Image = Properties.Resources.TXT;
+            HandbookDropItem.Image = Properties.Resources.excel_01;
+            AboutDropItem.Image = Properties.Resources.about2;
+            使用说明ToolStripMenuItem.Image = Properties.Resources.帮助中心编辑;
+
             //添加最近打开的文件
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = config.AppSettings.Settings;
@@ -201,8 +219,8 @@ namespace LevelnetAdjustment {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
-               "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果结果文件|*.ou4|所有文件(*.*)|*.*",
+                Filter = "所有文件(*.*)|*.*|COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
+               "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果文件|*.ou4",
                 FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
@@ -693,6 +711,24 @@ namespace LevelnetAdjustment {
                 ByteHelper.WriteByteToFile(Properties.Resources.help, helpFile);
             }
             System.Diagnostics.Process.Start(helpFile);
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (this.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                this.WindowState = System.Windows.Forms.FormWindowState.Normal;
+        }
+
+        private void 退出ToolStripMenuItem_Click(object sender, EventArgs e) {
+            Application.ExitThread();
+        }
+
+        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (this.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                this.WindowState = System.Windows.Forms.FormWindowState.Normal;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e) {
+            this.toolStripStatusLabel3.Text = "系统当前时间：" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
     }
 }

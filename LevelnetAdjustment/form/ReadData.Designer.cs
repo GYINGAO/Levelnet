@@ -350,7 +350,7 @@ namespace LevelnetAdjustment.form {
             this.MinimumSize = new System.Drawing.Size(200, 200);
             this.Name = "ReadData";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "数据输入与选项";
+            this.Text = "数据输入与设置";
             this.Load += new System.EventHandler(this.ReadData_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);

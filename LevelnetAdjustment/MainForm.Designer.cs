@@ -63,10 +63,21 @@ namespace LevelnetAdjustment {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.打开ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.退出ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -123,7 +134,7 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(160, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
             this.NewDropItem.Text = "新建";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
@@ -134,7 +145,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear,
             this.toolStripSeparator1});
             this.toolStripMenuItem_open.Name = "toolStripMenuItem_open";
-            this.toolStripMenuItem_open.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_open.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_open.Text = "打开";
             // 
             // toolStripMenuItem_choose
@@ -159,26 +170,26 @@ namespace LevelnetAdjustment {
             // toolStripMenuItem_read
             // 
             this.toolStripMenuItem_read.Name = "toolStripMenuItem_read";
-            this.toolStripMenuItem_read.Size = new System.Drawing.Size(160, 22);
-            this.toolStripMenuItem_read.Text = "数据读取与设置";
+            this.toolStripMenuItem_read.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_read.Text = "数据输入与设置";
             this.toolStripMenuItem_read.Click += new System.EventHandler(this.toolStripMenuItem_read_Click);
             // 
             // ClearDropItem
             // 
             this.ClearDropItem.Name = "ClearDropItem";
-            this.ClearDropItem.Size = new System.Drawing.Size(160, 22);
+            this.ClearDropItem.Size = new System.Drawing.Size(180, 22);
             this.ClearDropItem.Text = "清空数据";
             this.ClearDropItem.Click += new System.EventHandler(this.ClearDropItem_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(160, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
@@ -272,14 +283,14 @@ namespace LevelnetAdjustment {
             // AboutDropItem
             // 
             this.AboutDropItem.Name = "AboutDropItem";
-            this.AboutDropItem.Size = new System.Drawing.Size(180, 22);
+            this.AboutDropItem.Size = new System.Drawing.Size(124, 22);
             this.AboutDropItem.Text = "关于";
             this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
             // 
             // 使用说明ToolStripMenuItem
             // 
             this.使用说明ToolStripMenuItem.Name = "使用说明ToolStripMenuItem";
-            this.使用说明ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.使用说明ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.使用说明ToolStripMenuItem.Text = "使用说明";
             this.使用说明ToolStripMenuItem.Click += new System.EventHandler(this.使用说明ToolStripMenuItem_Click);
             // 
@@ -376,12 +387,77 @@ namespace LevelnetAdjustment {
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip2;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "水准网平差软件";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.打开ToolStripMenuItem,
+            this.退出ToolStripMenuItem});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(101, 48);
+            // 
+            // 打开ToolStripMenuItem
+            // 
+            this.打开ToolStripMenuItem.Name = "打开ToolStripMenuItem";
+            this.打开ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.打开ToolStripMenuItem.Text = "打开";
+            this.打开ToolStripMenuItem.Click += new System.EventHandler(this.打开ToolStripMenuItem_Click);
+            // 
+            // 退出ToolStripMenuItem
+            // 
+            this.退出ToolStripMenuItem.Name = "退出ToolStripMenuItem";
+            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.退出ToolStripMenuItem.Text = "退出";
+            this.退出ToolStripMenuItem.Click += new System.EventHandler(this.退出ToolStripMenuItem_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel3});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 663);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1179, 22);
+            this.statusStrip1.TabIndex = 9;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(140, 17);
+            this.toolStripStatusLabel1.Text = "欢迎使用水准网平差软件";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)));
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(1024, 17);
+            this.toolStripStatusLabel2.Spring = true;
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(0, 17);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(1179, 685);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -400,6 +476,9 @@ namespace LevelnetAdjustment {
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -443,6 +522,15 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_closeright;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_closeall;
         private System.Windows.Forms.HelpProvider helpProvider1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem 打开ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 退出ToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

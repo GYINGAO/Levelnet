@@ -63,6 +63,36 @@ namespace LevelnetAdjustment.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap _new {
+            get {
+                object obj = ResourceManager.GetObject("new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap about2 {
+            get {
+                object obj = ResourceManager.GetObject("about2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap clear {
+            get {
+                object obj = ResourceManager.GetObject("clear", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap close {
             get {
                 object obj = ResourceManager.GetObject("close", resourceCulture);
@@ -81,12 +111,42 @@ namespace LevelnetAdjustment.Properties {
         }
         
         /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap close2 {
+            get {
+                object obj = ResourceManager.GetObject("close2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap excel_01 {
+            get {
+                object obj = ResourceManager.GetObject("excel-01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
         internal static byte[] help {
             get {
                 object obj = ResourceManager.GetObject("help", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap import2 {
+            get {
+                object obj = ResourceManager.GetObject("import2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -103,9 +163,29 @@ namespace LevelnetAdjustment.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap open {
+            get {
+                object obj = ResourceManager.GetObject("open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap railway_g348c724a4_1920 {
             get {
                 object obj = ResourceManager.GetObject("railway_g348c724a4_1920", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap TXT {
+            get {
+                object obj = ResourceManager.GetObject("TXT", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -126,6 +206,16 @@ namespace LevelnetAdjustment.Properties {
         internal static System.Drawing.Bitmap wallhaven_qd667r_2560x20481 {
             get {
                 object obj = ResourceManager.GetObject("wallhaven-qd667r_2560x20481", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap 帮助中心编辑 {
+            get {
+                object obj = ResourceManager.GetObject("帮助中心编辑", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -154,7 +154,7 @@ namespace LevelnetAdjustment.form {
 
             for (int i = 0; i < FileList.Count; i++) {
                 string ext = Path.GetExtension(FileList[i]).ToLower();
-                if (ext.Contains(".dat") && ext.Contains(".gsi")) {
+                if (ext.Contains("dat") || ext.Contains("gsi")) {
                     var res = MessageBox.Show("是否按测段分割？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                     if (res == DialogResult.Yes) {
                         ClAdj.Options.IsSplit = true;
