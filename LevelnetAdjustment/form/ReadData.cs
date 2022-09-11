@@ -187,10 +187,8 @@ namespace LevelnetAdjustment.form {
             loading.ShowLoading();
             try {
                 MainForm ff = (MainForm)this.Owner;
-
-
                 foreach (DataGridViewRow row in dataGridView1.Rows) {
-                    string fileName = (string)row.Cells["FileName"].Value;
+                    string fileName = row.Cells["FileName"].Value.ToString();
                     bool isSplit = (bool)row.Cells["IsSplit"].Value;
                     ff.UpDateMenu(fileName);
                     switch (Path.GetExtension(fileName).ToLower()) {
@@ -271,7 +269,7 @@ namespace LevelnetAdjustment.form {
                 };
                 fileView.ShowDialog();
                 MainForm ff = (MainForm)this.Owner;
-                ff.UpDateMenu(row.Cells["FileName"].ToString());
+                ff.UpDateMenu(row.Cells["FileName"].Value.ToString());
             }
         }
 
