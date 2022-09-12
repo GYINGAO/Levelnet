@@ -21,6 +21,8 @@ namespace LevelnetAdjustment {
 
         public static bool flag = true;
 
+        public bool IsImport { get; set; } = false;
+
 
 
         /// <summary>
@@ -135,7 +137,12 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
             ReadData rd = new ReadData(ClAdj, Project);
+            rd.TransfEvent += ChangeImportState();
             rd.ShowDialog();
+        }
+
+        private void ChangeImportState() {
+            this.IsImport = true;
         }
 
 
@@ -241,6 +248,9 @@ namespace LevelnetAdjustment {
         /// 保存项目
         /// </summary>
         private void SaveProject() {
+            if (!IsImport) {
+                return;
+            }
             Project.StablePoints = ClAdj.StablePoints;
             Project.Options = ClAdj.Options;
             Project.RawDatas = ClAdj.RawDatas;

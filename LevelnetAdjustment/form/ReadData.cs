@@ -8,12 +8,14 @@ using System.IO;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment.form {
-
+    public delegate void TransfDelegate();
     public partial class ReadData : Form {
         public ClevelingAdjust ClAdj { get; set; }
         public string ProjDir { get; set; }
 
         public bool IsFileChange { get; set; } = false;
+
+        public event TransfDelegate TransfEvent;
 
         public ReadData(ClevelingAdjust clAdj, ProjectInfo project) {
             this.ClAdj = clAdj;
@@ -223,7 +225,7 @@ namespace LevelnetAdjustment.form {
                 this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
                 UpdateList();
                 loading.CloseWaitForm();
-
+                TransEvent();
                 if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
                     this.Close();
                 }
