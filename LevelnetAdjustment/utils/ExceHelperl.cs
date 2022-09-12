@@ -51,7 +51,7 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="rds"></param>
         /// <param name="ods"></param>
-        internal static void ExportHandbook(List<RawData> rds, List<ObservedData> ods, string path, List<FileOption> files) {
+        internal static void ExportHandbook(List<RawData> rds, List<ObservedData> ods, string path, List<InputFile> files) {
 
 
             IWorkbook workbook;

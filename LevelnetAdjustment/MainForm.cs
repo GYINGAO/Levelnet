@@ -26,19 +26,18 @@ namespace LevelnetAdjustment {
             get => filePath;
             set {
                 filePath = value;
-                OutpathAdj = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "约束网平差结果.ou3");
-                OutpathAdjFree = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "拟稳平差结果.ou4");
-                OutpathClosure = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "闭合差计算结果.ou1");
-                OutpathGrossError = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "粗差探测结果.ou2");
+                ClAdj.Options.OutputFiles = new OutputFile {
+                    OutpathAdj = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "约束网平差结果.ou3"),
+                    OutpathAdjFree = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "拟稳平差结果.ou4"),
+                    OutpathClosure = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "闭合差计算结果.ou1"),
+                    OutpathGrossError = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "粗差探测结果.ou2"),
+                };
             }
         }
         // 输出文件格式
         public readonly string split = new string('-', 80);
         public readonly string space = new string(' ', 30);
-        public string OutpathClosure { get; set; } = "";// 闭合差文件输出路径
-        public string OutpathGrossError { get; set; } // 粗差探测结果
-        public string OutpathAdj { get; set; } = "";// 平差文件输出路径
-        public string OutpathAdjFree { get; set; } = "";// 平差文件输出路径
+
         public ClevelingAdjust ClAdj { get; set; }
 
         public static bool flag = true;
@@ -167,7 +166,7 @@ namespace LevelnetAdjustment {
 
         }
 
-        private void frm_DataTransfEvent(List<FileOption> fileList) {
+        private void frm_DataTransfEvent(List<InputFile> fileList) {
             // 更新文件存储路径
             for (int i = 0; i < fileList.Count; i++) {
                 if (Path.GetExtension(fileList[i].FileName.ToLower()) != ".txt") {
@@ -281,7 +280,7 @@ namespace LevelnetAdjustment {
             if (ClAdj.ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-            if (File.Exists(OutpathAdj)) {
+            if (File.Exists(ClAdj.Options.OutputFiles.OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -293,11 +292,11 @@ namespace LevelnetAdjustment {
             loading.ShowLoading();
             try {
                 int i = ClAdj.LS_Adjustment();
-                ClAdj.ExportAdjustResult(OutpathAdj, split, space, "约束网");
+                ClAdj.ExportAdjustResult(ClAdj.Options.OutputFiles.OutpathAdj, split, space, "约束网");
                 loading.CloseWaitForm();
-                UpDateMenu(OutpathAdj);
+                UpDateMenu(ClAdj.Options.OutputFiles.OutpathAdj);
 
-                FileView fileView = new FileView(OutpathAdj) {
+                FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathAdj) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -325,7 +324,7 @@ namespace LevelnetAdjustment {
             if (ClAdj.ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-            if (File.Exists(OutpathAdjFree)) {
+            if (File.Exists(ClAdj.Options.OutputFiles.OutpathAdjFree)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -350,7 +349,7 @@ namespace LevelnetAdjustment {
                         ClAdj.CalcApproximateHeight();
                         FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
                         i = ClAdj.QuasiStable();
-                        ClAdj.ExportAdjustResult(OutpathAdjFree, split, space, "拟稳");
+                        ClAdj.ExportAdjustResult(ClAdj.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
                         loading.CloseWaitForm();
                     }
                     catch (Exception ex) {
@@ -370,7 +369,7 @@ namespace LevelnetAdjustment {
                 loading.ShowLoading();
                 try {
                     i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportAdjustResult(OutpathAdjFree, split, space, "自由网");
+                    ClAdj.ExportAdjustResult(ClAdj.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
                     loading.CloseWaitForm();
                 }
                 catch (Exception ex) {
@@ -379,9 +378,9 @@ namespace LevelnetAdjustment {
                 }
             }
 
-            UpDateMenu(OutpathAdjFree);
+            UpDateMenu(ClAdj.Options.OutputFiles.OutpathAdjFree);
 
-            FileView fileView = new FileView(OutpathAdjFree) {
+            FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathAdjFree) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
                 ShowIcon = false,
@@ -400,7 +399,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
-            if (File.Exists(OutpathClosure)) {
+            if (File.Exists(ClAdj.Options.OutputFiles.OutpathClosure)) {
                 if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -411,11 +410,11 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
             try {
-                ClAdj.CalcClosureError(OutpathClosure, split, space);
+                ClAdj.CalcClosureError(ClAdj.Options.OutputFiles.OutpathClosure, split, space);
                 loading.CloseWaitForm();
-                UpDateMenu(OutpathClosure);
+                UpDateMenu(ClAdj.Options.OutputFiles.OutpathClosure);
 
-                FileView fileView = new FileView(OutpathClosure) {
+                FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathClosure) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -445,11 +444,11 @@ namespace LevelnetAdjustment {
             loading.ShowLoading();
 
             try {
-                ClAdj.FindGrossError(split, space, OutpathGrossError);
+                ClAdj.FindGrossError(split, space, ClAdj.Options.OutputFiles.OutpathGrossError);
                 loading.CloseWaitForm();
-                UpDateMenu(OutpathGrossError);
+                UpDateMenu(ClAdj.Options.OutputFiles.OutpathGrossError);
 
-                FileView fileView = new FileView(OutpathGrossError) {
+                FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathGrossError) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,

@@ -145,6 +145,9 @@ namespace LevelnetAdjustment.utils {
         /// 计算近似高程
         /// </summary>
         public void CalcApproximateHeight() {
+            if (knownPoints.Count == 0) {
+                throw new Exception("未导入已知点");
+            }
             List<PointData> AllPoints_old = Commom.Clone(KnownPoints);
             UnknownPoints = new List<PointData>();
             int count = 0;
@@ -647,8 +650,10 @@ namespace LevelnetAdjustment.utils {
             strClosure.AppendLine(split);
             strClosure.AppendLine(space + "附合路线闭合差计算结果");
             strClosure.AppendLine(split);
-            if (m_knPnumber < 2)
+            if (m_knPnumber == 1)
                 return strClosure.AppendLine("已知点数小于2").ToString(); // 已知点数小于2
+            if (m_knPnumber <= 0)
+                return strClosure.AppendLine("未导入已知点").ToString(); // 已知点数等于0
             int[] neighbor = new int[m_Pnumber];       //邻接点数组
             double[] diff = new double[m_Pnumber]; //高差累加值数组
             double[] S = new double[m_Pnumber];    //路线长累加值数组

@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace LevelnetAdjustment.form {
     //声明委托 和 事件
-    public delegate void TransfDelegate_2(List<FileOption> fileList);
+    public delegate void TransfDelegate_2(List<InputFile> fileList);
     public partial class ReadData : Form {
         public ClevelingAdjust ClAdj { get; set; }
 
@@ -35,8 +35,8 @@ namespace LevelnetAdjustment.form {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|已知点文件|*.txt|所有文件(*.*)|*.*",
-                FilterIndex = 5,
+                Filter = "COSA观测文件|*.in1;*.IN1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|已知点文件|*.txt",
+                FilterIndex = 1,
                 RestoreDirectory = true,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
@@ -284,9 +284,9 @@ namespace LevelnetAdjustment.form {
         /// 根据表格更新List
         /// </summary>
         void UpdateList() {
-            ClAdj.Options.FileList = new List<FileOption>();
+            ClAdj.Options.FileList = new List<InputFile>();
             foreach (DataGridViewRow row in dataGridView1.Rows) {
-                ClAdj.Options.FileList.Add(new FileOption {
+                ClAdj.Options.FileList.Add(new InputFile {
                     FileName = row.Cells["FileName"].Value.ToString(),
                     IsSplit = (bool)row.Cells["IsSplit"].Value
                 });
