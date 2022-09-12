@@ -49,7 +49,7 @@ namespace LevelnetAdjustment.model {
             }
         }
         public List<InputFile> FileList { get; set; } = new List<InputFile>(); //文件列表
-        public OutputFile OutputFiles { get; set; }// 文件输出路径
+        public OutputFile OutputFiles { get; set; } = new OutputFile();// 文件输出路径
         public Option() {
             this.Level = 2;
         }

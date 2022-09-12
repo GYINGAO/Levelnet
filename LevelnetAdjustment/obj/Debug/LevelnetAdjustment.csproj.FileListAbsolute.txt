@@ -90,3 +90,5 @@ F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\水准网平差.app
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\水准网平差.exe
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\水准网平差.pdb
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.AssemblyReference.cache
+F:\编程\水准网平差程序\LevelnetAdjustment\bin\Debug\Newtonsoft.Json.xml
+F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.CreatePrj.resources

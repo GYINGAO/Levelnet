@@ -600,7 +600,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="filename"></param>
         /// <param name="points"></param>
         /// <param name="pds"></param>
-        internal static void ReadStablePoint(string filename, ArrayList points, List<PointData> pds) {
+        internal static void ReadStablePoint(string filename, List<string> points, List<PointData> pds) {
             using (StreamReader sr = new StreamReader(filename)) {
                 while (sr.Peek() > -1) {
                     string line = sr.ReadLine().Trim();

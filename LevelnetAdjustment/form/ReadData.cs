@@ -3,26 +3,21 @@ using LevelnetAdjustment.utils;
 using SplashScreenDemo;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment.form {
-    //声明委托 和 事件
-    public delegate void TransfDelegate_2(List<InputFile> fileList);
+
     public partial class ReadData : Form {
         public ClevelingAdjust ClAdj { get; set; }
+        public string ProjDir { get; set; }
 
         public bool IsFileChange { get; set; } = false;
 
-        public event TransfDelegate_2 TransfEvent;
-        public ReadData(ClevelingAdjust clAdj) {
+        public ReadData(ClevelingAdjust clAdj, ProjectInfo project) {
             this.ClAdj = clAdj;
+            this.ProjDir = Path.Combine(project.Path, project.Name, "ImportFiles");
             InitializeComponent();
         }
 
@@ -186,11 +181,15 @@ namespace LevelnetAdjustment.form {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
             try {
-                MainForm ff = (MainForm)this.Owner;
                 foreach (DataGridViewRow row in dataGridView1.Rows) {
                     string fileName = row.Cells["FileName"].Value.ToString();
                     bool isSplit = (bool)row.Cells["IsSplit"].Value;
-                    ff.UpDateMenu(fileName);
+                    //把文件复制到项目文件夹中
+                    FileInfo fileInfo1 = new FileInfo(fileName);
+                    string targetPath = Path.Combine(ProjDir, Path.GetFileName(fileName));
+                    if (File.Exists(targetPath)) File.Delete(targetPath);
+                    fileInfo1.CopyTo(targetPath);
+
                     switch (Path.GetExtension(fileName).ToLower()) {
                         case ".dat":
                             FileHelper.ReadDAT(fileName, RawDatas, ObservedDatas, isSplit);
@@ -223,7 +222,6 @@ namespace LevelnetAdjustment.form {
                 this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
                 this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
                 UpdateList();
-                TransfEvent(ClAdj.Options.FileList);
                 loading.CloseWaitForm();
 
                 if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
@@ -268,8 +266,6 @@ namespace LevelnetAdjustment.form {
                     ShowInTaskbar = true,
                 };
                 fileView.ShowDialog();
-                MainForm ff = (MainForm)this.Owner;
-                ff.UpDateMenu(row.Cells["FileName"].Value.ToString());
             }
         }
 

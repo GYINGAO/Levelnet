@@ -1,44 +1,23 @@
 ﻿using LevelnetAdjustment.form;
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
-using MathNet.Numerics.LinearAlgebra;
 using SplashScreenDemo;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment {
     public partial class MainForm : Form {
-        // 文件路径
-        private string filePath;
-        public string FilePath {
-            get => filePath;
-            set {
-                filePath = value;
-                ClAdj.Options.OutputFiles = new OutputFile {
-                    OutpathAdj = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "约束网平差结果.ou3"),
-                    OutpathAdjFree = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "拟稳平差结果.ou4"),
-                    OutpathClosure = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "闭合差计算结果.ou1"),
-                    OutpathGrossError = Path.Combine(Path.GetDirectoryName(value), Path.GetFileNameWithoutExtension(value) + "粗差探测结果.ou2"),
-                };
-            }
-        }
+
         // 输出文件格式
         public readonly string split = new string('-', 80);
         public readonly string space = new string(' ', 30);
 
         public ClevelingAdjust ClAdj { get; set; }
+
+        public ProjectInfo Project { get; set; }
 
         public static bool flag = true;
 
@@ -49,7 +28,6 @@ namespace LevelnetAdjustment {
         /// </summary>
         public MainForm() {
             InitializeComponent();
-            ClAdj = new ClevelingAdjust();
             this.DoubleBuffered = true;//设置本窗体
 
             SetStyle(ControlStyles.UserPaint, true);
@@ -60,8 +38,6 @@ namespace LevelnetAdjustment {
 
             this.UpdateStyles();
         }
-
-
         private void MainForm_Load(object sender, EventArgs e) {
             tabControl1.TabPages.Clear();
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
@@ -77,14 +53,13 @@ namespace LevelnetAdjustment {
             NewDropItem.Image = Properties.Resources._new;
             toolStripMenuItem_open.Image = Properties.Resources.open;
             toolStripMenuItem_read.Image = Properties.Resources.import2;
-            ClearDropItem.Image = Properties.Resources.clear;
             ExitDropItem.Image = Properties.Resources.close2;
             COSADropItem.Image = Properties.Resources.TXT;
             HandbookDropItem.Image = Properties.Resources.excel_01;
             AboutDropItem.Image = Properties.Resources.about2;
             使用说明ToolStripMenuItem.Image = Properties.Resources.帮助中心编辑;
 
-            //添加最近打开的文件
+            //添加最近打开的项目
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = config.AppSettings.Settings;
             if (settings.Count == 0) {
@@ -104,8 +79,20 @@ namespace LevelnetAdjustment {
             this.BackgroundImage = Properties.Resources.backgroundimage;
             this.BackgroundImageLayout = ImageLayout.Stretch;
 
+            //部分按钮禁用
+            ClosureErrorDropItem.Enabled = false;
+            GrossErrorDropItem.Enabled = false;
+            ConstraintNetworkDropItem.Enabled = false;
+            RankDefectNetworkDropItem.Enabled = false;
+            COSADropItem.Enabled = false;
+            HandbookDropItem.Enabled = false;
+
         }
 
+        /// <summary>
+        /// 动态更新菜单栏
+        /// </summary>
+        /// <param name="value"></param>
         public void UpDateMenu(string value) {
             string key = ConfigHelper.AddAppSetting(value);
             if (key == "") {
@@ -128,27 +115,15 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         public void terMenu_Click(object sender, EventArgs e) {
             ToolStripMenuItem downItem = sender as ToolStripMenuItem;
-            if (!File.Exists(downItem.Text)) {
-                MessageBox.Show("该文件已被删除！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            string path = Path.Combine(downItem.Text, Path.GetFileName(downItem.Text) + ".laproj");
+            if (!File.Exists(path)) {
+                MessageBox.Show("该项目已被删除！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ConfigHelper.DeleteAppSettings(downItem.Name);
                 ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Remove(downItem);
                 return;
             }
-            var idx = FindIndexFromTabControl(downItem.Text);
-            if (idx != -1) {
-                tabControl1.SelectedTab = tabControl1.TabPages[idx];
-                return;
-            }
-            FileView fileView = new FileView(downItem.Text) {
-                MdiParent = this,
-                //WindowState = FormWindowState.Maximized,
-                ShowIcon = false,
-                ShowInTaskbar = false,
-                Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None,
-            };
-            fileView.Show();
-            AddTabPage(fileView);  // 新建窗体同时新建一个标签
+
+            OpenProj(path);
         }
 
 
@@ -159,48 +134,26 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
-            ReadData rd = new ReadData(ClAdj);
-            rd.TransfEvent += frm_DataTransfEvent;
-            rd.Owner = this;
+            ReadData rd = new ReadData(ClAdj, Project);
             rd.ShowDialog();
-
         }
 
-        private void frm_DataTransfEvent(List<InputFile> fileList) {
-            // 更新文件存储路径
-            for (int i = 0; i < fileList.Count; i++) {
-                if (Path.GetExtension(fileList[i].FileName.ToLower()) != ".txt") {
-                    FilePath = fileList[i].FileName;
-                    break;
-                }
-            }
-        }
 
         /// <summary>
-        /// 创建新的观测文件
+        /// 创建项目
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void NewDropItem_Click(object sender, EventArgs e) {
-            FileView fileView = new FileView("") {
-                MdiParent = this,
-                //WindowState = FormWindowState.Maximized,
-                ShowIcon = false,
-                ShowInTaskbar = false,
-                Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None,
-            };
-            fileView.Show();
-            AddTabPage(fileView);  // 新建窗体同时新建一个标签
+            CreatePrj prj = new CreatePrj(Project);
+            prj.TransfEvent += UpDateProject;
+            prj.ShowDialog();
         }
 
-        /// <summary>
-        /// 清空数据
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ClearDropItem_Click(object sender, EventArgs e) {
-            ClAdj = new ClevelingAdjust();
+        public void UpDateProject(ProjectInfo project) {
+            this.ClAdj = new ClevelingAdjust();
+            this.Project = project;
+            UpDateMenu(Path.Combine(project.Path, project.Name));
             FormCollection childCollection = Application.OpenForms;
             for (int i = childCollection.Count; i-- > 0;) {
                 if (childCollection[i].Name != this.Name) childCollection[i].Close();
@@ -209,6 +162,11 @@ namespace LevelnetAdjustment {
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
         }
 
+        /// <summary>
+        /// 找到已打开文件tab索引
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         int FindIndexFromTabControl(string value) {
             var pages = tabControl1.TabPages;
             for (int i = 0; i < pages.Count; i++) {
@@ -221,39 +179,74 @@ namespace LevelnetAdjustment {
         }
 
         /// <summary>
-        /// 打开任意文件
+        /// 打开项目
+        /// </summary>
+        void OpenProj(string projname) {
+            ClAdj = new ClevelingAdjust();
+            UpDateMenu(Path.GetDirectoryName(projname));
+            // 读取文件信息
+            this.Project = JsonHelper.ReadJson(projname);
+            this.ClAdj.Options = Project.Options;
+            this.ClAdj.RawDatas = Project.RawDatas;
+            this.ClAdj.ObservedDatas = Project.ObservedDatas;
+            this.ClAdj.KnownPoints = Project.KnownPoints;
+            this.ClAdj.StablePoints = Project.StablePoints;
+            // 获取所有文件
+            FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
+            foreach (var file in files) {
+                FileView fv = new FileView(file.FullName) {
+                    MdiParent = this,//WindowState = FormWindowState.Maximized,
+                    ShowIcon = false,
+                    ShowInTaskbar = false,
+                    Dock = DockStyle.Fill,
+                    FormBorderStyle = FormBorderStyle.None,
+                };
+                fv.Show();
+                AddTabPage(fv);  // 新建窗体同时新建一个标签
+            }
+            MessageBox.Show("打开成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        }
+
+        /// <summary>
+        /// 触发打开项目事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripMenuItem_choose_Click(object sender, EventArgs e) {
             OpenFileDialog openFile = new OpenFileDialog {
-                Multiselect = true,
+                Multiselect = false,
                 Title = "打开",
-                Filter = "COSA观测文件|*.in1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|闭合差结果文件|*.ou1|" +
-               "粗差探测结果文件|*.ou2|约束网平差结果文件|*.ou3|拟稳平差结果文件|*.ou4|所有文件(*.*)|*.*",
-                FilterIndex = 8,
+                Filter = "项目文件|*.laproj",
+                FilterIndex = 1,
             };
             if (openFile.ShowDialog() == DialogResult.OK) {
-                // 不重复打开相同的文件
-                foreach (var item in openFile.FileNames) {
-                    var idx = FindIndexFromTabControl(item);
-                    if (idx != -1) {
-                        tabControl1.SelectedTab = tabControl1.TabPages[idx];
-                        continue;
-                    }
-
-                    UpDateMenu(item);
-                    FileView fv = new FileView(item) {
-                        MdiParent = this,//WindowState = FormWindowState.Maximized,
-                        ShowIcon = false,
-                        ShowInTaskbar = false,
-                        Dock = DockStyle.Fill,
-                        FormBorderStyle = FormBorderStyle.None,
-                    };
-                    fv.Show();
-                    AddTabPage(fv);  // 新建窗体同时新建一个标签
-                }
+                OpenProj(openFile.FileName);
             }
+        }
+
+        /// <summary>
+        /// 触发保存项目
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton1_Click(object sender, EventArgs e) {
+            if (Project == null) {
+                return;
+            }
+            SaveProject();
+            MessageBox.Show("保存成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// 保存项目
+        /// </summary>
+        private void SaveProject() {
+            Project.StablePoints = ClAdj.StablePoints;
+            Project.Options = ClAdj.Options;
+            Project.RawDatas = ClAdj.RawDatas;
+            Project.ObservedDatas = ClAdj.ObservedDatas;
+            Project.KnownPoints = ClAdj.KnownPoints;
+            JsonHelper.WriteJson(Project);
         }
 
         /// <summary>
@@ -280,7 +273,7 @@ namespace LevelnetAdjustment {
             if (ClAdj.ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-            if (File.Exists(ClAdj.Options.OutputFiles.OutpathAdj)) {
+            if (File.Exists(Project.Options.OutputFiles.OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -292,11 +285,10 @@ namespace LevelnetAdjustment {
             loading.ShowLoading();
             try {
                 int i = ClAdj.LS_Adjustment();
-                ClAdj.ExportAdjustResult(ClAdj.Options.OutputFiles.OutpathAdj, split, space, "约束网");
+                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网");
                 loading.CloseWaitForm();
-                UpDateMenu(ClAdj.Options.OutputFiles.OutpathAdj);
 
-                FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathAdj) {
+                FileView fileView = new FileView(Project.Options.OutputFiles.OutpathAdj) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -324,7 +316,7 @@ namespace LevelnetAdjustment {
             if (ClAdj.ObservedDatas == null) {
                 throw new Exception("请打开观测文件");
             }
-            if (File.Exists(ClAdj.Options.OutputFiles.OutpathAdjFree)) {
+            if (File.Exists(Project.Options.OutputFiles.OutpathAdjFree)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
                     return;
                 }
@@ -349,7 +341,7 @@ namespace LevelnetAdjustment {
                         ClAdj.CalcApproximateHeight();
                         FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
                         i = ClAdj.QuasiStable();
-                        ClAdj.ExportAdjustResult(ClAdj.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
+                        ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
                         loading.CloseWaitForm();
                     }
                     catch (Exception ex) {
@@ -369,7 +361,7 @@ namespace LevelnetAdjustment {
                 loading.ShowLoading();
                 try {
                     i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportAdjustResult(ClAdj.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
+                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
                     loading.CloseWaitForm();
                 }
                 catch (Exception ex) {
@@ -377,10 +369,7 @@ namespace LevelnetAdjustment {
                     throw ex;
                 }
             }
-
-            UpDateMenu(ClAdj.Options.OutputFiles.OutpathAdjFree);
-
-            FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathAdjFree) {
+            FileView fileView = new FileView(Project.Options.OutputFiles.OutpathAdjFree) {
                 MdiParent = this,
                 //WindowState = FormWindowState.Maximized,
                 ShowIcon = false,
@@ -410,11 +399,10 @@ namespace LevelnetAdjustment {
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
             try {
-                ClAdj.CalcClosureError(ClAdj.Options.OutputFiles.OutpathClosure, split, space);
+                ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
                 loading.CloseWaitForm();
-                UpDateMenu(ClAdj.Options.OutputFiles.OutpathClosure);
 
-                FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathClosure) {
+                FileView fileView = new FileView(Project.Options.OutputFiles.OutpathClosure) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -444,11 +432,10 @@ namespace LevelnetAdjustment {
             loading.ShowLoading();
 
             try {
-                ClAdj.FindGrossError(split, space, ClAdj.Options.OutputFiles.OutpathGrossError);
+                ClAdj.FindGrossError(split, space, Project.Options.OutputFiles.OutpathGrossError);
                 loading.CloseWaitForm();
-                UpDateMenu(ClAdj.Options.OutputFiles.OutpathGrossError);
 
-                FileView fileView = new FileView(ClAdj.Options.OutputFiles.OutpathGrossError) {
+                FileView fileView = new FileView(Project.Options.OutputFiles.OutpathGrossError) {
                     MdiParent = this,
                     //WindowState = FormWindowState.Maximized,
                     ShowIcon = false,
@@ -482,8 +469,8 @@ namespace LevelnetAdjustment {
                 Filter = "Excel 工作簿(*.xlsx)|*.xlsx|Excel 97-2003 工作簿(*.xls)|*.xls",
                 FilterIndex = 1,
                 RestoreDirectory = true,
-                FileName = FilePath != "" ? Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)) : "",
-                InitialDirectory = FilePath != "" ? Path.GetDirectoryName(FilePath) : Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                FileName = "观测手簿",
+                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles"),
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
@@ -511,11 +498,11 @@ namespace LevelnetAdjustment {
         private void DisPower_Click(object sender, EventArgs e) {
             SaveFileDialog saveFileDialog = new SaveFileDialog {
                 Title = "另存为",
-                Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                Filter = "COSA水准观测文件(*.in1)|*.in1",
                 FilterIndex = 1,
                 RestoreDirectory = true,
-                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
-                InitialDirectory = Path.GetDirectoryName(FilePath),
+                FileName = "按距离定权",
+                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles"),
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPoints, saveFileDialog.FileName);
@@ -534,8 +521,8 @@ namespace LevelnetAdjustment {
                 Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true,
-                FileName = Path.GetFileName(Path.GetFileNameWithoutExtension(FilePath)),
-                InitialDirectory = Path.GetDirectoryName(FilePath),
+                FileName = "按测站数定权",
+                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles"),
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPoints, saveFileDialog.FileName);
@@ -657,10 +644,6 @@ namespace LevelnetAdjustment {
         }
         #endregion
 
-        //事件处理方法
-        void frm_SettingTransfEvent(Option option) {
-            this.ClAdj.Options = option;
-        }
 
         /// <summary>
         /// 退出程序
@@ -677,8 +660,11 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if (Project != null) {
+                SaveProject();
+            }
             DialogResult result = MessageBox.Show("您确定要关闭软件吗？", "退出提示",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
                 Application.ExitThread();
             else {
@@ -726,12 +712,36 @@ namespace LevelnetAdjustment {
 
         }
 
-        //public void AddBackgroundImage() {
-        //    if (tabControl1.TabPages.Count == 0) {
-        //        BackgroundImage = Properties.Resources.railway_g348c724a4_1920;
-        //        this.Refresh();
-        //    }
-        //}
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+            if (ClAdj == null) {
+                return;
+            }
+            if (ClAdj.ObservedDatas.Count == 0) {
+                ClosureErrorDropItem.Enabled = false;
+                GrossErrorDropItem.Enabled = false;
+                ConstraintNetworkDropItem.Enabled = false;
+                RankDefectNetworkDropItem.Enabled = false;
+            }
+            else {
+                ClosureErrorDropItem.Enabled = true;
+                GrossErrorDropItem.Enabled = true;
+                ConstraintNetworkDropItem.Enabled = true;
+                RankDefectNetworkDropItem.Enabled = true;
+            }
+            if (ClAdj.RawDatas.Count == 0) {
+                COSADropItem.Enabled = false;
+                HandbookDropItem.Enabled = false;
+            }
+            else {
+                COSADropItem.Enabled = true;
+                HandbookDropItem.Enabled = true;
+            }
+        }
+
+
+
+
+
     }
 }
 

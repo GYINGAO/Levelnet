@@ -109,9 +109,11 @@ namespace LevelnetAdjustment.utils {
         public Option Options { get; set; } = new Option();  //设置与选项
         public ArrayList Threshold { get; set; } = new ArrayList(); //观测值残差阈值
         //拟稳点号数组
-        public ArrayList StablePoints { get; set; }
+        public List<string> StablePoints { get; set; }
         public ClevelingAdjust() {
-            StablePoints = new ArrayList();
+            StablePoints = new List<string>();
+            ObservedDatas = new List<ObservedData>();
+            KnownPoints = new List<PointData>();
         }
 
         void Calc_Params() {
