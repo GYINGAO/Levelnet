@@ -64,25 +64,6 @@ namespace LevelnetAdjustment {
             AboutDropItem.Image = Properties.Resources.about2;
             使用说明ToolStripMenuItem.Image = Properties.Resources.帮助中心编辑;
 
-            //添加最近打开的项目
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var settings = config.AppSettings.Settings;
-            if (settings.Count == 0) {
-                return;
-            }
-            ToolStripMenuItem terMenu;
-            foreach (var key in ConfigurationManager.AppSettings.AllKeys) {
-                terMenu = new ToolStripMenuItem {
-                    Name = key,
-                    Text = settings[key].Value
-                };
-                //注册事件
-                terMenu.Click += new EventHandler(terMenu_Click);
-                ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Add(terMenu);
-            }
-
-            this.BackgroundImage = Properties.Resources.backgroundimage;
-            this.BackgroundImageLayout = ImageLayout.Stretch;
 
             //部分按钮禁用
             ClosureErrorDropItem.Enabled = false;
@@ -92,6 +73,25 @@ namespace LevelnetAdjustment {
             COSADropItem.Enabled = false;
             HandbookDropItem.Enabled = false;
             toolStripMenuItem_read.Enabled = false;
+
+            //添加最近打开的项目
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var settings = config.AppSettings.Settings;
+            if (settings.Count != 0) {
+                ToolStripMenuItem terMenu;
+                foreach (var key in ConfigurationManager.AppSettings.AllKeys) {
+                    terMenu = new ToolStripMenuItem {
+                        Name = key,
+                        Text = settings[key].Value
+                    };
+                    //注册事件
+                    terMenu.Click += new EventHandler(terMenu_Click);
+                    ((ToolStripDropDownItem)((ToolStripDropDownItem)menuStrip1.Items["FileToolStripMenuItem"]).DropDownItems["toolStripMenuItem_open"]).DropDownItems.Add(terMenu);
+                };
+            }
+
+            this.BackgroundImage = Properties.Resources.backgroundimage;
+            this.BackgroundImageLayout = ImageLayout.Stretch;
 
             if (StartProj != "") {
                 OpenProj(StartProj);
@@ -703,9 +703,9 @@ namespace LevelnetAdjustment {
         }
 
         private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e) {
-            var helpFile = Path.Combine(Application.StartupPath, "help.doc");
+            var helpFile = Path.Combine(Application.StartupPath, "Readme.doc");
             if (!File.Exists(helpFile)) {
-                ByteHelper.WriteByteToFile(Properties.Resources.help, helpFile);
+                ByteHelper.WriteByteToFile(Properties.Resources.Readme, helpFile);
             }
             Process.Start(helpFile);
         }
