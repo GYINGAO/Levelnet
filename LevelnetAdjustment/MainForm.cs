@@ -703,11 +703,11 @@ namespace LevelnetAdjustment {
         }
 
         private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e) {
-            var helpFile = Path.Combine(Application.StartupPath, "help.chm");
+            var helpFile = Path.Combine(Application.StartupPath, "help.doc");
             if (!File.Exists(helpFile)) {
                 ByteHelper.WriteByteToFile(Properties.Resources.help, helpFile);
             }
-            System.Diagnostics.Process.Start(helpFile);
+            Process.Start(helpFile);
         }
         private void timer1_Tick(object sender, EventArgs e) {
             this.toolStripStatusLabel3.Text = "系统当前时间：" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");

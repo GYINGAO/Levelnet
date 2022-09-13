@@ -295,7 +295,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\help.chm" />
+    <None Include="Resources\help.doc" />
     <None Include="Resources\wallhaven-qd667r_2560x2048.png" />
   </ItemGroup>
   <ItemGroup>
