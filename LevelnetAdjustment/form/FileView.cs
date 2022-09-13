@@ -34,7 +34,6 @@ namespace LevelnetAdjustment.form {
                 rtb.Show();
                 this.Text = Path.GetFileName(FilePath);
             }
-
         }
 
 
@@ -57,10 +56,10 @@ namespace LevelnetAdjustment.form {
         private void SaveFile() {
             SaveFileDialog saveFileDialog = new SaveFileDialog {
                 Title = "另存为",
-                Filter = "观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                Filter = "所有文件(*.*)|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true,
-                FileName = Path.GetFileName(SaveFilePath),
+                FileName = Path.GetFileName(FilePath),
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                 SaveFilePath = saveFileDialog.FileName;
@@ -85,12 +84,13 @@ namespace LevelnetAdjustment.form {
             if (isModified) {
                 var res = MessageBox.Show("文件尚未保存，是否保存？", "提示", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
                 if (res == DialogResult.Yes) {
+
                     SaveFileDialog saveFileDialog = new SaveFileDialog {
                         Title = "另存为",
-                        Filter = "观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
+                        Filter = "所有文件(*.*)|*.*",
                         FilterIndex = 1,
                         RestoreDirectory = true,
-                        FileName = Path.GetFileName(SaveFilePath),
+                        FileName = Path.GetFileName(FilePath),
                     };
                     if (saveFileDialog.ShowDialog() == DialogResult.OK) {
                         SaveFilePath = saveFileDialog.FileName;

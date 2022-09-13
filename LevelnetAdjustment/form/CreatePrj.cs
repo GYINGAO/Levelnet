@@ -60,7 +60,9 @@ namespace LevelnetAdjustment.form {
             if (Directory.Exists(basepath)) {
                 var msg = MessageBox.Show("存在相同的项目，是否覆盖？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (msg == DialogResult.Yes) {
-                    Directory.Delete(basepath);
+                    //删除目录及所有文件
+                    DirectoryInfo di = new DirectoryInfo(basepath);
+                    di.Delete(true);
                     Directory.CreateDirectory(basepath);
                     Directory.CreateDirectory(Path.Combine(basepath, "ImportFiles"));
                     Directory.CreateDirectory(Path.Combine(basepath, "ExportFiles"));

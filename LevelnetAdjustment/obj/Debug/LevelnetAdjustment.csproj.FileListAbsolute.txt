@@ -71,7 +71,6 @@ F:\编程\水准网平差程序\LevelnetAdjustment\bin\Debug\System.ValueTuple.x
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.About.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FileView.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\SplashScreenDemo.MultiFuncLoading.resources
-F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.Setting.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\SplashScreenDemo.SimpleLoading.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.MainForm.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.Properties.Resources.resources

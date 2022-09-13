@@ -23,8 +23,6 @@ namespace LevelnetAdjustment {
 
         public bool IsImport { get; set; } = false;
 
-
-
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -137,14 +135,25 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
             ReadData rd = new ReadData(ClAdj, Project);
-            rd.TransfEvent += ChangeImportState();
+            rd.TransfEvent += ChangeImportState;
             rd.ShowDialog();
         }
 
-        private void ChangeImportState() {
+        void ChangeImportState() {
             this.IsImport = true;
         }
 
+        /// <summary>
+        /// 关闭所有的子窗体
+        /// </summary>
+        void ClearForms() {
+            FormCollection childCollection = Application.OpenForms;
+            for (int i = childCollection.Count; i-- > 0;) {
+                if (childCollection[i].Name != this.Name) childCollection[i].Close();
+            }
+            tabControl1.TabPages.Clear();
+            tabControl1.Visible = false;    // 没有元素的时候隐藏自己
+        }
 
         /// <summary>
         /// 创建项目
@@ -157,16 +166,16 @@ namespace LevelnetAdjustment {
             prj.ShowDialog();
         }
 
+        /// <summary>
+        /// 更新项目信息
+        /// </summary>
+        /// <param name="project"></param>
         public void UpDateProject(ProjectInfo project) {
             this.ClAdj = new ClevelingAdjust();
             this.Project = project;
+            ClAdj.Options = project.Options;
             UpDateMenu(Path.Combine(project.Path, project.Name));
-            FormCollection childCollection = Application.OpenForms;
-            for (int i = childCollection.Count; i-- > 0;) {
-                if (childCollection[i].Name != this.Name) childCollection[i].Close();
-            }
-            tabControl1.TabPages.Clear();
-            tabControl1.Visible = false;    // 没有元素的时候隐藏自己
+            ClearForms();
         }
 
         /// <summary>
@@ -191,6 +200,7 @@ namespace LevelnetAdjustment {
         void OpenProj(string projname) {
             ClAdj = new ClevelingAdjust();
             UpDateMenu(Path.GetDirectoryName(projname));
+            ClearForms();
             // 读取文件信息
             this.Project = JsonHelper.ReadJson(projname);
             this.ClAdj.Options = Project.Options;
@@ -198,18 +208,14 @@ namespace LevelnetAdjustment {
             this.ClAdj.ObservedDatas = Project.ObservedDatas;
             this.ClAdj.KnownPoints = Project.KnownPoints;
             this.ClAdj.StablePoints = Project.StablePoints;
+            this.ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);//去除重复边
             // 获取所有文件
             FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
             foreach (var file in files) {
-                FileView fv = new FileView(file.FullName) {
-                    MdiParent = this,//WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None,
-                };
-                fv.Show();
-                AddTabPage(fv);  // 新建窗体同时新建一个标签
+                if (!file.Extension.ToLower().Contains("ou")) {
+                    continue;
+                }
+                AddTabPage(file.FullName);  // 新建窗体同时新建一个标签
             }
             MessageBox.Show("打开成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
@@ -248,6 +254,7 @@ namespace LevelnetAdjustment {
         /// 保存项目
         /// </summary>
         private void SaveProject() {
+            //没有导入文件不需要保存
             if (!IsImport) {
                 return;
             }
@@ -285,6 +292,8 @@ namespace LevelnetAdjustment {
             }
             if (File.Exists(Project.Options.OutputFiles.OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+
+                    AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
                     return;
                 }
             }
@@ -297,18 +306,9 @@ namespace LevelnetAdjustment {
                 int i = ClAdj.LS_Adjustment();
                 ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网");
                 loading.CloseWaitForm();
-
-                FileView fileView = new FileView(Project.Options.OutputFiles.OutpathAdj) {
-                    MdiParent = this,
-                    //WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None,
-                };
                 MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-                AddTabPage(fileView);  // 新建窗体同时新建一个标签
+
+                AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();
@@ -328,6 +328,7 @@ namespace LevelnetAdjustment {
             }
             if (File.Exists(Project.Options.OutputFiles.OutpathAdjFree)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
                     return;
                 }
             }
@@ -379,17 +380,8 @@ namespace LevelnetAdjustment {
                     throw ex;
                 }
             }
-            FileView fileView = new FileView(Project.Options.OutputFiles.OutpathAdjFree) {
-                MdiParent = this,
-                //WindowState = FormWindowState.Maximized,
-                ShowIcon = false,
-                ShowInTaskbar = false,
-                Dock = DockStyle.Fill,
-                FormBorderStyle = FormBorderStyle.None,
-            };
             MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            fileView.Show();
-            AddTabPage(fileView);  // 新建窗体同时新建一个标签
+            AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
         }
 
         /// <summary>
@@ -398,12 +390,12 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
-            if (File.Exists(ClAdj.Options.OutputFiles.OutpathClosure)) {
+            if (File.Exists(Project.Options.OutputFiles.OutpathClosure)) {
                 if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
                     return;
                 }
             }
-
             SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -411,23 +403,14 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
                 loading.CloseWaitForm();
-
-                FileView fileView = new FileView(Project.Options.OutputFiles.OutpathClosure) {
-                    MdiParent = this,
-                    //WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None,
-                };
                 MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-                AddTabPage(fileView);  // 新建窗体同时新建一个标签
+                AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();
                 throw ex;
             }
+
         }
 
         /// <summary>
@@ -436,6 +419,12 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void GrossErrorDropItem_Click(object sender, EventArgs e) {
+            if (File.Exists(Project.Options.OutputFiles.OutpathGrossError)) {
+                if (MessageBox.Show("粗差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
+                    return;
+                }
+            }
             SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -444,24 +433,15 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.FindGrossError(split, space, Project.Options.OutputFiles.OutpathGrossError);
                 loading.CloseWaitForm();
-
-                FileView fileView = new FileView(Project.Options.OutputFiles.OutpathGrossError) {
-                    MdiParent = this,
-                    //WindowState = FormWindowState.Maximized,
-                    ShowIcon = false,
-                    ShowInTaskbar = false,
-                    Dock = DockStyle.Fill,
-                    FormBorderStyle = FormBorderStyle.None,
-                };
                 MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                fileView.Show();
-                AddTabPage(fileView);  // 新建窗体同时新建一个标签
+                AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
+
+
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();
                 throw ex;
             }
-
         }
 
         #endregion
@@ -473,31 +453,22 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void HandbookDropItem_Click(object sender, EventArgs e) {
-
-            SaveFileDialog saveFileDialog = new SaveFileDialog {
-                Title = "另存为",
-                Filter = "Excel 工作簿(*.xlsx)|*.xlsx|Excel 97-2003 工作簿(*.xls)|*.xls",
-                FilterIndex = 1,
-                RestoreDirectory = true,
-                FileName = "观测手簿",
-                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles"),
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+            if (!File.Exists(Project.Options.OutputFiles.COSADis)) {
                 SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
                 try {
-                    ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, saveFileDialog.FileName, ClAdj.Options.FileList);
+                    ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
                     loading.CloseWaitForm();
+                    MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex) {
                     loading.CloseWaitForm();
                     throw ex;
                 }
-
-                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            System.Diagnostics.Process.Start(Project.Options.OutputFiles.Handbook);
         }
 
         /// <summary>
@@ -506,18 +477,10 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void DisPower_Click(object sender, EventArgs e) {
-            SaveFileDialog saveFileDialog = new SaveFileDialog {
-                Title = "另存为",
-                Filter = "COSA水准观测文件(*.in1)|*.in1",
-                FilterIndex = 1,
-                RestoreDirectory = true,
-                FileName = "按距离定权",
-                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles"),
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPoints, saveFileDialog.FileName);
-                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+
+            FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSADis);
+            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
         }
 
         /// <summary>
@@ -526,18 +489,10 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void StationPower_Click(object sender, EventArgs e) {
-            SaveFileDialog saveFileDialog = new SaveFileDialog {
-                Title = "另存为",
-                Filter = "COSA水准观测文件(*.in1)|*.in1|所有文件(*.*)|*.*",
-                FilterIndex = 1,
-                RestoreDirectory = true,
-                FileName = "按测站数定权",
-                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles"),
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPoints, saveFileDialog.FileName);
-                MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSASta);
+            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AddTabPage(Project.Options.OutputFiles.COSASta);  // 新建窗体同时新建一个标签
+
         }
 
         #endregion
@@ -547,11 +502,24 @@ namespace LevelnetAdjustment {
         /// 添加一个标签
         /// </summary>
         /// <param name="frm"></param>
-        private void AddTabPage(Form frm) {
-            TabPage tp = new TabPage();
-            tp.Tag = frm;  // 当前标签控制的窗体对象记录在Tag属性中
-            tp.Text = frm.Text;
-            tp.ToolTipText = frm.Text;
+        private void AddTabPage(string filename) {
+            var idx = FindIndexFromTabControl(filename);
+            if (idx != -1) {
+                CloseTabPage(idx);
+            }
+            FileView fv = new FileView(filename) {
+                MdiParent = this,//WindowState = FormWindowState.Maximized,
+                ShowIcon = false,
+                ShowInTaskbar = false,
+                Dock = DockStyle.Fill,
+                FormBorderStyle = FormBorderStyle.None,
+            };
+            fv.Show();
+            TabPage tp = new TabPage {
+                Tag = fv,  // 当前标签控制的窗体对象记录在Tag属性中
+                Text = fv.Text,
+                ToolTipText = fv.Text
+            };
             tabControl1.TabPages.Add(tp);
             tabControl1.SelectedIndex = tabControl1.TabCount - 1;  // 默认选中最后一个新建的标签
             if (!tabControl1.Visible) tabControl1.Visible = true;  // 如果自己是隐藏的则显示自己

@@ -18,12 +18,12 @@ namespace LevelnetAdjustment.utils {
         public static ProjectInfo ReadJson(string filePath) {
             using (StreamReader file = File.OpenText(filePath)) {
                 string v = file.ReadToEnd();
-                return JsonConvert.DeserializeObject<ProjectInfo>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                return JsonConvert.DeserializeObject<ProjectInfo>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, StringEscapeHandling = StringEscapeHandling.EscapeNonAscii });
             }
         }
 
         public static void WriteJson(ProjectInfo project) {
-            string json = JsonConvert.SerializeObject(project, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            string json = JsonConvert.SerializeObject(project, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, StringEscapeHandling = StringEscapeHandling.EscapeNonAscii });
             FileHelper.WriteStrToTxt(json, Path.Combine(project.Path, project.Name, project.Name + ".laproj"));
         }
     }

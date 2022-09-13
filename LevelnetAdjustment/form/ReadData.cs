@@ -87,7 +87,7 @@ namespace LevelnetAdjustment.form {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ReadData_Load(object sender, EventArgs e) {
-            ClAdj.Options.FileList.ForEach(t => {
+            ClAdj.Options.ImportFiles.ForEach(t => {
                 int idx = dataGridView1.Rows.Add();
                 dataGridView1.Rows[idx].Cells["FileName"].Value = t.FileName;
                 dataGridView1.Rows[idx].Cells["IsSplit"].Value = t.IsSplit;
@@ -225,7 +225,7 @@ namespace LevelnetAdjustment.form {
                 this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
                 UpdateList();
                 loading.CloseWaitForm();
-                TransEvent();
+                TransfEvent();
                 if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
                     this.Close();
                 }
@@ -282,9 +282,9 @@ namespace LevelnetAdjustment.form {
         /// 根据表格更新List
         /// </summary>
         void UpdateList() {
-            ClAdj.Options.FileList = new List<InputFile>();
+            ClAdj.Options.ImportFiles = new List<InputFile>();
             foreach (DataGridViewRow row in dataGridView1.Rows) {
-                ClAdj.Options.FileList.Add(new InputFile {
+                ClAdj.Options.ImportFiles.Add(new InputFile {
                     FileName = row.Cells["FileName"].Value.ToString(),
                     IsSplit = (bool)row.Cells["IsSplit"].Value
                 });
