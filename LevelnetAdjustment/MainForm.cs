@@ -139,8 +139,10 @@ namespace LevelnetAdjustment {
             rd.ShowDialog();
         }
 
-        void ChangeImportState() {
+        void ChangeImportState(Option options) {
             this.IsImport = true;
+            this.ClAdj.Options = options;
+            this.Project.Options = options;
         }
 
         /// <summary>
@@ -174,7 +176,9 @@ namespace LevelnetAdjustment {
             this.ClAdj = new ClevelingAdjust();
             this.Project = project;
             ClAdj.Options = project.Options;
-            UpDateMenu(Path.Combine(project.Path, project.Name));
+            var projname = Path.Combine(project.Path, project.Name);
+            UpDateMenu(projname);
+            toolStripStatusLabel2.Text = "当前项目：" + projname;
             ClearForms();
         }
 
@@ -217,6 +221,7 @@ namespace LevelnetAdjustment {
                 }
                 AddTabPage(file.FullName);  // 新建窗体同时新建一个标签
             }
+            toolStripStatusLabel2.Text = "当前项目：" + projname;
             MessageBox.Show("打开成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
 
@@ -306,9 +311,8 @@ namespace LevelnetAdjustment {
                 int i = ClAdj.LS_Adjustment();
                 ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网");
                 loading.CloseWaitForm();
-                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();
@@ -380,8 +384,8 @@ namespace LevelnetAdjustment {
                     throw ex;
                 }
             }
-            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -403,8 +407,9 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
                 loading.CloseWaitForm();
-                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
+                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();
@@ -433,8 +438,9 @@ namespace LevelnetAdjustment {
             try {
                 ClAdj.FindGrossError(split, space, Project.Options.OutputFiles.OutpathGrossError);
                 loading.CloseWaitForm();
-                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
+                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
             }
@@ -490,8 +496,9 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void StationPower_Click(object sender, EventArgs e) {
             FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSASta);
-            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             AddTabPage(Project.Options.OutputFiles.COSASta);  // 新建窗体同时新建一个标签
+            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
 

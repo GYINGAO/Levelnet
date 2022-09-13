@@ -150,6 +150,10 @@ namespace LevelnetAdjustment.utils {
             if (knownPoints.Count == 0) {
                 throw new Exception("未导入已知点");
             }
+            //已经计算出来了
+            if (UnknownPoints.Count != 0) {
+                return;
+            }
             List<PointData> AllPoints_old = Commom.Clone(KnownPoints);
             UnknownPoints = new List<PointData>();
             int count = 0;

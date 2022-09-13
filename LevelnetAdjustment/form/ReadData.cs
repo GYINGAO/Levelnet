@@ -8,9 +8,10 @@ using System.IO;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment.form {
-    public delegate void TransfDelegate();
+    public delegate void TransfDelegate(Option options);
     public partial class ReadData : Form {
         public ClevelingAdjust ClAdj { get; set; }
+        public Option Options { get; set; }
         public string ProjDir { get; set; }
 
         public bool IsFileChange { get; set; } = false;
@@ -19,6 +20,7 @@ namespace LevelnetAdjustment.form {
 
         public ReadData(ClevelingAdjust clAdj, ProjectInfo project) {
             this.ClAdj = clAdj;
+            this.Options = clAdj.Options;
             this.ProjDir = Path.Combine(project.Path, project.Name, "ImportFiles");
             InitializeComponent();
         }
@@ -32,7 +34,7 @@ namespace LevelnetAdjustment.form {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "COSA观测文件|*.in1;*.IN1|DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|已知点文件|*.txt",
+                Filter = "DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|COSA观测文件|*.in1;*.IN1|已知点文件|*.txt",
                 FilterIndex = 1,
                 RestoreDirectory = true,
             };
@@ -87,7 +89,7 @@ namespace LevelnetAdjustment.form {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ReadData_Load(object sender, EventArgs e) {
-            ClAdj.Options.ImportFiles.ForEach(t => {
+            Options.ImportFiles.ForEach(t => {
                 int idx = dataGridView1.Rows.Add();
                 dataGridView1.Rows[idx].Cells["FileName"].Value = t.FileName;
                 dataGridView1.Rows[idx].Cells["IsSplit"].Value = t.IsSplit;
@@ -149,22 +151,24 @@ namespace LevelnetAdjustment.form {
                     return;
                 }
                 else {
-                    this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-                    this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
-                    this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
-                    this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
-                    this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
+                    Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                    Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                    Options.Limit = double.Parse(tb_limit.Text) / 100;
+                    Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                    Options.Sigma = double.Parse(textBox1.Text);
+                    TransfEvent(Options);
                     Close();
                     return;
                 }
             }
             //没有改变文件，直接退出
             if (!IsFileChange) {
-                this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-                this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
-                this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
-                this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
-                this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
+                Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                Options.Limit = double.Parse(tb_limit.Text) / 100;
+                Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                Options.Sigma = double.Parse(textBox1.Text);
+                TransfEvent(Options);
                 Close();
                 return;
             }
@@ -192,6 +196,7 @@ namespace LevelnetAdjustment.form {
                     if (File.Exists(targetPath)) File.Delete(targetPath);
                     fileInfo1.CopyTo(targetPath);
 
+
                     switch (Path.GetExtension(fileName).ToLower()) {
                         case ".dat":
                             FileHelper.ReadDAT(fileName, RawDatas, ObservedDatas, isSplit);
@@ -218,14 +223,15 @@ namespace LevelnetAdjustment.form {
                 ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
 
 
-                this.ClAdj.Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-                this.ClAdj.Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
-                this.ClAdj.Options.Limit = double.Parse(tb_limit.Text) / 100;
-                this.ClAdj.Options.UnitRight = rbtn_before.Checked ? 0 : 1;
-                this.ClAdj.Options.Sigma = double.Parse(textBox1.Text);
+                Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                Options.Limit = double.Parse(tb_limit.Text) / 100;
+                Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                Options.Sigma = double.Parse(textBox1.Text);
+
                 UpdateList();
                 loading.CloseWaitForm();
-                TransfEvent();
+                TransfEvent(Options);
                 if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
                     this.Close();
                 }

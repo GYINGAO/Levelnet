@@ -55,7 +55,7 @@ namespace LevelnetAdjustment.form {
         private void btn_con_Click(object sender, EventArgs e) {
             if (tbpath.Text.Trim() == "") throw new Exception("请选择项目路径");
             if (tbname.Text.Trim() == "") throw new Exception("请输入项目名");
-            if (!Directory.Exists(tbpath.Text.Trim())) throw new Exception("路径不合法");
+            if (!Directory.Exists(tbpath.Text.Trim())) throw new Exception("项目路径不合法");
             var basepath = Path.Combine(tbpath.Text.Trim(), tbname.Text.Trim());
             if (Directory.Exists(basepath)) {
                 var msg = MessageBox.Show("存在相同的项目，是否覆盖？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
