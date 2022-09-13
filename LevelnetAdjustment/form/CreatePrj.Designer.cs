@@ -24,6 +24,7 @@ namespace LevelnetAdjustment.form {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CreatePrj));
             this.label1 = new System.Windows.Forms.Label();
             this.tbpath = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -214,6 +215,7 @@ namespace LevelnetAdjustment.form {
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tbpath);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(430, 440);
             this.MinimizeBox = false;

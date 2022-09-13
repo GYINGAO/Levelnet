@@ -91,6 +91,7 @@ namespace LevelnetAdjustment {
             RankDefectNetworkDropItem.Enabled = false;
             COSADropItem.Enabled = false;
             HandbookDropItem.Enabled = false;
+            toolStripMenuItem_read.Enabled = false;
 
             if (StartProj != "") {
                 OpenProj(StartProj);
@@ -742,6 +743,13 @@ namespace LevelnetAdjustment {
                 COSADropItem.Enabled = true;
                 HandbookDropItem.Enabled = true;
             }
+
+            if (Project == null) {
+                toolStripMenuItem_read.Enabled = false;
+            }
+            else {
+                toolStripMenuItem_read.Enabled = true;
+            }
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e) {
@@ -759,8 +767,6 @@ namespace LevelnetAdjustment {
                 OpenProj(path);
             }
         }
-
-
     }
 }
 
