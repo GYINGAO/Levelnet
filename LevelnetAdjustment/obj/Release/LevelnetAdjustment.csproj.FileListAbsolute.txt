@@ -90,3 +90,4 @@ F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\水准网平差.e
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\水准网平差.pdb
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.CreatePrj.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\bin\Release\Newtonsoft.Json.xml
+F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache

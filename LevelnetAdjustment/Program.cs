@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -12,9 +11,6 @@ namespace LevelnetAdjustment {
         [STAThread]
         static void Main(string[] args) {
             try {
-
-                //RegistFileType(".laproj");
-
                 #region 线程异常处理 全局的异常处理
                 Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);//处理处理未捕获的异常 
                 Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);  //处理UI线程异常  
@@ -22,10 +18,9 @@ namespace LevelnetAdjustment {
                 #endregion
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
+                string path = args != null && args.Length > 0 ? args[0] : "";
 
-                Application.Run(new MainForm(args));
-
-
+                Application.Run(new MainForm(path));
             }
             catch (Exception ex) {
                 string str = GetExceptionMsg(ex, string.Empty);

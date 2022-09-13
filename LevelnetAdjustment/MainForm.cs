@@ -5,6 +5,7 @@ using SplashScreenDemo;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -25,17 +26,15 @@ namespace LevelnetAdjustment {
 
         public string StartProj { get; set; }
 
+
+
         /// <summary>
         /// 构造函数
         /// </summary>
-        public MainForm(string[] args) {
+        public MainForm(string path) {
             InitializeComponent();
             this.DoubleBuffered = true;//设置本窗体
-
-            if (args != null && args.Length > 0) {
-                this.StartProj = args[0];
-            }
-
+            this.StartProj = path;
             SetStyle(ControlStyles.UserPaint, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true); // 禁止擦除背景.
             SetStyle(ControlStyles.DoubleBuffer, true); // 双缓冲
@@ -93,7 +92,7 @@ namespace LevelnetAdjustment {
             COSADropItem.Enabled = false;
             HandbookDropItem.Enabled = false;
 
-            if (StartProj != null || StartProj != "") {
+            if (StartProj != "") {
                 OpenProj(StartProj);
             }
         }
@@ -230,7 +229,7 @@ namespace LevelnetAdjustment {
                 }
                 AddTabPage(file.FullName);  // 新建窗体同时新建一个标签
             }
-            toolStripStatusLabel2.Text = "当前项目：" + projname;
+            toolStripStatusLabel2.Text = "当前项目：" + Path.GetDirectoryName(projname);
             MessageBox.Show("打开成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
 
@@ -625,6 +624,16 @@ namespace LevelnetAdjustment {
             }
         }
 
+        /// <summary>
+        /// 在文件夹中打开
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 在文件夹中打开ToolStripMenuItem_Click(object sender, EventArgs e) {
+            int index = GetPageIndexWidthPoint(contextMenuStrip1.Left - this.Left);
+            string path = (tabControl1.TabPages[index].Tag as FileView).FilePath;
+            Process.Start("Explorer", "/select," + path);
+        }
 
         /// <summary>
         /// 从菜单弹出位置得到当前所在的标签索引
@@ -750,6 +759,8 @@ namespace LevelnetAdjustment {
                 OpenProj(path);
             }
         }
+
+
     }
 }
 
