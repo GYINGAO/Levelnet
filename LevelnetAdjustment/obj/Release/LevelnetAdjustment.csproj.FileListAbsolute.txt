@@ -71,7 +71,6 @@ F:\编程\水准网平差程序\LevelnetAdjustment\bin\Release\System.ValueTuple
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.About.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FileView.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\SplashScreenDemo.MultiFuncLoading.resources
-F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.Setting.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\SplashScreenDemo.SimpleLoading.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.MainForm.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.Properties.Resources.resources
@@ -89,6 +88,5 @@ F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\水准网平差.e
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\水准网平差.application
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\水准网平差.exe
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\水准网平差.pdb
-F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
 F:\编程\水准网平差程序\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.CreatePrj.resources
 F:\编程\水准网平差程序\LevelnetAdjustment\bin\Release\Newtonsoft.Json.xml

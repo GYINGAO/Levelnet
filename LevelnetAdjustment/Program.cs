@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LevelnetAdjustment.utils;
 
 namespace LevelnetAdjustment {
     static class Program {
@@ -12,8 +14,10 @@ namespace LevelnetAdjustment {
         /// 应用程序的主入口点。
         /// </summary>
         [STAThread]
-        static void Main() {
+        static void Main(string[] args) {
             try {
+
+                RegistryHelper.RegistFileType(".laproj");
 
                 #region 线程异常处理 全局的异常处理
                 Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);//处理处理未捕获的异常 
@@ -22,7 +26,10 @@ namespace LevelnetAdjustment {
                 #endregion
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm());
+
+                Application.Run(new MainForm(args));
+
+
             }
             catch (Exception ex) {
                 string str = GetExceptionMsg(ex, string.Empty);

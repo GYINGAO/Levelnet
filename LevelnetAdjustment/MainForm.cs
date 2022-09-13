@@ -23,12 +23,18 @@ namespace LevelnetAdjustment {
 
         public bool IsImport { get; set; } = false;
 
+        public string StartProj { get; set; }
+
         /// <summary>
         /// 构造函数
         /// </summary>
-        public MainForm() {
+        public MainForm(string[] args) {
             InitializeComponent();
             this.DoubleBuffered = true;//设置本窗体
+
+            if (args != null && args.Length > 0) {
+                this.StartProj = args[0];
+            }
 
             SetStyle(ControlStyles.UserPaint, true);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true); // 禁止擦除背景.
@@ -87,6 +93,9 @@ namespace LevelnetAdjustment {
             COSADropItem.Enabled = false;
             HandbookDropItem.Enabled = false;
 
+            if (StartProj != null) {
+                OpenProj(StartProj);
+            }
         }
 
         /// <summary>
@@ -459,7 +468,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void HandbookDropItem_Click(object sender, EventArgs e) {
-            if (!File.Exists(Project.Options.OutputFiles.COSADis)) {
+            if (!File.Exists(Project.Options.OutputFiles.Handbook)) {
                 SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -467,14 +476,17 @@ namespace LevelnetAdjustment {
                 try {
                     ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
                     loading.CloseWaitForm();
-                    MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                        System.Diagnostics.Process.Start(Project.Options.OutputFiles.Handbook);
                 }
                 catch (Exception ex) {
                     loading.CloseWaitForm();
                     throw ex;
                 }
             }
-            System.Diagnostics.Process.Start(Project.Options.OutputFiles.Handbook);
+            else {
+                System.Diagnostics.Process.Start(Project.Options.OutputFiles.Handbook);
+            }
         }
 
         /// <summary>
@@ -723,10 +735,21 @@ namespace LevelnetAdjustment {
             }
         }
 
+        private void MainForm_DragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                e.Effect = DragDropEffects.Link;
+            }
+            else {
+                e.Effect = DragDropEffects.None;
+            }
+        }
 
-
-
-
+        private void MainForm_DragDrop(object sender, DragEventArgs e) {
+            string path = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            if (path.EndsWith(".laproj")) {
+                OpenProj(path);
+            }
+        }
     }
 }
 

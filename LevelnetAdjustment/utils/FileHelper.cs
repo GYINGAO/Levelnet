@@ -1,13 +1,16 @@
 ﻿using LevelnetAdjustment.model;
 using MathNet.Numerics.LinearAlgebra;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LevelnetAdjustment.utils {
     public class FileHelper {
@@ -642,5 +645,61 @@ namespace LevelnetAdjustment.utils {
             streamWriter.Close();
             fileStream.Close();
         }
+
+        public static void RegisterFileType(string typeName, string fileType, string fileContent, string app, string ico) {
+            //工具启动路径
+            string toolPath = app;
+
+            string extension = typeName;
+
+            //fileType = "自定义文件类型";
+
+            //fileContent = "AAAA";
+            //获取信息
+            RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(extension);
+
+            if (registryKey != null) {
+                try {
+                    RegistryKey _Regkey = Registry.ClassesRoot.OpenSubKey("", true);
+
+                    RegistryKey _VRPkey = _Regkey.OpenSubKey(extension);
+                    if (_VRPkey != null) _Regkey.DeleteSubKeyTree(extension, true);
+                    if (_VRPkey != null) _Regkey.DeleteSubKeyTree("Exec");
+                }
+                catch (Exception e) {
+                    throw e;
+                }
+            }
+
+            if (registryKey != null && registryKey.OpenSubKey("shell") != null && registryKey.OpenSubKey("shell").OpenSubKey("open") != null &&
+                registryKey.OpenSubKey("shell").OpenSubKey("open").OpenSubKey("command") != null) {
+                var varSub = registryKey.OpenSubKey("shell").OpenSubKey("open").OpenSubKey("command");
+                var varValue = varSub.GetValue("");
+
+                if (Equals(varValue, toolPath + " \"%1\"")) {
+                    return;
+                }
+            }
+
+            //文件注册
+            registryKey = Registry.ClassesRoot.CreateSubKey(extension);
+            registryKey.SetValue("", fileType);
+            registryKey.SetValue("Content Type", fileContent);
+            //设置默认图标
+            RegistryKey iconKey = registryKey.CreateSubKey("DefaultIcon");
+            iconKey.SetValue("", Application.StartupPath + $"\\{ico}.ico");
+            iconKey.Close();
+            //设置默认打开程序路径
+            registryKey = registryKey.CreateSubKey("shell\\open\\command");
+            registryKey.SetValue("", toolPath + " \"%1\"");
+            //关闭
+            registryKey.Close();
+
+            SHChangeNotify(0x8000000, 0, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        [DllImport("shell32.dll")]
+        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
     }
 }
