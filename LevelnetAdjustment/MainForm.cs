@@ -1,12 +1,15 @@
 ﻿using LevelnetAdjustment.form;
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
+using Newtonsoft.Json;
 using SplashScreenDemo;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Text;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment {
@@ -767,6 +770,124 @@ namespace LevelnetAdjustment {
                 OpenProj(path);
             }
         }
+
+
+
+
+
+        string UpdateUrl = "http://localhost:7003/checkversion";//检测版本更新地址
+        string ExeUrl = "http://localhost:7003/download";//下载EXE的地址
+        string ExeName = "LNADJ";//程序名
+
+        public void Updatenow() {
+            try {
+                Configuration config = ConfigurationManager.OpenExeConfiguration(@"" + ExeName + ".exe"); // 写的是应用程序的路径
+            }
+            catch {
+                MessageBox.Show("当前目录找不到主程序" + ExeName);
+                Close();
+                return;
+            }
+            string retdata = HttpGet(UpdateUrl);
+
+            LNADJ msg = JsonConvert.DeserializeObject<LNADJ>(retdata, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, StringEscapeHandling = StringEscapeHandling.EscapeNonAscii });
+
+            if (msg.Update)//需要更新
+            {
+                DialogResult dr = MessageBox.Show("检测到新版本：" + msg.Version + "更新内容：" + msg.Remarks + "，当前版本：" + versionname + ",是否更新", "操作提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (DialogResult.Yes == dr) {
+                    try {
+                        System.Net.WebClient client = new System.Net.WebClient();
+                        byte[] data = client.DownloadData(ExeUrl + updateBean.ID + "/" + ExeName + ".exe");//下载EXE程序
+
+                        System.Diagnostics.Process[] ps = System.Diagnostics.Process.GetProcesses();//把之前的程序关闭
+                        foreach (System.Diagnostics.Process p in ps) {
+                            //MessageBox.Show(p.ProcessName);
+                            if (p.ProcessName == ExeName || p.ProcessName == (ExeName + ".vshost")) {
+                                p.Kill();
+                                break;
+                            }
+                        }
+
+                        string path = Application.StartupPath;
+                        FileStream fs = new FileStream(path + "\\" + ExeName + ".exe", FileMode.Create);
+                        //将byte数组写入文件中
+                        fs.Write(data, 0, data.Length);
+                        fs.Close();
+                        MessageBox.Show("更新成功");
+
+                        SaveConfig("VersionID", updateBean.ID.ToString());
+                        SaveConfig("VersionName", updateBean.Version);
+                    }
+                    catch (Exception ex) {
+                        MessageBox.Show("更新失败：" + ex.Message);
+                    }
+                }
+            }
+            Close();
+            System.Diagnostics.Process.Start(Application.StartupPath + "\\" + ExeName + ".exe");
+
+        }
+        public string LoadConfig(string content) {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(@"" + ExeName + ".exe"); // 写的是应用程序的路径
+            try {
+                return config.AppSettings.Settings[content].Value;
+            }
+            catch {
+                return "";
+            }
+
+        }
+        public void SaveConfig(string content, string value) {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(@"" + ExeName + ".exe"); // 写的是应用程序的路径
+            try {
+                config.AppSettings.Settings[content].Value = value;
+            }
+            catch {
+                config.AppSettings.Settings.Add(content, value);
+            }
+            config.Save(System.Configuration.ConfigurationSaveMode.Minimal);
+        }
+        public static string HttpGet(string url) {
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+            request.Method = "GET";
+            //request.ContentType = "application/x-www-form-urlencoded";
+            request.Accept = "*/*";
+            request.Timeout = 15000;
+            request.AllowAutoRedirect = false;
+            WebResponse response = null;
+            string responseStr = null;
+            try {
+                response = request.GetResponse();
+                if (response != null) {
+                    StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                    responseStr = reader.ReadToEnd();
+                    reader.Close();
+                }
+            }
+            catch (Exception) {
+                MessageBox.Show("请检查当前网络或者链接路径");
+            }
+            finally {
+                request = null;
+                response = null;
+            }
+            return responseStr;
+        }
+        public partial class LNADJ {
+            public int ID { get; set; }
+            public string Version { get; set; }
+            public string Remarks { get; set; }
+            public bool Update { get; set; }
+
+        }
+
+
+
+
+
+
+
     }
 }
 

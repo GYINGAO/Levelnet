@@ -94,7 +94,6 @@ namespace LevelnetAdjustment.form {
                 dataGridView1.Rows[idx].Cells["FileName"].Value = t.FileName;
                 dataGridView1.Rows[idx].Cells["IsSplit"].Value = t.IsSplit;
             });
-            dataGridView1.CurrentCell = null;
 
             switch (ClAdj.Options.PowerMethod) {
                 case 0:
@@ -137,6 +136,8 @@ namespace LevelnetAdjustment.form {
             this.tb_limit.Text = (ClAdj.Options.Limit * 100).ToString();
             this.textBox1.Visible = rbtn_before.Checked ? true : false;
             this.textBox1.Text = ClAdj.Options.Sigma.ToString();
+
+            dataGridView1.CurrentCell = null;
         }
 
 

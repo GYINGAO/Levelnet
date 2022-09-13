@@ -8,7 +8,7 @@
     <ProjectGuid>{143826CE-ACB5-4B28-8FB5-9181291858E5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>LevelnetAdjustment</RootNamespace>
-    <AssemblyName>水准网平差</AssemblyName>
+    <AssemblyName>LNADJ</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
