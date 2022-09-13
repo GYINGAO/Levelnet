@@ -247,7 +247,6 @@
     <Compile Include="utils\FileHelper.cs" />
     <Compile Include="utils\DFSAlgorithm.cs" />
     <Compile Include="utils\JsonHelper.cs" />
-    <Compile Include="utils\RegistryHelper.cs" />
     <Compile Include="utils\SplashScreenManager.cs" />
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>

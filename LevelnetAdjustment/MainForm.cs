@@ -93,7 +93,7 @@ namespace LevelnetAdjustment {
             COSADropItem.Enabled = false;
             HandbookDropItem.Enabled = false;
 
-            if (StartProj != null) {
+            if (StartProj != null || StartProj != "") {
                 OpenProj(StartProj);
             }
         }
