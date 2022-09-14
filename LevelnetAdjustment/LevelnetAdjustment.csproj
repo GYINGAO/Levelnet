@@ -246,6 +246,7 @@
     <Compile Include="utils\ExceHelperl.cs" />
     <Compile Include="utils\FileHelper.cs" />
     <Compile Include="utils\DFSAlgorithm.cs" />
+    <Compile Include="utils\HttpHelper.cs" />
     <Compile Include="utils\JsonHelper.cs" />
     <Compile Include="utils\SplashScreenManager.cs" />
     <EmbeddedResource Include="form\About.resx">
