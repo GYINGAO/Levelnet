@@ -57,7 +57,7 @@ namespace LevelnetAdjustment.model {
 
         public Option Options { get; set; } = new Option();//选项
         public List<PointData> KnownPoints { get; set; } = new List<PointData>();//已知点数据
-        public List<string> StablePoints { get; set; } = new List<string>(); //拟稳点数据
+        public List<PointData> UnknownPoints { get; set; } = new List<PointData>(); //拟稳点数据
         public List<RawData> RawDatas { get; set; } = new List<RawData>();//原始数据
         public List<ObservedData> ObservedDatas { get; set; } = new List<ObservedData>();//测段观测文件
 

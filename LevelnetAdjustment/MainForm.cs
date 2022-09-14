@@ -157,6 +157,8 @@ namespace LevelnetAdjustment {
             this.IsImport = true;
             this.ClAdj.Options = options;
             this.Project.Options = options;
+            ClAdj.CalcApproximateHeight();
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPoints, ClAdj.UnknownPoints);
         }
 
         /// <summary>
@@ -225,8 +227,10 @@ namespace LevelnetAdjustment {
             this.ClAdj.RawDatas = Project.RawDatas;
             this.ClAdj.ObservedDatas = Project.ObservedDatas;
             this.ClAdj.KnownPoints = Project.KnownPoints;
-            this.ClAdj.StablePoints = Project.StablePoints;
+            this.ClAdj.UnknownPoints = Project.UnknownPoints;
             this.ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);//去除重复边
+            ClAdj.CalcApproximateHeight();
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPoints, ClAdj.UnknownPoints);
             // 获取所有文件
             FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
             foreach (var file in files) {
@@ -277,7 +281,7 @@ namespace LevelnetAdjustment {
             if (!IsImport) {
                 return;
             }
-            Project.StablePoints = ClAdj.StablePoints;
+            Project.UnknownPoints = ClAdj.UnknownPoints;
             Project.Options = ClAdj.Options;
             Project.RawDatas = ClAdj.RawDatas;
             Project.ObservedDatas = ClAdj.ObservedDatas;
@@ -350,39 +354,40 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
-            ClAdj.CalcApproximateHeight(1);
+            ClAdj.CalcApproximateHeight();
             ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.UnknownPoints);
             chooseStablePoint.TransfChangeStable += CalcStable;
-            chooseStablePoint.Show();
+            chooseStablePoint.ShowDialog();
         }
 
         private void CalcStable(List<PointData> Points) {
             ClAdj.UnknownPoints = Points;
-            SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPoints, Points);
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            /*     try {*/
-            var i = 0;
-            // 有拟稳点
-            if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
-                i = ClAdj.QuasiStable();
-                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
-            }
-            // 无拟稳点
-            else {
-                i = ClAdj.FreeNetAdjust();
-                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
-            }
+            try {
+                var i = 0;
+                // 有拟稳点
+                if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
+                    i = ClAdj.QuasiStable();
+                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
+                }
+                // 无拟稳点
+                else {
+                    i = ClAdj.FreeNetAdjust();
+                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
+                }
 
-            loading.CloseWaitForm();
-            AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
-            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            /* }
-             catch (Exception ex) {
-                 loading.CloseWaitForm();
-                 throw ex;
-             }*/
+                loading.CloseWaitForm();
+                AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
         }
 
 
