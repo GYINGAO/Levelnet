@@ -31,6 +31,7 @@ namespace LevelnetAdjustment {
             this.ToolStripMenuItem_closeothers = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItem_closeright = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItem_closeall = new System.Windows.Forms.ToolStripMenuItem();
+            this.在文件夹中打开ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NewDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_open = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,11 +56,7 @@ namespace LevelnetAdjustment {
             this.使用说明ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.新建NToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.打开OToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.帮助LToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
@@ -68,7 +65,10 @@ namespace LevelnetAdjustment {
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.在文件夹中打开ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.新建NToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.打开OToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.帮助LToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -91,30 +91,37 @@ namespace LevelnetAdjustment {
             // toolStripMenuItem_close
             // 
             this.toolStripMenuItem_close.Name = "toolStripMenuItem_close";
-            this.toolStripMenuItem_close.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_close.Size = new System.Drawing.Size(160, 22);
             this.toolStripMenuItem_close.Text = "关闭当前页面";
             this.toolStripMenuItem_close.Click += new System.EventHandler(this.toolStripMenuItem_close_Click);
             // 
             // ToolStripMenuItem_closeothers
             // 
             this.ToolStripMenuItem_closeothers.Name = "ToolStripMenuItem_closeothers";
-            this.ToolStripMenuItem_closeothers.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripMenuItem_closeothers.Size = new System.Drawing.Size(160, 22);
             this.ToolStripMenuItem_closeothers.Text = "关闭其他页面";
             this.ToolStripMenuItem_closeothers.Click += new System.EventHandler(this.ToolStripMenuItem_closeothers_Click);
             // 
             // ToolStripMenuItem_closeright
             // 
             this.ToolStripMenuItem_closeright.Name = "ToolStripMenuItem_closeright";
-            this.ToolStripMenuItem_closeright.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripMenuItem_closeright.Size = new System.Drawing.Size(160, 22);
             this.ToolStripMenuItem_closeright.Text = "关闭右侧页面";
             this.ToolStripMenuItem_closeright.Click += new System.EventHandler(this.ToolStripMenuItem_closeright_Click);
             // 
             // ToolStripMenuItem_closeall
             // 
             this.ToolStripMenuItem_closeall.Name = "ToolStripMenuItem_closeall";
-            this.ToolStripMenuItem_closeall.Size = new System.Drawing.Size(180, 22);
+            this.ToolStripMenuItem_closeall.Size = new System.Drawing.Size(160, 22);
             this.ToolStripMenuItem_closeall.Text = "关闭所有页面";
             this.ToolStripMenuItem_closeall.Click += new System.EventHandler(this.ToolStripMenuItem_closeall_Click);
+            // 
+            // 在文件夹中打开ToolStripMenuItem
+            // 
+            this.在文件夹中打开ToolStripMenuItem.Name = "在文件夹中打开ToolStripMenuItem";
+            this.在文件夹中打开ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.在文件夹中打开ToolStripMenuItem.Text = "在文件夹中打开";
+            this.在文件夹中打开ToolStripMenuItem.Click += new System.EventHandler(this.在文件夹中打开ToolStripMenuItem_Click);
             // 
             // FileToolStripMenuItem
             // 
@@ -197,28 +204,28 @@ namespace LevelnetAdjustment {
             // ClosureErrorDropItem
             // 
             this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-            this.ClosureErrorDropItem.Size = new System.Drawing.Size(136, 22);
+            this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
             this.ClosureErrorDropItem.Text = "闭合差计算";
             this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
             // 
             // GrossErrorDropItem
             // 
             this.GrossErrorDropItem.Name = "GrossErrorDropItem";
-            this.GrossErrorDropItem.Size = new System.Drawing.Size(136, 22);
+            this.GrossErrorDropItem.Size = new System.Drawing.Size(180, 22);
             this.GrossErrorDropItem.Text = "粗差探测";
             this.GrossErrorDropItem.Click += new System.EventHandler(this.GrossErrorDropItem_Click);
             // 
             // ConstraintNetworkDropItem
             // 
             this.ConstraintNetworkDropItem.Name = "ConstraintNetworkDropItem";
-            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(136, 22);
+            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(180, 22);
             this.ConstraintNetworkDropItem.Text = "约束网平差";
             this.ConstraintNetworkDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
             // 
             // RankDefectNetworkDropItem
             // 
             this.RankDefectNetworkDropItem.Name = "RankDefectNetworkDropItem";
-            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(136, 22);
+            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(180, 22);
             this.RankDefectNetworkDropItem.Text = "拟稳平差";
             this.RankDefectNetworkDropItem.Click += new System.EventHandler(this.RankDefectNetworkDropItem_Click);
             // 
@@ -317,50 +324,10 @@ namespace LevelnetAdjustment {
             this.toolStrip1.TabIndex = 5;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // 新建NToolStripButton
-            // 
-            this.新建NToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.新建NToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("新建NToolStripButton.Image")));
-            this.新建NToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.新建NToolStripButton.Name = "新建NToolStripButton";
-            this.新建NToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.新建NToolStripButton.Text = "新建项目(&N)";
-            this.新建NToolStripButton.Click += new System.EventHandler(this.新建NToolStripButton_Click);
-            // 
-            // 打开OToolStripButton
-            // 
-            this.打开OToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.打开OToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("打开OToolStripButton.Image")));
-            this.打开OToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.打开OToolStripButton.Name = "打开OToolStripButton";
-            this.打开OToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.打开OToolStripButton.Text = "打开项目(&O)";
-            this.打开OToolStripButton.Click += new System.EventHandler(this.打开OToolStripButton_Click);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "保存项目(&S)";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
             this.toolStripSeparator.Size = new System.Drawing.Size(6, 25);
-            // 
-            // 帮助LToolStripButton
-            // 
-            this.帮助LToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.帮助LToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("帮助LToolStripButton.Image")));
-            this.帮助LToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.帮助LToolStripButton.Name = "帮助LToolStripButton";
-            this.帮助LToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.帮助LToolStripButton.Text = "帮助(&L)";
-            this.帮助LToolStripButton.Click += new System.EventHandler(this.帮助LToolStripButton_Click);
             // 
             // tabControl1
             // 
@@ -423,12 +390,45 @@ namespace LevelnetAdjustment {
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // 在文件夹中打开ToolStripMenuItem
+            // 新建NToolStripButton
             // 
-            this.在文件夹中打开ToolStripMenuItem.Name = "在文件夹中打开ToolStripMenuItem";
-            this.在文件夹中打开ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.在文件夹中打开ToolStripMenuItem.Text = "在文件夹中打开";
-            this.在文件夹中打开ToolStripMenuItem.Click += new System.EventHandler(this.在文件夹中打开ToolStripMenuItem_Click);
+            this.新建NToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.新建NToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("新建NToolStripButton.Image")));
+            this.新建NToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.新建NToolStripButton.Name = "新建NToolStripButton";
+            this.新建NToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.新建NToolStripButton.Text = "新建项目(&N)";
+            this.新建NToolStripButton.Click += new System.EventHandler(this.新建NToolStripButton_Click);
+            // 
+            // 打开OToolStripButton
+            // 
+            this.打开OToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.打开OToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("打开OToolStripButton.Image")));
+            this.打开OToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.打开OToolStripButton.Name = "打开OToolStripButton";
+            this.打开OToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.打开OToolStripButton.Text = "打开项目(&O)";
+            this.打开OToolStripButton.Click += new System.EventHandler(this.打开OToolStripButton_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "保存项目(&S)";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // 帮助LToolStripButton
+            // 
+            this.帮助LToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.帮助LToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("帮助LToolStripButton.Image")));
+            this.帮助LToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.帮助LToolStripButton.Name = "帮助LToolStripButton";
+            this.帮助LToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.帮助LToolStripButton.Text = "帮助(&L)";
+            this.帮助LToolStripButton.Click += new System.EventHandler(this.帮助LToolStripButton_Click);
             // 
             // MainForm
             // 
@@ -448,6 +448,7 @@ namespace LevelnetAdjustment {
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(1200, 730);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "水准网平差软件";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);

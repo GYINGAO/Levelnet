@@ -1,4 +1,5 @@
-﻿using LevelnetAdjustment.form;
+﻿
+using LevelnetAdjustment.form;
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
 using Newtonsoft.Json;
@@ -8,8 +9,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment {
@@ -78,6 +77,7 @@ namespace LevelnetAdjustment {
             COSADropItem.Enabled = false;
             HandbookDropItem.Enabled = false;
             toolStripMenuItem_read.Enabled = false;
+
 
             //添加最近打开的项目
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -165,7 +165,7 @@ namespace LevelnetAdjustment {
         void ClearForms() {
             FormCollection childCollection = Application.OpenForms;
             for (int i = childCollection.Count; i-- > 0;) {
-                if (childCollection[i].Name != this.Name) childCollection[i].Close();
+                if (childCollection[i].Name != Name) childCollection[i].Close();
             }
             tabControl1.TabPages.Clear();
             tabControl1.Visible = false;    // 没有元素的时候隐藏自己
@@ -350,57 +350,49 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
+            ClAdj.CalcApproximateHeight();
+            ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.UnknownPoints);
+            chooseStablePoint.TransfChangeStable += CalcStable;
 
-            var i = 0;
 
-            if (MessageBox.Show("是否导入拟稳点点号？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                // 拟稳平差
-                OpenFileDialog openFile = new OpenFileDialog {
-                    Multiselect = false,
-                    Title = "打开",
-                    Filter = "文本文件(*.txt)|*.txt|所有文件(*.*)|*.*",
-                    FilterIndex = 1,
-                };
-                if (openFile.ShowDialog() == DialogResult.OK) {
-                    SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
-                    //将Loaing窗口，注入到 SplashScreenManager 来管理
-                    GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                    loading.ShowLoading();
-                    try {
-                        ClAdj.CalcApproximateHeight();
-                        FileHelper.ReadStablePoint(openFile.FileName, ClAdj.StablePoints, ClAdj.UnknownPoints);
-                        i = ClAdj.QuasiStable();
-                        ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
-                        loading.CloseWaitForm();
-                    }
-                    catch (Exception ex) {
-                        loading.CloseWaitForm();
-                        throw ex;
-                    }
+            chooseStablePoint.Show();
+
+
+
+
+
+        }
+
+        private void CalcStable(List<PointData> Points) {
+            ClAdj.UnknownPoints = Points;
+            SimpleLoading loadingfrm = new SimpleLoading(this, "拟稳平差中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                var i = 0;
+                // 有拟稳点
+                if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
+                    i = ClAdj.QuasiStable();
+                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
                 }
+                // 无拟稳点
                 else {
-                    return;
-                }
-            }
-            else {
-                // 自由网平差
-                SimpleLoading loadingfrm = new SimpleLoading(this, "自由网平差中，请稍等...");
-                //将Loaing窗口，注入到 SplashScreenManager 来管理
-                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                loading.ShowLoading();
-                try {
                     i = ClAdj.FreeNetAdjust();
                     ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
-                    loading.CloseWaitForm();
                 }
-                catch (Exception ex) {
-                    loading.CloseWaitForm();
-                    throw ex;
-                }
+
+                loading.CloseWaitForm();
+                AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
-            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
         }
+
+
 
         /// <summary>
         /// 计算闭合差
@@ -777,13 +769,7 @@ namespace LevelnetAdjustment {
             }
         }
 
-
-
-
-
-
-
-        void Update() {
+        new void Update() {
             var Version = Application.ProductVersion.ToString();
             string checkURL = "http://43.142.49.203:7001/check?Version=" + Version;//检测版本更新地址
 
@@ -794,7 +780,8 @@ namespace LevelnetAdjustment {
                 if (res.Update) {
                     DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新内容：" + res.Remark + "\r\n是否更新", "更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (dr == DialogResult.Yes) {
-                        string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
+                        //string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
+                        string downloadURL = "http://43.142.49.203:7001/download";//下载EXE的地址
                         Process.Start(downloadURL);
                         DirectExit = true;
                         this.Close();

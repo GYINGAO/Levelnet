@@ -191,6 +191,12 @@
     <Compile Include="form\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\ChooseStablePoint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\ChooseStablePoint.Designer.cs">
+      <DependentUpon>ChooseStablePoint.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\CreatePrj.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -251,6 +257,9 @@
     <Compile Include="utils\SplashScreenManager.cs" />
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\ChooseStablePoint.resx">
+      <DependentUpon>ChooseStablePoint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\CreatePrj.resx">
       <DependentUpon>CreatePrj.cs</DependentUpon>
