@@ -350,17 +350,10 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
-            ClAdj.CalcApproximateHeight();
+            ClAdj.CalcApproximateHeight(1);
             ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.UnknownPoints);
             chooseStablePoint.TransfChangeStable += CalcStable;
-
-
             chooseStablePoint.Show();
-
-
-
-
-
         }
 
         private void CalcStable(List<PointData> Points) {
@@ -369,27 +362,27 @@ namespace LevelnetAdjustment {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            try {
-                var i = 0;
-                // 有拟稳点
-                if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
-                    i = ClAdj.QuasiStable();
-                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
-                }
-                // 无拟稳点
-                else {
-                    i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
-                }
+            /*     try {*/
+            var i = 0;
+            // 有拟稳点
+            if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
+                i = ClAdj.QuasiStable();
+                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
+            }
+            // 无拟稳点
+            else {
+                i = ClAdj.FreeNetAdjust();
+                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
+            }
 
-                loading.CloseWaitForm();
-                AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
-                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
+            loading.CloseWaitForm();
+            AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+            MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            /* }
+             catch (Exception ex) {
+                 loading.CloseWaitForm();
+                 throw ex;
+             }*/
         }
 
 
@@ -778,7 +771,7 @@ namespace LevelnetAdjustment {
                 string getJson = HttpHelper.Get(checkURL);
                 Response res = JsonConvert.DeserializeObject<Response>(getJson);
                 if (res.Update) {
-                    DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新内容：" + res.Remark + "\r\n是否更新", "更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新内容：\r\n" + res.Remark + "\r\n\r\n是否更新?", "更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (dr == DialogResult.Yes) {
                         //string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
                         string downloadURL = "http://43.142.49.203:7001/download";//下载EXE的地址

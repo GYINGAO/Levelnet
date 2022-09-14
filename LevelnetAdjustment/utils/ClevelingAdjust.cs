@@ -146,12 +146,12 @@ namespace LevelnetAdjustment.utils {
         /// <summary>
         /// 计算近似高程
         /// </summary>
-        public void CalcApproximateHeight() {
+        public void CalcApproximateHeight(int adjmethod) {
             if (knownPoints.Count == 0) {
                 throw new Exception("未导入已知点");
             }
             //已经计算出来了
-            if (UnknownPoints.Count != 0) {
+            if ((adjmethod == 0 && X != null && X.RowCount == AllPoints.Count) || (adjmethod == 1 && X != null && X.RowCount == UnknownPoints.Count)) {
                 return;
             }
             List<PointData> AllPoints_old = Commom.Clone(KnownPoints);
@@ -428,7 +428,7 @@ namespace LevelnetAdjustment.utils {
         /// <returns>迭代次数</returns>
         public int LS_Adjustment() {
             Options.AdjustMethod = 0;
-            CalcApproximateHeight();
+            CalcApproximateHeight(Options.AdjustMethod);
             Calc_P();
             Calc_B();
             Calc_l();
@@ -741,7 +741,7 @@ namespace LevelnetAdjustment.utils {
             Options.AdjustMethod = 0;
             //double U = Calc.re_norm(1 - Options.Alpha / 2);
             double U = 3.3;
-            CalcApproximateHeight();
+            CalcApproximateHeight(Options.AdjustMethod);
             PVV = 0;
             int k;
             List<ObservedData> odError = new List<ObservedData>(); //保存含有粗差的观测数据
@@ -816,7 +816,7 @@ namespace LevelnetAdjustment.utils {
         public int QuasiStable() {
             Options.AdjustMethod = 1;
             // 自由网平差要求每个点有先验高程值
-            CalcApproximateHeight();
+            CalcApproximateHeight(Options.AdjustMethod);
             Calc_P();
             Calc_B();
             Calc_l();
@@ -901,7 +901,7 @@ namespace LevelnetAdjustment.utils {
         public int FreeNetAdjust() {
             Options.AdjustMethod = 1;
             // 自由网平差要求每个点有先验高程值
-            CalcApproximateHeight();
+            CalcApproximateHeight(Options.AdjustMethod);
             // 生成高程近似值矩阵
             Calc_P();
             Calc_B();
