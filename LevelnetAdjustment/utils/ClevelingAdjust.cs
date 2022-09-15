@@ -94,7 +94,7 @@ namespace LevelnetAdjustment.utils {
 
         void Calc_Params() {
             N = ObservedDatas.Count;
-            R = N - T;
+
             KnPnumber = KnownPointEable.Count;
             UnknownPoints_array = new ArrayList();
             ObservedDatas.ForEach(item => {
@@ -106,9 +106,12 @@ namespace LevelnetAdjustment.utils {
                 }
                 TotalDistence += item.Distance;
             });
-            CalcApproximateHeight(true);
             T = UnknownPoints_array.Count;
+            R = N - T;
             M = T + KnPnumber;
+            if (KnownPointEable?.Count != 0 && ObservedDatas?.Count != 0) {
+                CalcApproximateHeight(true);
+            }
             ObservedDatasNoRep = Calc.RemoveDuplicates(ObservedDatas);
 
         }
@@ -450,13 +453,15 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(split);
             sb.AppendLine(space + $"{title}平差结果");
             sb.AppendLine(split);
-            sb.AppendLine(space + "已知点高程");
-            sb.AppendLine(split);
-            sb.AppendLine($"                  {"序号",-11}{"点名",-11}{"高程/m",-11}");
-            for (int i = 0; i < KnownPointEable.Count; i++) {
-                sb.AppendLine($"                  {i + 1,-13}{KnownPointEable[i].Number,-13}{KnownPointEable[i].Height,-13:#0.00000}");
+            if (Options.AdjustMethod == 0) {
+                sb.AppendLine(space + "已知点高程");
+                sb.AppendLine(split);
+                sb.AppendLine($"                  {"序号",-11}{"点名",-11}{"高程/m",-11}");
+                for (int i = 0; i < KnownPointEable.Count; i++) {
+                    sb.AppendLine($"                  {i + 1,-13}{KnownPointEable[i].Number,-13}{KnownPointEable[i].Height,-13:#0.00000}");
+                }
+                sb.AppendLine(split);
             }
-            sb.AppendLine(split);
             sb.AppendLine(space + "高差观测数据");
             sb.AppendLine(split);
             sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"高差/m",-11}{"距离/km",-9}{"权重",-11}");

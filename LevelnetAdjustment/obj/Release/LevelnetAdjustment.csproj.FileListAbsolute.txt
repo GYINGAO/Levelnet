@@ -110,6 +110,8 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.Num
 F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
 F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.ValueTuple.xml
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.About.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseKnownPoint.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseStablePoint.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.CreatePrj.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FileView.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\SplashScreenDemo.MultiFuncLoading.resources
@@ -125,6 +127,3 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.appl
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.CopyComplete
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.exe
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.pdb
-F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseStablePoint.resources
-F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
-F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseKnownPoint.resources

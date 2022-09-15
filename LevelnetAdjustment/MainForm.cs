@@ -218,6 +218,16 @@ namespace LevelnetAdjustment {
         /// 打开项目
         /// </summary>
         void OpenProj(string projname) {
+            if (Project != null) {
+                if (toolStripStatusLabel2.Text == "当前项目：" + Path.GetDirectoryName(projname)) {
+                    MessageBox.Show("打开了相同的项目！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                // 打开项目保存上一个项目
+                else {
+                    SaveProject();
+                }
+            }
             ClAdj = new ClevelingAdjust();
             UpDateMenu(Path.GetDirectoryName(projname));
             ClearForms();
@@ -229,7 +239,7 @@ namespace LevelnetAdjustment {
             this.ClAdj.KnownPoints = Project.KnownPoints;
             this.ClAdj.UnknownPoints = Project.UnknownPoints;
             this.ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);//去除重复边
-            ClAdj.CalcApproximateHeight(true);
+            //ClAdj.CalcApproximateHeight(true);
             ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
             // 获取所有文件
             FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
@@ -278,9 +288,9 @@ namespace LevelnetAdjustment {
         /// </summary>
         private void SaveProject() {
             //没有导入文件不需要保存
-            if (!IsImport) {
-                return;
-            }
+            /* if (!IsImport) {
+                 return;
+             }*/
             Project.UnknownPoints = ClAdj.UnknownPoints;
             Project.Options = ClAdj.Options;
             Project.RawDatas = ClAdj.RawDatas;
@@ -481,24 +491,25 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void HandbookDropItem_Click(object sender, EventArgs e) {
-            if (!File.Exists(Project.Options.OutputFiles.Handbook)) {
-                SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
-                //将Loaing窗口，注入到 SplashScreenManager 来管理
-                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-                loading.ShowLoading();
-                try {
-                    ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
-                    loading.CloseWaitForm();
-                    if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                        System.Diagnostics.Process.Start(Project.Options.OutputFiles.Handbook);
-                }
-                catch (Exception ex) {
-                    loading.CloseWaitForm();
-                    throw ex;
+            if (File.Exists(Project.Options.OutputFiles.Handbook)) {
+                if (MessageBox.Show("观测手簿已存在，是否重新导出？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    Process.Start(Project.Options.OutputFiles.Handbook);
+                    return;
                 }
             }
-            else {
-                System.Diagnostics.Process.Start(Project.Options.OutputFiles.Handbook);
+            SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
+                loading.CloseWaitForm();
+                if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    Process.Start(Project.Options.OutputFiles.Handbook);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
             }
         }
 
