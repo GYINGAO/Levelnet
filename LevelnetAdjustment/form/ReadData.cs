@@ -187,7 +187,7 @@ namespace LevelnetAdjustment.form {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            try {
+          /*  try {*/
                 foreach (DataGridViewRow row in dataGridView1.Rows) {
                     string fileName = row.Cells["FileName"].Value.ToString();
                     bool isSplit = (bool)row.Cells["IsSplit"].Value;
@@ -233,14 +233,13 @@ namespace LevelnetAdjustment.form {
                 UpdateList();
                 loading.CloseWaitForm();
                 TransfEvent(Options);
-                if (MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK) {
-                    this.Close();
-                }
-            }
+                this.Close();
+
+          /*  }
             catch (Exception ex) {
                 loading.CloseWaitForm();
                 throw ex;
-            }
+            }*/
         }
 
         /// <summary>

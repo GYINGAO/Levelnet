@@ -92,9 +92,8 @@ namespace LevelnetAdjustment.utils {
             KnownPoints = new List<PointData>();
         }
 
-        void Calc_Params() {
+        public void Calc_Params() {
             N = ObservedDatas.Count;
-
             KnPnumber = KnownPointEable.Count;
             UnknownPoints_array = new ArrayList();
             ObservedDatas.ForEach(item => {
@@ -106,6 +105,8 @@ namespace LevelnetAdjustment.utils {
                 }
                 TotalDistence += item.Distance;
             });
+            KnownPointEable = new List<PointData>();
+            KnownPointEable.AddRange(knownPoints.FindAll(p => p.Enable));
             T = UnknownPoints_array.Count;
             R = N - T;
             M = T + KnPnumber;

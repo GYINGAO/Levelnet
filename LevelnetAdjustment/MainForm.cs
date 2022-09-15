@@ -157,8 +157,27 @@ namespace LevelnetAdjustment {
             this.IsImport = true;
             this.ClAdj.Options = options;
             this.Project.Options = options;
-            ClAdj.CalcApproximateHeight(true);
+
             ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+            string msg = "";
+            int j = 0;
+            for (int i = 0; i < ClAdj.KnownPoints.Count; i++) {
+                if (ClAdj.ObservedDatas.Exists(l => l.Start == ClAdj.KnownPoints[i].Number || l.End == ClAdj.KnownPoints[i].Number)) {
+                    continue;
+                }
+                else {
+                    j++;
+                    msg += $"{j}、点号：{ClAdj.KnownPoints[i].Number}，高程：{ClAdj.KnownPoints[i].Height}\r\n";
+                    ClAdj.KnownPoints[i].Enable = false;
+                }
+            }
+            if (msg != "") {
+                MessageBox.Show($"以下已知点在观测文件中未找到!\r\n{msg}", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ClAdj.Calc_Params();
+            }
+            else {
+                MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         /// <summary>
