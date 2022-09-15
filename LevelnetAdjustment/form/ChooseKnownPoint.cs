@@ -2,19 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using LevelnetAdjustment.utils;
 
 namespace LevelnetAdjustment.form {
-    public delegate void ChangeStable(List<PointData> Points);
-    public partial class ChooseStablePoint : Form {
+
+
+    public partial class ChooseKnownPoint : Form {
         public List<PointData> Points { get; set; }
         public List<PointData> Points_Copy { get; set; }
-        public event ChangeStable TransfChangeStable;
-
-        public ChooseStablePoint(List<PointData> points) {
+        public event ChangeStable TransfChangeKnownPoint;
+        public ChooseKnownPoint(List<PointData> points) {
             this.Points = points;
             InitializeComponent();
             //利用反射设置DataGridView的双缓冲
@@ -24,18 +27,9 @@ namespace LevelnetAdjustment.form {
             pi.SetValue(this.dataGridView1, true, null);
         }
 
-        /// <summary>
-        /// 取消
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e) {
-            Close();
-        }
-
-        private void ChooseStablePoint_Load(object sender, EventArgs e) {
+        private void ChooseKnownPoint_Load(object sender, EventArgs e) {
             this.dataGridView1.AutoGenerateColumns = false;
-            Points_Copy = Commom.Clone(Points);
+            Points_Copy = utils.Commom.Clone(Points);
             this.dataGridView1.DataSource = new BindingList<PointData>(Points_Copy);
         }
 
@@ -52,13 +46,12 @@ namespace LevelnetAdjustment.form {
                    TextFormatFlags.VerticalCenter | TextFormatFlags.Right);
         }
 
-        /// <summary>
-        /// 确认
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e) {
+            Close();
+        }
+
         private void button1_Click(object sender, EventArgs e) {
-            TransfChangeStable(Points_Copy);
+            TransfChangeKnownPoint(Points_Copy);
             this.Close();
         }
     }

@@ -191,6 +191,12 @@
     <Compile Include="form\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\ChooseKnownPoint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\ChooseKnownPoint.Designer.cs">
+      <DependentUpon>ChooseKnownPoint.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\ChooseStablePoint.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -233,12 +239,12 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="model\PointData.cs" />
     <Compile Include="model\Closure.cs" />
     <Compile Include="model\InputFile.cs" />
     <Compile Include="model\OutputFile.cs" />
     <Compile Include="model\ProjectInfo.cs" />
     <Compile Include="model\RawData.cs" />
-    <Compile Include="model\PointData.cs" />
     <Compile Include="model\ObservedData.cs" />
     <Compile Include="model\Option.cs" />
     <Compile Include="Program.cs" />
@@ -257,6 +263,9 @@
     <Compile Include="utils\SplashScreenManager.cs" />
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\ChooseKnownPoint.resx">
+      <DependentUpon>ChooseKnownPoint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\ChooseStablePoint.resx">
       <DependentUpon>ChooseStablePoint.cs</DependentUpon>

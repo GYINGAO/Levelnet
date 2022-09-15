@@ -157,8 +157,8 @@ namespace LevelnetAdjustment {
             this.IsImport = true;
             this.ClAdj.Options = options;
             this.Project.Options = options;
-            ClAdj.CalcApproximateHeight();
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPoints, ClAdj.UnknownPoints);
+            ClAdj.CalcApproximateHeight(true);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
         }
 
         /// <summary>
@@ -229,8 +229,8 @@ namespace LevelnetAdjustment {
             this.ClAdj.KnownPoints = Project.KnownPoints;
             this.ClAdj.UnknownPoints = Project.UnknownPoints;
             this.ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);//去除重复边
-            ClAdj.CalcApproximateHeight();
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPoints, ClAdj.UnknownPoints);
+            ClAdj.CalcApproximateHeight(true);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
             // 获取所有文件
             FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
             foreach (var file in files) {
@@ -321,6 +321,15 @@ namespace LevelnetAdjustment {
                 }
             }
 
+            ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+            chooseStablePoint.TransfChangeKnownPoint += CalcLS;
+            chooseStablePoint.ShowDialog();
+        }
+
+        void CalcLS(List<PointData> Points) {
+            ClAdj.KnownPoints = Points;
+            ClAdj.CalcApproximateHeight(true);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
             SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -336,8 +345,8 @@ namespace LevelnetAdjustment {
                 loading.CloseWaitForm();
                 throw ex;
             }
-
         }
+
 
         /// <summary>
         /// 秩亏网平差
@@ -354,7 +363,7 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
-            ClAdj.CalcApproximateHeight();
+            ClAdj.CalcApproximateHeight(false);
             ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.UnknownPoints);
             chooseStablePoint.TransfChangeStable += CalcStable;
             chooseStablePoint.ShowDialog();
@@ -362,7 +371,7 @@ namespace LevelnetAdjustment {
 
         private void CalcStable(List<PointData> Points) {
             ClAdj.UnknownPoints = Points;
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPoints, Points);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, Points);
             SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -404,6 +413,16 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
+
+            ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+            chooseStablePoint.TransfChangeKnownPoint += CalcClosureError;
+            chooseStablePoint.ShowDialog();
+        }
+
+        void CalcClosureError(List<PointData> Points) {
+            ClAdj.KnownPoints = Points;
+            ClAdj.CalcApproximateHeight(true);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
             SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -419,7 +438,6 @@ namespace LevelnetAdjustment {
                 loading.CloseWaitForm();
                 throw ex;
             }
-
         }
 
         /// <summary>
@@ -491,7 +509,7 @@ namespace LevelnetAdjustment {
         /// <param name="e"></param>
         private void DisPower_Click(object sender, EventArgs e) {
 
-            FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSADis);
+            FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSADis);
             MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
         }
@@ -502,7 +520,7 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void StationPower_Click(object sender, EventArgs e) {
-            FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSASta);
+            FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSASta);
 
             AddTabPage(Project.Options.OutputFiles.COSASta);  // 新建窗体同时新建一个标签
             MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);

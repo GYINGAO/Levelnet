@@ -7,61 +7,45 @@ using System.Text;
 
 namespace LevelnetAdjustment.utils {
     public class ClevelingAdjust {
+
+
         // 观测数据列表
         private List<ObservedData> observedDatas;
         public List<ObservedData> ObservedDatas {
             get => observedDatas;
             set {
                 observedDatas = value;
-                N = value.Count;
-                if (KnownPoints != null && knownPoints.Count != 0) {
-                    UnknownPoints_array = new ArrayList();
-                    value.ForEach(item => {
-                        if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
-                            UnknownPoints_array.Add(item.Start);
-                        }
-                        if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
-                            UnknownPoints_array.Add(item.End);
-                        }
-                        TotalDistence += item.Distance;
-                    });
-                    T = UnknownPoints_array.Count;
-                    R = N - T;
-                    M = UnknownPoints_array.Count + KnownPoints.Count;
+                if (KnownPointEable != null && KnownPointEable.Count != 0) {
+                    Calc_Params();
                 }
             }
         }
+
         // 已知点列表(点号，高程)
         private List<PointData> knownPoints;
         public List<PointData> KnownPoints {
             get => knownPoints;
             set {
+                knownPoints = value;
                 // 更新已知点
                 KnownPoints_array = new ArrayList();
+                KnownPointEable = new List<PointData>();
                 value.ForEach(item => {
-                    KnownPoints_array.Add(item.Number);
+                    if (item.Enable) {
+                        KnownPoints_array.Add(item.Number);
+                        KnownPointEable.Add(item);
+                    }
                 });
-                knownPoints = value;
-                KnPnumber = value.Count;
 
                 // 更新未知点
                 if (observedDatas != null && observedDatas.Count != 0) {
-                    UnknownPoints_array = new ArrayList();
-                    observedDatas.ForEach(item => {
-                        if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
-                            UnknownPoints_array.Add(item.Start);
-                        }
-                        if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
-                            UnknownPoints_array.Add(item.End);
-                        }
-                        TotalDistence += item.Distance;
-                    });
-                    T = UnknownPoints_array.Count;
-                    R = N - T;
-                    M = UnknownPoints_array.Count + KnownPoints.Count;
+                    Calc_Params();
                 }
+
             }
         }
+
+        public List<PointData> KnownPointEable { get; set; }
         // 所有点的信息(点号，高程)
         public List<PointData> UnknownPoints { get; set; } = new List<PointData>();// 定义列表存储近似高程(点号，高程)
         public ArrayList UnknownPoints_array { get; set; } = new ArrayList();// 未知点点号数组
@@ -109,14 +93,11 @@ namespace LevelnetAdjustment.utils {
         }
 
         void Calc_Params() {
-            N = observedDatas.Count;
-            T = UnknownPoints.Count;
+            N = ObservedDatas.Count;
             R = N - T;
-            M = UnknownPoints_array.Count + KnownPoints.Count;
-            KnPnumber = knownPoints.Count;
-
+            KnPnumber = KnownPointEable.Count;
             UnknownPoints_array = new ArrayList();
-            observedDatas.ForEach(item => {
+            ObservedDatas.ForEach(item => {
                 if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
                     UnknownPoints_array.Add(item.Start);
                 }
@@ -125,24 +106,24 @@ namespace LevelnetAdjustment.utils {
                 }
                 TotalDistence += item.Distance;
             });
-
-
-
-            // 重新计算不含重复测段的额观测数据
+            CalcApproximateHeight(true);
+            T = UnknownPoints_array.Count;
+            M = T + KnPnumber;
+            ObservedDatasNoRep = Calc.RemoveDuplicates(ObservedDatas);
 
         }
 
         /// <summary>
         /// 计算近似高程
         /// </summary>
-        public void CalcApproximateHeight() {
-            if (knownPoints.Count == 0) {
-                throw new Exception("未导入已知点");
+        public void CalcApproximateHeight(bool force) {
+            if (KnownPointEable.Count == 0) {
+                throw new Exception("已知点个数为0");
             }
-            if (UnknownPoints != null && UnknownPoints.Count > 0) {
+            if (UnknownPoints != null && UnknownPoints.Count > 0 && !force) {
                 return;
             }
-            List<PointData> AllPoints_old = Commom.Clone(KnownPoints);
+            List<PointData> AllPoints_old = Commom.Clone(KnownPointEable);
             UnknownPoints = new List<PointData>();
             int count = 0;
             int idx = 0;
@@ -200,7 +181,7 @@ namespace LevelnetAdjustment.utils {
                 // 生成高程近似值矩阵
                 double[] Xs = new double[M];
                 for (int i = 0; i < KnPnumber; i++) {
-                    Xs[i] = KnownPoints[i].Height;
+                    Xs[i] = KnownPointEable[i].Height;
                 }
                 for (int i = 0; i < T; i++) {
                     Xs[i + KnPnumber] = UnknownPoints[i].Height;
@@ -288,10 +269,10 @@ namespace LevelnetAdjustment.utils {
             else {
                 for (int i = 0; i < N; i++) {
                     var startIdx = AllPoints.FindIndex(p => p.Number == ObservedDatas[i].Start);
-                    var startH = startIdx < KnPnumber ? knownPoints[startIdx].Height : X[startIdx - KnPnumber, 0];
+                    var startH = startIdx < KnPnumber ? KnownPointEable[startIdx].Height : X[startIdx - KnPnumber, 0];
 
                     var endIdx = AllPoints.FindIndex(p => p.Number == ObservedDatas[i].End);
-                    var endH = endIdx < KnPnumber ? knownPoints[endIdx].Height : X[endIdx - KnPnumber, 0];
+                    var endH = endIdx < KnPnumber ? KnownPointEable[endIdx].Height : X[endIdx - KnPnumber, 0];
                     ls[i] = startH + ObservedDatas[i].HeightDiff - endH;
                 }// 计算每个常数项的值   
             }
@@ -305,7 +286,7 @@ namespace LevelnetAdjustment.utils {
             NBB = B.Transpose() * P * B;
             if (Options.AdjustMethod == 0) {
                 //法方程系数阵已知点对角线加上很大的常数，使得已知点改正数为0
-                for (int i = 0; i < KnownPoints.Count; i++) {
+                for (int i = 0; i < KnPnumber; i++) {
                     NBB[i, i] = 10e20;
                 }
             }
@@ -382,7 +363,7 @@ namespace LevelnetAdjustment.utils {
         /// <returns></returns>
         int GetStartIdx(int i) {
             if (Options.AdjustMethod == 0) {
-                int q = knownPoints.FindIndex(p => p.Number == ObservedDatas[i].Start);
+                int q = KnownPointEable.FindIndex(p => p.Number == ObservedDatas[i].Start);
                 if (q != -1) {
                     return q;
                 }
@@ -402,7 +383,7 @@ namespace LevelnetAdjustment.utils {
         /// <returns></returns>
         int GetEndIdx(int i) {
             if (Options.AdjustMethod == 0) {
-                int q = knownPoints.FindIndex(p => p.Number == ObservedDatas[i].End);
+                int q = KnownPointEable.FindIndex(p => p.Number == ObservedDatas[i].End);
                 if (q != -1) {
                     return q;
                 }
@@ -472,8 +453,8 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(space + "已知点高程");
             sb.AppendLine(split);
             sb.AppendLine($"                  {"序号",-11}{"点名",-11}{"高程/m",-11}");
-            for (int i = 0; i < KnownPoints.Count; i++) {
-                sb.AppendLine($"                  {i + 1,-13}{KnownPoints[i].Number,-13}{KnownPoints[i].Height,-13:#0.00000}");
+            for (int i = 0; i < KnownPointEable.Count; i++) {
+                sb.AppendLine($"                  {i + 1,-13}{KnownPointEable[i].Number,-13}{KnownPointEable[i].Height,-13:#0.00000}");
             }
             sb.AppendLine(split);
             sb.AppendLine(space + "高差观测数据");
@@ -510,7 +491,7 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(space + "    水准网总体信息");
             sb.AppendLine(split);
             if (Options.AdjustMethod == 0) {
-                sb.AppendLine(space + "已知高程点数：".PadRight(8) + KnownPoints.Count);
+                sb.AppendLine(space + "已知高程点数：".PadRight(8) + KnPnumber);
             }
             sb.AppendLine(space + "未知高程点数：".PadRight(8) + UnknownPoints.Count);
             sb.AppendLine(space + "高差测段数：".PadRight(8) + ObservedDatasNoRep.Count);
@@ -692,7 +673,7 @@ namespace LevelnetAdjustment.utils {
                     strClosure.Append(AllPoints[ii].Number);
 
                     //闭合差计算，限差计算与输出
-                    double W = (KnownPoints[ii].Height + diff[jj] - KnownPoints[jj].Height) * 1000; // 闭合差
+                    double W = (KnownPointEable[ii].Height + diff[jj] - KnownPointEable[jj].Height) * 1000; // 闭合差
                     double limit = roundi * Math.Sqrt(S[jj]);  // 限差
                     Closures.Add(new Closure { Error = -W, Length = S[jj] });
                     strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("#0.00") + "(mm)");
