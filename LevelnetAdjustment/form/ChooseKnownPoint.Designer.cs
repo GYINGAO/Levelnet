@@ -24,7 +24,8 @@ namespace LevelnetAdjustment.form {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChooseKnownPoint));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Height = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -68,9 +69,9 @@ namespace LevelnetAdjustment.form {
             // Height
             // 
             this.Height.DataPropertyName = "Height";
-            dataGridViewCellStyle2.Format = "N5";
-            dataGridViewCellStyle2.NullValue = null;
-            this.Height.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Format = "N5";
+            dataGridViewCellStyle3.NullValue = null;
+            this.Height.DefaultCellStyle = dataGridViewCellStyle3;
             this.Height.HeaderText = "高程";
             this.Height.Name = "Height";
             // 
@@ -140,6 +141,7 @@ namespace LevelnetAdjustment.form {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(409, 481);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(300, 300);
