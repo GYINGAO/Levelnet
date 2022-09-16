@@ -102,6 +102,40 @@ namespace LevelnetAdjustment {
                 OpenProj(StartProj);
             }
         }
+        /// <summary>
+        /// 更新程序
+        /// </summary>
+        new void Update() {
+            var Version = Application.ProductVersion.ToString();
+            string checkURL = "http://43.142.49.203:7001/check?Version=" + Version;//检测版本更新地址
+
+            try {
+
+                string getJson = HttpHelper.Get(checkURL);
+                Response res = JsonConvert.DeserializeObject<Response>(getJson);
+                if (res.Update) {
+                    DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新内容：\r\n" + res.Remark + "\r\n\r\n是否更新?", "更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (dr == DialogResult.Yes) {
+                        //string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
+                        string downloadURL = "http://43.142.49.203:7001/download";//下载EXE的地址
+                        Process.Start(downloadURL);
+                        DirectExit = true;
+                        this.Close();
+                    }
+
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public partial class Response {
+            public string CurrentVersion { get; set; }
+            public string LatestVersion { get; set; }
+            public string Remark { get; set; }
+            public bool Update { get; set; }
+            public string AppName { get; set; }
+
+        }
+
 
         /// <summary>
         /// 动态更新菜单栏
@@ -141,9 +175,9 @@ namespace LevelnetAdjustment {
         }
 
 
-        #region 文件管理
+        #region 项目
         /// <summary>
-        /// 读取数据
+        /// 数据输入
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -332,233 +366,6 @@ namespace LevelnetAdjustment {
 
         #endregion
 
-        #region 数据处理
-        /// <summary>
-        /// 约束网平差按钮
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LevelnetDropItem_Click(object sender, EventArgs e) {
-            if (ClAdj.ObservedDatas == null) {
-                throw new Exception("请打开观测文件");
-            }
-            if (File.Exists(Project.Options.OutputFiles.OutpathAdj)) {
-                if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
-
-                    AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
-                    return;
-                }
-            }
-
-            ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
-            chooseStablePoint.TransfChangeKnownPoint += CalcLS;
-            chooseStablePoint.ShowDialog();
-        }
-
-        void CalcLS(List<PointData> Points) {
-            ClAdj.KnownPoints = Points;
-            ClAdj.CalcApproximateHeight(true);
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
-            SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
-            try {
-                int i = ClAdj.LS_Adjustment();
-                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网");
-                loading.CloseWaitForm();
-                AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
-                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
-        }
-
-
-        /// <summary>
-        /// 秩亏网平差
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RankDefectNetworkDropItem_Click(object sender, EventArgs e) {
-            if (ClAdj.ObservedDatas == null) {
-                throw new Exception("请打开观测文件");
-            }
-            if (File.Exists(Project.Options.OutputFiles.OutpathAdjFree)) {
-                if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
-                    AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
-                    return;
-                }
-            }
-            ClAdj.CalcApproximateHeight(false);
-            ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.UnknownPoints);
-            chooseStablePoint.TransfChangeStable += CalcStable;
-            chooseStablePoint.ShowDialog();
-        }
-
-        private void CalcStable(List<PointData> Points) {
-            ClAdj.UnknownPoints = Points;
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, Points);
-            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
-            try {
-                var i = 0;
-                // 有拟稳点
-                if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
-                    i = ClAdj.QuasiStable();
-                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
-                }
-                // 无拟稳点
-                else {
-                    i = ClAdj.FreeNetAdjust();
-                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
-                }
-
-                loading.CloseWaitForm();
-                AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
-                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
-        }
-
-
-
-        /// <summary>
-        /// 计算闭合差
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ClosureErrorDropItem_Click(object sender, EventArgs e) {
-            if (File.Exists(Project.Options.OutputFiles.OutpathClosure)) {
-                if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
-                    AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
-                    return;
-                }
-            }
-
-            ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
-            chooseStablePoint.TransfChangeKnownPoint += CalcClosureError;
-            chooseStablePoint.ShowDialog();
-        }
-
-        void CalcClosureError(List<PointData> Points) {
-            ClAdj.KnownPoints = Points;
-            ClAdj.CalcApproximateHeight(true);
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
-            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
-            try {
-                ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
-                loading.CloseWaitForm();
-
-                AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
-                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// 粗差探测按钮
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GrossErrorDropItem_Click(object sender, EventArgs e) {
-            if (File.Exists(Project.Options.OutputFiles.OutpathGrossError)) {
-                if (MessageBox.Show("粗差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
-                    AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
-                    return;
-                }
-            }
-            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
-
-            try {
-                ClAdj.FindGrossError(split, space, Project.Options.OutputFiles.OutpathGrossError);
-                loading.CloseWaitForm();
-
-                AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
-                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
-        }
-
-        #endregion
-
-        #region 导出报表
-        /// <summary>
-        /// 导出观测手簿
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void HandbookDropItem_Click(object sender, EventArgs e) {
-            if (File.Exists(Project.Options.OutputFiles.Handbook)) {
-                if (MessageBox.Show("观测手簿已存在，是否重新导出？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
-                    Process.Start(Project.Options.OutputFiles.Handbook);
-                    return;
-                }
-            }
-            SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
-            try {
-                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
-                loading.CloseWaitForm();
-                if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                    Process.Start(Project.Options.OutputFiles.Handbook);
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// 导出COSA按距离定权 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DisPower_Click(object sender, EventArgs e) {
-
-            FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSADis);
-            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
-        }
-
-        /// <summary>
-        /// 导出COSA按测站数定权
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StationPower_Click(object sender, EventArgs e) {
-            FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSASta);
-
-            AddTabPage(Project.Options.OutputFiles.COSASta);  // 新建窗体同时新建一个标签
-            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-        }
-
-        #endregion
-
         #region 设置多标签页面
         /// <summary>
         /// 添加一个标签
@@ -695,6 +502,7 @@ namespace LevelnetAdjustment {
         #endregion
 
 
+
         /// <summary>
         /// 退出程序
         /// </summary>
@@ -726,6 +534,7 @@ namespace LevelnetAdjustment {
             }
         }
 
+        #region 帮助
 
         /// <summary>
         /// 打开关于窗口
@@ -756,14 +565,14 @@ namespace LevelnetAdjustment {
             }
             Process.Start(helpFile);
         }
+
+        #endregion
         private void timer1_Tick(object sender, EventArgs e) {
             this.toolStripStatusLabel3.Text = "系统当前时间：" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
 
         private void MainForm_MdiChildActivate(object sender, EventArgs e) {
-
             this.BackgroundImage = null;
-
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
@@ -815,38 +624,239 @@ namespace LevelnetAdjustment {
             }
         }
 
-        new void Update() {
-            var Version = Application.ProductVersion.ToString();
-            string checkURL = "http://43.142.49.203:7001/check?Version=" + Version;//检测版本更新地址
 
-            try {
 
-                string getJson = HttpHelper.Get(checkURL);
-                Response res = JsonConvert.DeserializeObject<Response>(getJson);
-                if (res.Update) {
-                    DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新内容：\r\n" + res.Remark + "\r\n\r\n是否更新?", "更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (dr == DialogResult.Yes) {
-                        //string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
-                        string downloadURL = "http://43.142.49.203:7001/download";//下载EXE的地址
-                        Process.Start(downloadURL);
-                        DirectExit = true;
-                        this.Close();
-                    }
+        #region 水准仪数据预处理
+        private void 设置处理参数ToolStripMenuItem1_Click(object sender, EventArgs e) {
+            FrmLevelParams frmLevelParams = new FrmLevelParams();
+            frmLevelParams.ShowDialog();
+        }
+        private void 选择观测文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            var filter = ClAdj.Options.LevelParams.Type == 0 ? "DAT files|*.dat;*.DAT" : "GSI files|*.gsi;*.GSI";
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = true,
+                Title = "打开",
+                Filter = filter,
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
 
+            }
+        }
+
+        private void 选择已知点文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = true,
+                Title = "打开",
+                Filter = "TXT Files|*.txt;*.TXT",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+
+            }
+        }
+        private void 生成平差文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSADis);
+            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
+        }
+        private void 观测数据检核ToolStripMenuItem_Click(object sender, EventArgs e) {
+
+        }
+        private void 生成观测手簿ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (File.Exists(Project.Options.OutputFiles.Handbook)) {
+                if (MessageBox.Show("观测手簿已存在，是否重新导出？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    Process.Start(Project.Options.OutputFiles.Handbook);
+                    return;
                 }
             }
-            catch (Exception ex) { throw ex; }
+            SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
+                loading.CloseWaitForm();
+                if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    Process.Start(Project.Options.OutputFiles.Handbook);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
+        }
+
+        #endregion 水准仪数据预处理
+
+        #region 高程网平差处理
+        private void 选择平差文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = true,
+                Title = "打开",
+                Filter = "in1 Files|*.in1;*.IN1",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+
+            }
+        }
+        private void 往返测高差较差ToolStripMenuItem_Click(object sender, EventArgs e) {
+
+        }
+        private void 附和环闭合差ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (File.Exists(Project.Options.OutputFiles.OutpathClosure)) {
+                if (MessageBox.Show("闭合差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
+                    return;
+                }
+            }
+
+            ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+            chooseStablePoint.TransfChangeKnownPoint += CalcClosureError;
+            chooseStablePoint.ShowDialog();
+        }
+
+        void CalcClosureError(List<PointData> Points) {
+            ClAdj.KnownPoints = Points;
+            ClAdj.CalcApproximateHeight(true);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
+                loading.CloseWaitForm();
+
+                AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
+                MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
         }
 
 
-        public partial class Response {
-            public string CurrentVersion { get; set; }
-            public string LatestVersion { get; set; }
-            public string Remark { get; set; }
-            public bool Update { get; set; }
-            public string AppName { get; set; }
+        private void 粗差探测ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (File.Exists(Project.Options.OutputFiles.OutpathGrossError)) {
+                if (MessageBox.Show("粗差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
+                    return;
+                }
+            }
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
 
+            try {
+                ClAdj.FindGrossError(split, space, Project.Options.OutputFiles.OutpathGrossError);
+                loading.CloseWaitForm();
+
+                AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
+                MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
         }
+        private void 约束网平差ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (ClAdj.ObservedDatas == null) {
+                throw new Exception("请打开观测文件");
+            }
+            if (File.Exists(Project.Options.OutputFiles.OutpathAdj)) {
+                if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+
+                    AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
+                    return;
+                }
+            }
+
+            ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+            chooseStablePoint.TransfChangeKnownPoint += CalcLS;
+            chooseStablePoint.ShowDialog();
+        }
+
+        void CalcLS(List<PointData> Points) {
+            ClAdj.KnownPoints = Points;
+            ClAdj.CalcApproximateHeight(true);
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+            SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                int i = ClAdj.LS_Adjustment();
+                ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网");
+                loading.CloseWaitForm();
+                AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
+        }
+
+        private void 拟稳平差ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (ClAdj.ObservedDatas == null) {
+                throw new Exception("请打开观测文件");
+            }
+            if (File.Exists(Project.Options.OutputFiles.OutpathAdjFree)) {
+                if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+                    return;
+                }
+            }
+            ClAdj.CalcApproximateHeight(false);
+            ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.UnknownPoints);
+            chooseStablePoint.TransfChangeStable += CalcStable;
+            chooseStablePoint.ShowDialog();
+        }
+
+        private void CalcStable(List<PointData> Points) {
+            ClAdj.UnknownPoints = Points;
+            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, Points);
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                var i = 0;
+                // 有拟稳点
+                if (ClAdj.UnknownPoints.FindIndex(p => p.IsStable == true) != -1) {
+                    i = ClAdj.QuasiStable();
+                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
+                }
+                // 无拟稳点
+                else {
+                    i = ClAdj.FreeNetAdjust();
+                    ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
+                }
+
+                loading.CloseWaitForm();
+                AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+                MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
+        }
+
+        private void 设置处理参数ToolStripMenuItem_Click(object sender, EventArgs e) {
+            FrmSetting frmSetting = new FrmSetting();
+            frmSetting.ShowDialog();
+        }
+
+        #endregion
 
     }
 }

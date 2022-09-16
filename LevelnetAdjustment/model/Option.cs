@@ -47,9 +47,15 @@ namespace LevelnetAdjustment.model {
         }
         public List<InputFile> ImportFiles { get; set; } = new List<InputFile>(); //文件列表
         public OutputFile OutputFiles { get; set; } = new OutputFile();// 文件输出路径
+        public LevelParam LevelParams { get; set; } = new LevelParam();//电子水准仪参数
         public Option() {
             this.Level = 2;
             this.Coefficient = 4;
         }
+    }
+
+    public class LevelParam {
+        public int Type { get; set; } = 0; //水准仪类型
+        public string ZD { get; set; } = "Z/z"; //转点
     }
 }

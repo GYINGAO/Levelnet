@@ -185,6 +185,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="control\FileViewCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="control\FileViewCtrl.Designer.cs">
+      <DependentUpon>FileViewCtrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\About.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -214,6 +220,18 @@
     </Compile>
     <Compile Include="form\FileView.Designer.cs">
       <DependentUpon>FileView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="form\FrmLevelParams.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmLevelParams.Designer.cs">
+      <DependentUpon>FrmLevelParams.cs</DependentUpon>
+    </Compile>
+    <Compile Include="form\FrmSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmSetting.Designer.cs">
+      <DependentUpon>FrmSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="form\MultiFuncLoading.cs">
       <SubType>Form</SubType>
@@ -261,6 +279,9 @@
     <Compile Include="utils\HttpHelper.cs" />
     <Compile Include="utils\JsonHelper.cs" />
     <Compile Include="utils\SplashScreenManager.cs" />
+    <EmbeddedResource Include="control\FileViewCtrl.resx">
+      <DependentUpon>FileViewCtrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
@@ -275,6 +296,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="form\FileView.resx">
       <DependentUpon>FileView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmLevelParams.resx">
+      <DependentUpon>FrmLevelParams.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmSetting.resx">
+      <DependentUpon>FrmSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\MultiFuncLoading.resx">
       <DependentUpon>MultiFuncLoading.cs</DependentUpon>
@@ -332,9 +359,7 @@
   <ItemGroup>
     <None Include="Resources\loading3.gif" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="control\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\close.png" />
   </ItemGroup>
