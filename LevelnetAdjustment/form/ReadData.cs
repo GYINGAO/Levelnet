@@ -181,65 +181,70 @@ namespace LevelnetAdjustment.form {
             var ObservedDatas = new List<ObservedData>();
             var RawDatas = new List<RawData>();
 
+            foreach (DataGridViewRow row in dataGridView1.Rows) {
+                string ext = Path.GetExtension(row.Cells["FileName"].Value.ToString());
+                if (ext.ToLower().Contains("dat") || ext.ToLower().Contains("gsi")) {
+
+                }
+            }
 
 
             SimpleLoading loadingfrm = new SimpleLoading(this, "读取中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-          /*  try {*/
-                foreach (DataGridViewRow row in dataGridView1.Rows) {
-                    string fileName = row.Cells["FileName"].Value.ToString();
-                    bool isSplit = (bool)row.Cells["IsSplit"].Value;
-                    //把文件复制到项目文件夹中
-                    FileInfo fileInfo1 = new FileInfo(fileName);
-                    string targetPath = Path.Combine(ProjDir, Path.GetFileName(fileName));
-                    if (File.Exists(targetPath)) File.Delete(targetPath);
-                    fileInfo1.CopyTo(targetPath);
+            /*  try {*/
+            foreach (DataGridViewRow row in dataGridView1.Rows) {
+                string fileName = row.Cells["FileName"].Value.ToString();
+                //把文件复制到项目文件夹中
+                FileInfo fileInfo1 = new FileInfo(fileName);
+                string targetPath = Path.Combine(ProjDir, Path.GetFileName(fileName));
+                if (File.Exists(targetPath)) File.Delete(targetPath);
+                fileInfo1.CopyTo(targetPath);
 
 
-                    switch (Path.GetExtension(fileName).ToLower()) {
-                        case ".dat":
-                            FileHelper.ReadDAT(fileName, RawDatas, ObservedDatas, isSplit);
-                            break;
-                        case ".gsi":
-                            FileHelper.ReadGSI(fileName, RawDatas, ObservedDatas, KnownPoints, isSplit);
-                            break;
-                        case ".in1":
-                            var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, fileName);
-                            ClAdj.Options.Level = tup.Item1;
-                            ClAdj.Options.PowerMethod = tup.Item2;
-                            break;
-                        case ".txt":
-                            FileHelper.ReadKnPoints(fileName, ClAdj.KnownPoints);
-                            break;
-                        default:
-                            break;
-                    }
+                switch (Path.GetExtension(fileName).ToLower()) {
+                    case ".dat":
+                        FileHelper.ReadDAT(fileName, RawDatas, ObservedDatas, isSplit);
+                        break;
+                    case ".gsi":
+                        FileHelper.ReadGSI(fileName, RawDatas, ObservedDatas, KnownPoints, isSplit);
+                        break;
+                    case ".in1":
+                        var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, fileName);
+                        ClAdj.Options.Level = tup.Item1;
+                        ClAdj.Options.PowerMethod = tup.Item2;
+                        break;
+                    case ".txt":
+                        FileHelper.ReadKnPoints(fileName, ClAdj.KnownPoints);
+                        break;
+                    default:
+                        break;
                 }
+            }
 
-                ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
-                ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
-                ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
-                ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
+            ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+            ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
+            ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
+            ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
 
 
-                Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-                Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
-                Options.Limit = double.Parse(tb_limit.Text) / 100;
-                Options.UnitRight = rbtn_before.Checked ? 0 : 1;
-                Options.Sigma = double.Parse(textBox1.Text);
+            Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+            Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+            Options.Limit = double.Parse(tb_limit.Text) / 100;
+            Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+            Options.Sigma = double.Parse(textBox1.Text);
 
-                UpdateList();
-                loading.CloseWaitForm();
-                TransfEvent(Options);
-                this.Close();
+            UpdateList();
+            loading.CloseWaitForm();
+            TransfEvent(Options);
+            this.Close();
 
-          /*  }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }*/
+            /*  }
+              catch (Exception ex) {
+                  loading.CloseWaitForm();
+                  throw ex;
+              }*/
         }
 
         /// <summary>

@@ -52,7 +52,6 @@ namespace LevelnetAdjustment.form {
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.FileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IsSplit = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -284,8 +283,7 @@ namespace LevelnetAdjustment.form {
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.FileName,
-            this.IsSplit});
+            this.FileName});
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
@@ -368,12 +366,6 @@ namespace LevelnetAdjustment.form {
             this.FileName.Name = "FileName";
             this.FileName.ReadOnly = true;
             // 
-            // IsSplit
-            // 
-            this.IsSplit.HeaderText = "是否包含转点";
-            this.IsSplit.Name = "IsSplit";
-            this.IsSplit.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
             // ReadData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -435,6 +427,5 @@ namespace LevelnetAdjustment.form {
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem 清空ToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsSplit;
     }
 }
