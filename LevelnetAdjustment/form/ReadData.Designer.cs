@@ -306,6 +306,7 @@ namespace LevelnetAdjustment.form {
             this.删除ToolStripMenuItem,
             this.清空ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.contextMenuStrip1.Size = new System.Drawing.Size(101, 48);
             // 
             // 删除ToolStripMenuItem
@@ -369,7 +370,7 @@ namespace LevelnetAdjustment.form {
             // 
             // IsSplit
             // 
-            this.IsSplit.HeaderText = "是否按测段分割";
+            this.IsSplit.HeaderText = "是否包含转点";
             this.IsSplit.Name = "IsSplit";
             this.IsSplit.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             // 

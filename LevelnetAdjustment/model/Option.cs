@@ -29,9 +29,6 @@ namespace LevelnetAdjustment.model {
             set {
                 int c;
                 switch (value) {
-                    case 2:
-                        c = 4;
-                        break;
                     case 3:
                         c = 12;
                         break;
@@ -42,7 +39,7 @@ namespace LevelnetAdjustment.model {
                         c = 30;
                         break;
                     default:
-                        c = 0;
+                        c = 4;
                         break;
                 }
                 coefficient = c;
@@ -52,6 +49,7 @@ namespace LevelnetAdjustment.model {
         public OutputFile OutputFiles { get; set; } = new OutputFile();// 文件输出路径
         public Option() {
             this.Level = 2;
+            this.Coefficient = 4;
         }
     }
 }

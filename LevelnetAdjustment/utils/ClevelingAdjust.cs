@@ -503,7 +503,7 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(space + "高差测段数：".PadRight(8) + ObservedDatasNoRep.Count);
             sb.AppendLine(space + "观测总距离：".PadRight(8) + TotalDistence.ToString("#0.000") + "(km)");
             sb.AppendLine(space + "PVV：".PadRight(8) + PVV.ToString("#0.000"));
-            sb.AppendLine(space + "验后单位权中误差：".PadRight(8) + Mu.ToString("#0.000"));
+            sb.AppendLine(space + "每公里高差中误差：".PadRight(8) + Mu.ToString("#0.000"));
 
             sb.AppendLine(split);
             FileHelper.WriteStrToTxt(sb.ToString(), filePath);
@@ -591,16 +591,18 @@ namespace LevelnetAdjustment.utils {
                     // strClosure.AppendLine("观测值" + AllPoint_array[k1] + "-" + AllPoint_array[k2] + "与任何观测边不构成闭合环");
                 }
                 else {
+                    string msg = "";
                     used[i] = 1;
                     closure_N++;
                     strClosure.AppendLine("闭合环号：" + closure_N);
                     strClosure.Append("线路点号：");
                     int p1 = k1;
+                    msg += "线路点号：";
                     while (true)//输出点名
                     {
                         int p2 = neighbor[p1];
                         strClosure.Append(AllPoints[p1].Number + "-");
-
+                        msg += AllPoints[p1].Number + "-";
                         for (int r = 0; r < m_Lnumber; r++)//将用过的观测值标定
                         {
                             var startIdx = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[r].Start);
@@ -622,10 +624,11 @@ namespace LevelnetAdjustment.utils {
                             p1 = p2;
                     }
                     strClosure.Append(AllPoints[k2].Number + "-" + AllPoints[k1].Number);
+                    msg += AllPoints[k2].Number + "-" + AllPoints[k1].Number;
                     double W = (ObservedDatasNoRep[i].HeightDiff + diff[k1]) * 1000;   //闭合差
                     double SS = S[k1] + ObservedDatasNoRep[i].Distance; //环长
                     double limit = (roundi * Math.Sqrt(SS));
-                    Closures.Add(new Closure { Error = -W, Length = SS });
+                    Closures.Add(new Closure { Error = -W, Length = SS, Limit = limit, Line = msg });
                     strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("f2") + "(mm)");
                     strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
                     strClosure.AppendLine($"总长度：{SS}(km)");
@@ -661,6 +664,7 @@ namespace LevelnetAdjustment.utils {
 
             for (int ii = 0; ii < KnPnumber; ii++) {
                 FindShortPath(ii, -1, neighbor, diff, S); //搜索最短路线，用所有观测值
+
                 for (int jj = ii + 1; jj < KnPnumber; jj++) {
                     if (neighbor[jj] < 0) {
                         // strClosure.Append(AllPoint_array[ii] + "-" + AllPoint_array[jj] + "之间找到不到最短路线");
@@ -668,20 +672,24 @@ namespace LevelnetAdjustment.utils {
                     }
                     // 输出附合路线上的点号
                     line_N++;
+                    string msg = "";
                     strClosure.AppendLine("线路号：" + line_N);
                     strClosure.Append("线路点号：");
+                    msg += "线路点号：";
                     int k = jj;
                     while (true) {
                         strClosure.Append(AllPoints[k].Number + "-");
+                        msg += (AllPoints[k].Number + "-");
                         k = neighbor[k];
                         if (k == ii) break;
                     }
                     strClosure.Append(AllPoints[ii].Number);
+                    msg += AllPoints[ii].Number;
 
                     //闭合差计算，限差计算与输出
                     double W = (KnownPointEable[ii].Height + diff[jj] - KnownPointEable[jj].Height) * 1000; // 闭合差
                     double limit = roundi * Math.Sqrt(S[jj]);  // 限差
-                    Closures.Add(new Closure { Error = -W, Length = S[jj] });
+                    Closures.Add(new Closure { Error = -W, Length = S[jj], Limit = limit, Line = msg });
                     strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("#0.00") + "(mm)");
                     strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
                     strClosure.AppendLine($"总长度：{S[jj]}(km)");
@@ -724,8 +732,16 @@ namespace LevelnetAdjustment.utils {
             Closures = new List<Closure>();
             string strLoop = LoopClosure(Options.Coefficient, split, space);
             string strLine = LineClosure(Options.Coefficient, split, space);
+            string msg = $"\r\n{split}\r\n{space}超限路线\r\n{split}\r\n";
+            for (int i = 0; i < Closures.Count; i++) {
+                if (Math.Abs(Closures[i].Error) > Math.Abs(Closures[i].Limit)) {
+                    msg += $"{Closures[i].Line}\r\n高差闭合差：{Closures[i].Error}\r\n平原限差：{Closures[i].Limit.ToString("f4")}\r\n\r\n";
+                }
+            }
+
             double tmse = CalcTMSE();
-            string msg = $"{split}\r\n{space}由闭合差计算的观测值精度\r\n{split}\r\n每公里高程测量的高差全中误差：   {tmse:#0.000}\r\n多边形个数：   {Closures.Count}";
+            msg += $"{split}\r\n{space}由闭合差计算的观测值精度\r\n{split}\r\n每公里高程测量的高差全中误差：   {tmse:#0.000}\r\n多边形个数：   {Closures.Count}";
+
             FileHelper.WriteStrToTxt(strLine + strLoop + msg, OutpathClosure);
         }
 
