@@ -79,7 +79,7 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        internal static void ReadDAT(string filename, List<RawData> dats, List<ObservedData> ods, bool isSplit) {
+        internal static void ReadDAT(string filename, List<RawData> dats, List<ObservedData> ods) {
             int ct = dats.Count;
             if (isSplit) {
                 using (StreamReader sr = new StreamReader(filename)) {

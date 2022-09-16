@@ -92,7 +92,6 @@ namespace LevelnetAdjustment.form {
             Options.ImportFiles.ForEach(t => {
                 int idx = dataGridView1.Rows.Add();
                 dataGridView1.Rows[idx].Cells["FileName"].Value = t.FileName;
-                dataGridView1.Rows[idx].Cells["IsSplit"].Value = t.IsSplit;
             });
 
             switch (ClAdj.Options.PowerMethod) {
@@ -205,10 +204,10 @@ namespace LevelnetAdjustment.form {
 
                 switch (Path.GetExtension(fileName).ToLower()) {
                     case ".dat":
-                        FileHelper.ReadDAT(fileName, RawDatas, ObservedDatas, isSplit);
+                        FileHelper.ReadDAT(fileName, RawDatas, ObservedDatas);
                         break;
                     case ".gsi":
-                        FileHelper.ReadGSI(fileName, RawDatas, ObservedDatas, KnownPoints, isSplit);
+                        FileHelper.ReadGSI(fileName, RawDatas, ObservedDatas, KnownPoints);
                         break;
                     case ".in1":
                         var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, fileName);
@@ -297,7 +296,6 @@ namespace LevelnetAdjustment.form {
             foreach (DataGridViewRow row in dataGridView1.Rows) {
                 ClAdj.Options.ImportFiles.Add(new InputFile {
                     FileName = row.Cells["FileName"].Value.ToString(),
-                    IsSplit = (bool)row.Cells["IsSplit"].Value
                 });
             }
         }
