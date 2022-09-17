@@ -11,27 +11,27 @@ namespace LevelnetAdjustment.model {
         public string FrontPoint { get; set; } //测站前视点
         public string MidPoint { get; set; } //测站前视点
 
-        public double MidDiff { get; set; } //中视读数
-        public double MidDis { get; set; } //中视距离
+        public double MidDiff { get; set; } = 0; //中视读数
+        public double MidDis { get; set; } = 0; //中视距离
 
-        public double BackDiff1 { get; set; } //第一个后视读数
-        public double BackDiff2 { get; set; } //第一个前视读数
-        public double FrontDiff1 { get; set; } //第一个前视读数
-        public double FrontDiff2 { get; set; } //第二个前视读数
-        public double Diff1 { get; set; } //第一个高差
-        public double Diff2 { get; set; } //第二个高差
-        public double DiffAve { get; set; } //高差平均值
+        public double BackDiff1 { get; set; } = 0; //第一个后视读数
+        public double BackDiff2 { get; set; } = 0; //第一个前视读数
+        public double FrontDiff1 { get; set; } = 0; //第一个前视读数
+        public double FrontDiff2 { get; set; } = 0; //第二个前视读数
+        public double Diff1 { get; set; } = 0; //第一个高差
+        public double Diff2 { get; set; } = 0;//第二个高差
+        public double DiffAve { get; set; } = 0;//高差平均值
 
-        public double BackDis1 { get; set; } //第一个后距读数
-        public double BackDis2 { get; set; } //第一个前距读数
-        public double FrontDis1 { get; set; } //第一个前距读数
-        public double FrontDis2 { get; set; } //第二个前距读数
-        public double DisDiff1 { get; set; } //第一个视距差
-        public double DisDiff2 { get; set; } //第二个视距差
-        public double DisDiffAve { get; set; } //视距差平均值
-        public double Dis1 { get; set; } //第一个观测距离
-        public double Dis2 { get; set; } //第二个观测距离
-        public double DisAve { get; set; } //观测距离平均值
+        public double BackDis1 { get; set; } = 0;//第一个后距读数
+        public double BackDis2 { get; set; } = 0;//第一个前距读数
+        public double FrontDis1 { get; set; } = 0;//第一个前距读数
+        public double FrontDis2 { get; set; } = 0; //第二个前距读数
+        public double DisDiff1 { get; set; } = 0;//第一个视距差
+        public double DisDiff2 { get; set; } = 0;//第二个视距差
+        public double DisDiffAve { get; set; } = 0;//视距差平均值
+        public double Dis1 { get; set; } = 0;//第一个观测距离
+        public double Dis2 { get; set; } = 0; //第二个观测距离
+        public double DisAve { get; set; } = 0; //观测距离平均值
 
         public bool IsEnd { get; set; } = false;//是否是终点测站 
         public bool IsStart { get; set; } = false;//是否是起点测站 
