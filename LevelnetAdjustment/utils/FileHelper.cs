@@ -79,229 +79,112 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        internal static void ReadDAT(string filename, List<RawData> dats, List<ObservedData> ods) {
+        internal static void ReadDAT(List<RawData> dats, string filename, string ZD) {
+            string[] method1 = { "bffb", "bfbf", "fbbf", "abffb", "abfbf", "abf", "bf" };
+            string[] method2 = { "bbff", "ffbb" };
             int ct = dats.Count;
-            if (isSplit) {
-                using (StreamReader sr = new StreamReader(filename)) {
-                    int stationIdx = 0;//测站索引,记录一个测站观测索引
 
-                    // string method;//观测方式 aBFFB aFBBF BFBF BBFF FBBF
-                    while (sr.Peek() > -1) {
-                        string line = sr.ReadLine().Trim();
-                        //跳过空行
-                        if (string.IsNullOrEmpty(line)) {
-                            continue;
-                        }
+            using (StreamReader sr = new StreamReader(filename)) {
+                int stationIdx = 0;//测站索引,记录一个测站观测索引
+                int stationNum = 0;//一个测段测站数
+                int observeCount = 0;//每站观测次数
+                string method = "";
 
-                        //测段开始
-                        if (line.Contains("Start-Line") || line.Contains("Start")) {
-                            ods.Add(new ObservedData());
-                            continue;
-                        }
-                        //测段结束
-                        if (line.Contains("End-Line") || line.Contains("End")) {
-                            continue;
-                        }
-
-                        //整个测站重新测量
-                        if (line.Contains("Station repeated")) {
-                            //判断是否已经增加了一个测站，如果是，移除
-                            if (stationIdx != 0) {
-                                dats.RemoveAt(dats.Count - 1);//移除最后一站
-                                dats.Add(new RawData());
-                                stationIdx = 0;
-                            }
-                            continue;
-                        }
-                        //单次重新测量
-                        if (line.Contains("Measurement repeated")) {
-                            continue;
-                        }
-                        string[] arr = Regex.Split(line, "(?:\\s*[|]\\s*)", RegexOptions.IgnoreCase);
-                        var str3 = arr[3].Trim();
-                        var str2 = arr[2].Trim();
-                        // 读取测量数据
-                        if (str3.Contains("Rb") || str3.Contains("Rf")) {
-                            // 不要的测量数据
-                            if (line.Contains("#####")) {
-                                continue;
-                            }
-                            stationIdx++;
-                            if (stationIdx == 1) {
-                                dats.Add(new RawData());
-                            }
-                            var arr3 = Regex.Split(str3, "[\\s]+", RegexOptions.IgnoreCase);
-                            var arr2 = Regex.Split(str2, "[\\s]+", RegexOptions.IgnoreCase);
-                            var arr4 = Regex.Split(arr[4].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
-                            double c1;//高差单位系数，转换为m
-                            double c2;//距离单位系数,转换为km
-                            switch (arr3[2]) {
-                                case "km": c1 = 1000; break;
-                                case "mm": c1 = 0.001; break;
-                                default: c1 = 1; break;
-                            }
-                            switch (arr4[2]) {
-                                case "km": c2 = 1; break;
-                                case "mm": c2 = 0.000001; break;
-                                default: c2 = 0.001; break;
-                            }
-                            if (stationIdx <= 2) {
-                                if (arr3[0] == "Rb") {
-                                    dats[dats.Count - 1].BackDiff1 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].BackDis1 = Convert.ToDouble(arr4[1]) * c2;
-                                    dats[dats.Count - 1].BackPoint = arr2[1];
-                                }
-                                else if (arr3[0] == "Rf") {
-                                    dats[dats.Count - 1].FrontDiff1 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].FrontDis1 = Convert.ToDouble(arr4[1]) * c2;
-                                    dats[dats.Count - 1].FrontPoint = arr2[1];
-                                }
-                            }
-                            else {
-                                if (arr3[0] == "Rb") {
-                                    dats[dats.Count - 1].BackDiff2 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].BackDis2 = Convert.ToDouble(arr4[1]) * c2;
-                                }
-                                else if (arr3[0] == "Rf") {
-                                    dats[dats.Count - 1].FrontDiff2 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].FrontDis2 = Convert.ToDouble(arr4[1]) * c2;
-                                }
-                            }
-
-                            // 一个测站最后一个数据读取完
-                            if (stationIdx == 4) {
-                                dats[dats.Count - 1].Calc();
-                                stationIdx = 0;
-                            }
-                        }
-
-                        // 包含测段数的一行，计算测段数据
-                        if (str3.Contains("Db") || str3.Contains("Df")) {
-                            var arr2 = Regex.Split(arr[2].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
-                            int stationNum = int.Parse(arr2[2]);//测段测站数
-                            ods[ods.Count - 1].StationNum = stationNum;
-                            dats[dats.Count - 1].IsEnd = true;
-                            dats[dats.Count - stationNum].IsStart = true;
-                            //ods[ods.Count - 1].End = arr2[1];//测段终点
-                            ods[ods.Count - 1].Start = dats[dats.Count - stationNum].BackPoint;
-                            ods[ods.Count - 1].End = dats[dats.Count - 1].FrontPoint;
-                            //计算测段数据
-                            double totalDis = 0;
-                            double totalDiff = 0;
-                            for (int i = dats.Count - stationNum; i < dats.Count; i++) {
-                                totalDiff += dats[i].DiffAve;
-                                totalDis += dats[i].DisAve;
-                            }
-                            ods[ods.Count - 1].HeightDiff = totalDiff;
-                            ods[ods.Count - 1].Distance = totalDis;
-                        }
+                // string method;//观测方式 aBFFB aFBBF BFBF BBFF FBBF
+                while (sr.Peek() > -1) {
+                    string line = sr.ReadLine().Trim();
+                    //跳过空行
+                    if (string.IsNullOrEmpty(line)) {
+                        continue;
                     }
-                }
-            }
-            else {
-                using (StreamReader sr = new StreamReader(filename)) {
-                    int stationIdx = 0;//测站索引,记录一个测站观测索引
+                    string[] arr = Regex.Split(line, "(?:\\s*[|]\\s*)", RegexOptions.IgnoreCase);
+                    //测段开始
+                    if (line.Contains("Start-Line") || line.Contains("Start")) {
+                        method = Regex.Split(arr[2], "[\\s]+", RegexOptions.IgnoreCase)[1];
+                        stationIdx = 0;
+                        observeCount = method.Length > 2 ? 4 : 2;
+                        stationNum = 0;
+                        continue;
+                    }
 
-                    // string method;//观测方式 aBFFB aFBBF BFBF BBFF FBBF
-                    while (sr.Peek() > -1) {
-                        string line = sr.ReadLine().Trim();
-                        //跳过空行
-                        if (string.IsNullOrEmpty(line)) {
+
+                    //整个测站重新测量
+                    if (line.Contains("Station repeated")) {
+                        //判断是否已经增加了一个测站，如果是，移除
+                        if (stationIdx != 0) {
+                            dats.RemoveAt(dats.Count - 1);//移除最后一站
+                            dats.Add(new RawData());
+                            stationIdx = 0;
+                        }
+                        continue;
+                    }
+                    //单次重新测量
+                    if (line.Contains("Measurement repeated")) {
+                        continue;
+                    }
+                    var str3 = arr[3].Trim();
+                    var str2 = arr[2].Trim();
+                    // 读取测量数据
+                    if (str3.Contains("Rb") || str3.Contains("Rf")) {
+                        // 不要的测量数据
+                        if (line.Contains("#####")) {
                             continue;
                         }
-                        //测段开始
-                        if (line.Contains("Start-Line") || line.Contains("Start")) {
-                            continue;
+                        stationIdx++;
+                        if (stationIdx == 1) {
+                            dats.Add(new RawData());
+                            stationNum++;
                         }
-                        //测段结束
-                        if (line.Contains("End-Line") || line.Contains("End")) {
-                            continue;
+                        var arr3 = Regex.Split(str3, "[\\s]+", RegexOptions.IgnoreCase);
+                        var arr2 = Regex.Split(str2, "[\\s]+", RegexOptions.IgnoreCase);
+                        var arr4 = Regex.Split(arr[4].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
+                        double c1;//高差单位系数，转换为m
+                        double c2;//距离单位系数,转换为km
+                        switch (arr3[2]) {
+                            case "km": c1 = 1000; break;
+                            case "mm": c1 = 0.001; break;
+                            default: c1 = 1; break;
+                        }
+                        switch (arr4[2]) {
+                            case "km": c2 = 1; break;
+                            case "mm": c2 = 0.000001; break;
+                            default: c2 = 0.001; break;
                         }
 
-                        //整个测站重新测量
-                        if (line.Contains("Station repeated")) {
-                            //判断是否已经增加了一个测站，如果是，移除
-                            if (stationIdx != 0) {
-                                dats.RemoveAt(dats.Count - 1);//移除最后一站
-                                dats.Add(new RawData());
-                                stationIdx = 0;
-                            }
-                            continue;
-                        }
-                        //单次重新测量
-                        if (line.Contains("Measurement repeated")) {
-                            continue;
-                        }
-                        string[] arr = Regex.Split(line, "(?:\\s*[|]\\s*)", RegexOptions.IgnoreCase);
-                        var str3 = arr[3].Trim();
-                        var str2 = arr[2].Trim();
-                        // 读取测量数据
-                        if (str3.Contains("Rb") || str3.Contains("Rf")) {
-                            // 不要的测量数据
-                            if (line.Contains("#####")) {
-                                continue;
-                            }
-                            stationIdx++;
-                            if (stationIdx == 1) {
-                                dats.Add(new RawData());
-                                ods.Add(new ObservedData());
-                            }
-                            var arr3 = Regex.Split(str3, "[\\s]+", RegexOptions.IgnoreCase);
-                            var arr2 = Regex.Split(str2, "[\\s]+", RegexOptions.IgnoreCase);
-                            var arr4 = Regex.Split(arr[4].Trim(), "[\\s]+", RegexOptions.IgnoreCase);
-                            double c1;//高差单位系数，转换为m
-                            double c2;//距离单位系数,转换为km
-                            switch (arr3[2]) {
-                                case "km": c1 = 1000; break;
-                                case "mm": c1 = 0.001; break;
-                                default: c1 = 1; break;
-                            }
-                            switch (arr4[2]) {
-                                case "km": c2 = 1; break;
-                                case "mm": c2 = 0.000001; break;
-                                default: c2 = 0.001; break;
-                            }
-                            if (stationIdx <= 2) {
-                                if (arr3[0] == "Rb") {
-                                    dats[dats.Count - 1].BackDiff1 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].BackDis1 = Convert.ToDouble(arr4[1]) * c2;
-                                    dats[dats.Count - 1].BackPoint = arr2[1];
-                                }
-                                else if (arr3[0] == "Rf") {
-                                    dats[dats.Count - 1].FrontDiff1 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].FrontDis1 = Convert.ToDouble(arr4[1]) * c2;
-                                    dats[dats.Count - 1].FrontPoint = arr2[1];
-                                }
+                        if (arr3[0] == "Rb") {
+                            if (dats[dats.Count - 1].BackDis1 == 0) {
+                                dats[dats.Count - 1].BackDiff1 = Convert.ToDouble(arr3[1]) * c1;
+                                dats[dats.Count - 1].BackDis1 = Convert.ToDouble(arr4[1]) * c2;
+                                dats[dats.Count - 1].BackPoint = arr2[1];
                             }
                             else {
-                                if (arr3[0] == "Rb") {
-                                    dats[dats.Count - 1].BackDiff2 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].BackDis2 = Convert.ToDouble(arr4[1]) * c2;
-                                }
-                                else if (arr3[0] == "Rf") {
-                                    dats[dats.Count - 1].FrontDiff2 = Convert.ToDouble(arr3[1]) * c1;
-                                    dats[dats.Count - 1].FrontDis2 = Convert.ToDouble(arr4[1]) * c2;
-                                }
-                            }
-
-                            if (stationIdx == 4) {
-                                dats[dats.Count - 1].Calc();
-                                stationIdx = 0;
-                                ods[ods.Count - 1].StationNum = 1;
-                                dats[dats.Count - 1].IsEnd = true;
-                                dats[dats.Count - 1].IsStart = true;
-                                ods[ods.Count - 1].Start = dats[dats.Count - 1].BackPoint;
-                                ods[ods.Count - 1].End = dats[dats.Count - 1].FrontPoint;
-                                ods[ods.Count - 1].HeightDiff = dats[dats.Count - 1].DiffAve;
-                                ods[ods.Count - 1].Distance = dats[dats.Count - 1].DisAve;
+                                dats[dats.Count - 1].BackDiff2 = Convert.ToDouble(arr3[1]) * c1;
+                                dats[dats.Count - 1].BackDis2 = Convert.ToDouble(arr4[1]) * c2;
                             }
                         }
-                        // 包含测段数的一行，计算测段数据
-                        if (str3.Contains("Db") || str3.Contains("Df")) {
-                            continue;
+                        else if (arr3[0] == "Rf") {
+                            if (dats[dats.Count - 1].FrontDis1 == 0) {
+                                dats[dats.Count - 1].FrontDiff1 = Convert.ToDouble(arr3[1]) * c1;
+                                dats[dats.Count - 1].FrontDis1 = Convert.ToDouble(arr4[1]) * c2;
+                                dats[dats.Count - 1].FrontPoint = arr2[1];
+                            }
+                            else {
+                                dats[dats.Count - 1].FrontDiff2 = Convert.ToDouble(arr3[1]) * c1;
+                                dats[dats.Count - 1].FrontDis2 = Convert.ToDouble(arr4[1]) * c2;
+                            }
+                        }
+
+                        if (stationIdx == observeCount) {
+                            stationIdx = 0;
                         }
                     }
 
+                    //测段结束
+                    if (line.Contains("End-Line") || line.Contains("End")) {
+                        dats[dats.Count - 1].Calc();
+                        dats[dats.Count - 1].IsEnd = true;
+                        continue;
+                    }
                 }
             }
             dats[ct].IsFileStart = true;
@@ -316,194 +199,113 @@ namespace LevelnetAdjustment.utils {
         /// <param name="observedDatas"></param>
         /// 参考 https://www.docin.com/p-2467208828.html#:~:text=%E5%BE%95%E5%8D%A1DNA03%E7%94%B5,%E5%A4%9A%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%9D%97%E7%BB%84%E6%88%90%E3%80%82
         ///  https://totalopenstation.readthedocs.io/en/stable/input_formats/if_leica_gsi.html
-        internal static void ReadGSI(string filename, List<RawData> rds, List<ObservedData> ods, List<PointData> kps, bool isSplit) {
+        internal static void ReadGSI(string filename, List<RawData> rds, List<ObservedData> ods, List<PointData> kps, string ZD) {
             try {
                 int ct = rds.Count;
-                if (isSplit) {
-                    using (StreamReader sr = new StreamReader(filename)) {
-                        string method; //观测方式
-                        int stationIdx = 0;//测站索引,记录一个测站观测索引
-                        int stationNum = 0; //每个测段测站数
-                        while (sr.Peek() > -1) {
-                            string line = sr.ReadLine().Trim();
-                            if (string.IsNullOrEmpty(line)) {
-                                continue;
+                using (StreamReader sr = new StreamReader(filename)) {
+                    string method; //观测方式
+                    int stationIdx = 0;//测站索引,记录一个测站观测索引
+                    int stationNum = 0; //每个测段测站数
+                    while (sr.Peek() > -1) {
+                        string line = sr.ReadLine().Trim();
+                        if (string.IsNullOrEmpty(line)) {
+                            continue;
+                        }
+                        var arr = Regex.Split(line, "[\\s]+", RegexOptions.IgnoreCase);
+                        if (arr.Length == 1) {
+                            // 410003+?......4  4=aBFFB
+                            string n = arr[0].Substring(arr[0].Length - 1, 1); //取最后一位
+                            if (n == "4") {
+                                method = "aBFFB";
                             }
-                            var arr = Regex.Split(line, "[\\s]+", RegexOptions.IgnoreCase);
-                            if (arr.Length == 1) {
-                                // 410003+?......4  4=aBFFB
-                                string n = arr[0].Substring(arr[0].Length - 1, 1); //取最后一位
-                                if (n == "4") {
-                                    method = "aBFFB";
+                            if (stationNum >= 1) {
+                                ods.Add(new ObservedData());
+                                // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
+                                ods[ods.Count - 1].StationNum = stationNum;
+                                ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
+                                ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
+                                rds[rds.Count - 1].IsEnd = true;
+                                rds[rds.Count - stationNum].IsStart = true;
+                                //计算测段数据
+                                double totalDis = 0;
+                                double totalDiff = 0;
+                                for (int i = rds.Count - stationNum; i < rds.Count; i++) {
+                                    totalDiff += rds[i].DiffAve;
+                                    totalDis += rds[i].DisAve;
                                 }
-                                if (stationNum >= 1) {
-                                    ods.Add(new ObservedData());
-                                    // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
-                                    ods[ods.Count - 1].StationNum = stationNum;
-                                    ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
-                                    ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
-                                    rds[rds.Count - 1].IsEnd = true;
-                                    rds[rds.Count - stationNum].IsStart = true;
-                                    //计算测段数据
-                                    double totalDis = 0;
-                                    double totalDiff = 0;
-                                    for (int i = rds.Count - stationNum; i < rds.Count; i++) {
-                                        totalDiff += rds[i].DiffAve;
-                                        totalDis += rds[i].DisAve;
-                                    }
-                                    ods[ods.Count - 1].HeightDiff = totalDiff;
-                                    ods[ods.Count - 1].Distance = totalDis;
-                                    stationNum = 0;
-                                }
-                            }
-                            else if (arr.Length == 2) {
-                                /*PointData pd = new PointData {
-                                    Number = Regex.Split(arr[0], "[+]|[-]", RegexOptions.IgnoreCase)[1],
-                                    Height = Convert2Double(arr[1])
-                                };
-                                kps.Add(pd);*/
-                                continue;
-                            }
-                            else if (arr.Length == 5) {
-                                if (arr[2].Substring(0, 3) == "333") {
-                                    continue;
-                                }
-                                if (stationIdx == 0) {
-                                    rds.Add(new RawData());
-                                }
-                                stationIdx++;
-                                // 331后视1 332前视1 335后视2 336前视2 32视距
-                                var pointCode = arr[2].Substring(0, 3);
-
-                                switch (pointCode) {
-                                    case "331":
-                                        rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
-                                        rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
-                                        rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    case "332":
-                                        rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
-                                        rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                        rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    case "335":
-                                        rds[rds.Count - 1].BackDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                        rds[rds.Count - 1].BackDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    case "336":
-                                        rds[rds.Count - 1].FrontDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                        rds[rds.Count - 1].FrontDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (stationIdx == 4) {
-                                    stationIdx = 0;
-                                }
-                            }
-
-                            else if (arr.Length == 6) {
-                                rds[rds.Count - 1].Calc();
-                                stationNum++;
+                                ods[ods.Count - 1].HeightDiff = totalDiff;
+                                ods[ods.Count - 1].Distance = totalDis;
+                                stationNum = 0;
                             }
                         }
-                        ods.Add(new ObservedData());
-                        // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
-                        ods[ods.Count - 1].StationNum = stationNum;
-                        ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
-                        ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
-                        rds[rds.Count - 1].IsEnd = true;
-                        rds[rds.Count - stationNum].IsStart = true;
-                        //计算测段数据
-                        double totalDisend = 0;
-                        double totalDiffend = 0;
-                        for (int i = rds.Count - stationNum; i < rds.Count; i++) {
-                            totalDiffend += rds[i].DiffAve;
-                            totalDisend += rds[i].DisAve;
+                        else if (arr.Length == 2) {
+                            /*PointData pd = new PointData {
+                                Number = Regex.Split(arr[0], "[+]|[-]", RegexOptions.IgnoreCase)[1],
+                                Height = Convert2Double(arr[1])
+                            };
+                            kps.Add(pd);*/
+                            continue;
                         }
-                        ods[ods.Count - 1].HeightDiff = totalDiffend;
-                        ods[ods.Count - 1].Distance = totalDisend;
-                    }
-                }
-                else {
-                    using (StreamReader sr = new StreamReader(filename)) {
-                        string method; //观测方式
-                        int stationIdx = 0;//测站索引,记录一个测站观测索引
-                        int totalStation = 0;//一共有多少测站
-                        while (sr.Peek() > -1) {
-                            string line = sr.ReadLine().Trim();
-                            if (string.IsNullOrEmpty(line)) {
+                        else if (arr.Length == 5) {
+                            if (arr[2].Substring(0, 3) == "333") {
                                 continue;
                             }
-                            var arr = Regex.Split(line, "[\\s]+", RegexOptions.IgnoreCase);
-                            if (arr.Length == 1) {
-                                // 410003+?......4  4=aBFFB
-                                string n = arr[0].Substring(arr[0].Length - 1, 1); //取最后一位
-                                if (n == "4") {
-                                    method = "aBFFB";
-                                }
+                            if (stationIdx == 0) {
+                                rds.Add(new RawData());
                             }
-                            else if (arr.Length == 5) {
-                                if (arr[2].Substring(0, 3) == "333") {
-                                    continue;
-                                }
-                                if (stationIdx == 0) {
-                                    rds.Add(new RawData());
-                                }
-                                stationIdx++;
-                                // 331后视1 332前视1 335后视2 336前视2 32视距
-                                var pointCode = arr[2].Substring(0, 3);
-                                switch (pointCode) {
-                                    case "331":
-                                        rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
-                                        rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
-                                        rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    case "332":
-                                        rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
-                                        rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                        rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    case "335":
-                                        rds[rds.Count - 1].BackDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                        rds[rds.Count - 1].BackDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    case "336":
-                                        rds[rds.Count - 1].FrontDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                        rds[rds.Count - 1].FrontDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (stationIdx == 4) {
-                                    stationIdx = 0;
-                                    totalStation++;
-                                    rds[rds.Count - 1].Calc();
-                                    var stationNum = 1;
-                                    ods.Add(new ObservedData());
-                                    // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
-                                    ods[ods.Count - 1].StationNum = 1;
-                                    ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
-                                    ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
-                                    //计算测段数据
-                                    double totalDisend = 0;
-                                    double totalDiffend = 0;
-                                    for (int i = rds.Count - stationNum; i < rds.Count; i++) {
-                                        totalDiffend += rds[i].DiffAve;
-                                        totalDisend += rds[i].DisAve;
-                                    }
-                                    ods[ods.Count - 1].HeightDiff = totalDiffend;
-                                    ods[ods.Count - 1].Distance = totalDisend;
-                                    rds[rds.Count - 1].IsEnd = true;
-                                    rds[rds.Count - stationNum].IsStart = true;
-                                }
-                            }
+                            stationIdx++;
+                            // 331后视1 332前视1 335后视2 336前视2 32视距
+                            var pointCode = arr[2].Substring(0, 3);
 
+                            switch (pointCode) {
+                                case "331":
+                                    rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
+                                    rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
+                                    rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                    break;
+                                case "332":
+                                    rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
+                                    rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                    rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                    break;
+                                case "335":
+                                    rds[rds.Count - 1].BackDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                    rds[rds.Count - 1].BackDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                    break;
+                                case "336":
+                                    rds[rds.Count - 1].FrontDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                    rds[rds.Count - 1].FrontDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (stationIdx == 4) {
+                                stationIdx = 0;
+                            }
+                        }
+
+                        else if (arr.Length == 6) {
+                            rds[rds.Count - 1].Calc();
+                            stationNum++;
                         }
                     }
+                    ods.Add(new ObservedData());
+                    // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
+                    ods[ods.Count - 1].StationNum = stationNum;
+                    ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
+                    ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
+                    rds[rds.Count - 1].IsEnd = true;
+                    rds[rds.Count - stationNum].IsStart = true;
+                    //计算测段数据
+                    double totalDisend = 0;
+                    double totalDiffend = 0;
+                    for (int i = rds.Count - stationNum; i < rds.Count; i++) {
+                        totalDiffend += rds[i].DiffAve;
+                        totalDisend += rds[i].DisAve;
+                    }
+                    ods[ods.Count - 1].HeightDiff = totalDiffend;
+                    ods[ods.Count - 1].Distance = totalDisend;
                 }
-                rds[ct].IsFileStart = true;
-                rds[rds.Count - 1].IsFileFinish = true;
             }
             catch (Exception) {
                 throw new Exception("文件格式有误，读取失败");
