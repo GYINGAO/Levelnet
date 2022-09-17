@@ -56,5 +56,49 @@ namespace LevelnetAdjustment.utils {
             });
             return ods_new;
         }
+
+        /// <summary>
+        /// 将原始观测数据转换为高差观测数据
+        /// </summary>
+        /// <param name="rds"></param>
+        /// <returns></returns>
+        public static List<ObservedData> Rd2Od(List<RawData> rds, string zd) {
+            List<ObservedData> ods = new List<ObservedData>();
+            double totalDis = 0;//距离
+            double totalDiff = 0;//高差
+            int stationNum = 0;//测站数
+            foreach (var rd in rds) {
+                stationNum++;
+                if (stationNum == 1) {
+                    ods.Add(new ObservedData() { Start = rd.BackPoint });
+                }
+                //有转点
+                totalDiff += rd.DiffAve;
+                totalDis += rd.DisAve;
+                if (IsZD(zd, rd.FrontPoint)) {
+                    continue;
+                }
+                else {
+                    ods[ods.Count - 1].StationNum = stationNum;
+                    ods[ods.Count - 1].Distance = totalDis;
+                    ods[ods.Count - 1].HeightDiff = totalDiff;
+                    ods[ods.Count - 1].End = rd.FrontPoint;
+                    stationNum = 0;
+                    totalDis = 0;
+                    totalDiff = 0;
+                }
+            }
+            return ods;
+        }
+
+        static bool IsZD(string zd, string number) {
+            if (zd == "num") {
+                return new System.Text.RegularExpressions.Regex("^[0-9]").IsMatch(number);
+            }
+            else if(zd.Contains('/')) {
+                return number.ToLower().StartsWith(zd.Split('/')[0].ToLower());
+            }
+            return number.ToLower().StartsWith(zd.ToLower());
+        }
     }
 }

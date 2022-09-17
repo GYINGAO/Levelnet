@@ -171,6 +171,7 @@ namespace LevelnetAdjustment.utils {
                 if (rds[i].IsFileStart) {
                     sheetIdx++;
                     sheet = workbook.GetSheetAt(sheetIdx);
+                    sectionNum = 0;
                 }
                 //添加标头
                 if (rds[i].IsStart) {

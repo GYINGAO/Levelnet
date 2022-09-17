@@ -175,6 +175,7 @@ namespace LevelnetAdjustment.utils {
                         }
 
                         if (stationIdx == observeCount) {
+                            dats[dats.Count - 1].Calc();
                             stationIdx = 0;
                         }
                     }
@@ -183,6 +184,7 @@ namespace LevelnetAdjustment.utils {
                     if (line.Contains("End-Line") || line.Contains("End")) {
                         dats[dats.Count - 1].Calc();
                         dats[dats.Count - 1].IsEnd = true;
+                        dats[dats.Count - stationNum].IsStart = true;
                         continue;
                     }
                 }
@@ -199,7 +201,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="observedDatas"></param>
         /// 参考 https://www.docin.com/p-2467208828.html#:~:text=%E5%BE%95%E5%8D%A1DNA03%E7%94%B5,%E5%A4%9A%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%9D%97%E7%BB%84%E6%88%90%E3%80%82
         ///  https://totalopenstation.readthedocs.io/en/stable/input_formats/if_leica_gsi.html
-        internal static void ReadGSI(string filename, List<RawData> rds, List<ObservedData> ods, List<PointData> kps, string ZD) {
+        internal static void ReadGSI(string filename, List<RawData> rds, string ZD) {
             try {
                 int ct = rds.Count;
                 using (StreamReader sr = new StreamReader(filename)) {
@@ -219,11 +221,7 @@ namespace LevelnetAdjustment.utils {
                                 method = "aBFFB";
                             }
                             if (stationNum >= 1) {
-                                ods.Add(new ObservedData());
-                                // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
-                                ods[ods.Count - 1].StationNum = stationNum;
-                                ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
-                                ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
+
                                 rds[rds.Count - 1].IsEnd = true;
                                 rds[rds.Count - stationNum].IsStart = true;
                                 //计算测段数据
@@ -233,8 +231,7 @@ namespace LevelnetAdjustment.utils {
                                     totalDiff += rds[i].DiffAve;
                                     totalDis += rds[i].DisAve;
                                 }
-                                ods[ods.Count - 1].HeightDiff = totalDiff;
-                                ods[ods.Count - 1].Distance = totalDis;
+
                                 stationNum = 0;
                             }
                         }
@@ -289,11 +286,7 @@ namespace LevelnetAdjustment.utils {
                             stationNum++;
                         }
                     }
-                    ods.Add(new ObservedData());
-                    // 571测站标准差 572累计测站差 573距离差 574路线总长 83高程
-                    ods[ods.Count - 1].StationNum = stationNum;
-                    ods[ods.Count - 1].Start = rds[rds.Count - stationNum].BackPoint;
-                    ods[ods.Count - 1].End = rds[rds.Count - 1].FrontPoint;
+
                     rds[rds.Count - 1].IsEnd = true;
                     rds[rds.Count - stationNum].IsStart = true;
                     //计算测段数据
@@ -303,8 +296,7 @@ namespace LevelnetAdjustment.utils {
                         totalDiffend += rds[i].DiffAve;
                         totalDisend += rds[i].DisAve;
                     }
-                    ods[ods.Count - 1].HeightDiff = totalDiffend;
-                    ods[ods.Count - 1].Distance = totalDisend;
+
                 }
             }
             catch (Exception) {
