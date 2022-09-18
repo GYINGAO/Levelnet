@@ -15,9 +15,6 @@ namespace LevelnetAdjustment.utils {
             get => observedDatas;
             set {
                 observedDatas = value;
-                if (KnownPointEable != null && KnownPointEable.Count != 0) {
-                    Calc_Params();
-                }
             }
         }
 
@@ -36,12 +33,6 @@ namespace LevelnetAdjustment.utils {
                         KnownPointEable.Add(item);
                     }
                 });
-
-                // 更新未知点
-                if (observedDatas != null && observedDatas.Count != 0) {
-                    Calc_Params();
-                }
-
             }
         }
 

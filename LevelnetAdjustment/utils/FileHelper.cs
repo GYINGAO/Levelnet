@@ -79,7 +79,7 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        internal static void ReadDAT(List<RawData> dats, string filename, string ZD) {
+        internal static void ReadDAT(List<RawData> dats, string filename) {
             string[] method1 = { "bffb", "bfbf", "fbbf", "abffb", "abfbf", "abf", "bf" };
             string[] method2 = { "bbff", "ffbb" };
             int ct = dats.Count;
@@ -201,107 +201,83 @@ namespace LevelnetAdjustment.utils {
         /// <param name="observedDatas"></param>
         /// 参考 https://www.docin.com/p-2467208828.html#:~:text=%E5%BE%95%E5%8D%A1DNA03%E7%94%B5,%E5%A4%9A%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%9D%97%E7%BB%84%E6%88%90%E3%80%82
         ///  https://totalopenstation.readthedocs.io/en/stable/input_formats/if_leica_gsi.html
-        internal static void ReadGSI(string filename, List<RawData> rds, string ZD) {
-            try {
-                int ct = rds.Count;
-                using (StreamReader sr = new StreamReader(filename)) {
-                    string method; //观测方式
-                    int stationIdx = 0;//测站索引,记录一个测站观测索引
-                    int stationNum = 0; //每个测段测站数
-                    while (sr.Peek() > -1) {
-                        string line = sr.ReadLine().Trim();
-                        if (string.IsNullOrEmpty(line)) {
-                            continue;
+        internal static void ReadGSI(string filename, List<RawData> rds) {
+            int ct = rds.Count;
+            using (StreamReader sr = new StreamReader(filename)) {
+                int stationIdx = 0;//测站索引,记录一个测站观测索引
+                int stationNum = 0; //每个测段测站数
+                int observeCount = 0;//每站观测次数
+                while (sr.Peek() > -1) {
+                    string line = sr.ReadLine().Trim();
+                    if (string.IsNullOrEmpty(line)) {
+                        continue;
+                    }
+                    var arr = Regex.Split(line, "[\\s]+", RegexOptions.IgnoreCase);
+                    if (arr.Length == 1) {
+                        // 410003+?......4  4=aBFFB
+                        string n = arr[0].Substring(arr[0].Length - 1, 1); //取最后一位
+                        observeCount = Convert.ToInt32(n);
+                        // 这里判断测段结束
+                        if (stationNum >= 1) {
+                            rds[rds.Count - 1].IsEnd = true;
+                            rds[rds.Count - stationNum].IsStart = true;
+                            stationNum = 0;
                         }
-                        var arr = Regex.Split(line, "[\\s]+", RegexOptions.IgnoreCase);
-                        if (arr.Length == 1) {
-                            // 410003+?......4  4=aBFFB
-                            string n = arr[0].Substring(arr[0].Length - 1, 1); //取最后一位
-                            if (n == "4") {
-                                method = "aBFFB";
-                            }
-                            if (stationNum >= 1) {
+                    }
+                    else if (arr.Length == 5) {
 
-                                rds[rds.Count - 1].IsEnd = true;
-                                rds[rds.Count - stationNum].IsStart = true;
-                                //计算测段数据
-                                double totalDis = 0;
-                                double totalDiff = 0;
-                                for (int i = rds.Count - stationNum; i < rds.Count; i++) {
-                                    totalDiff += rds[i].DiffAve;
-                                    totalDis += rds[i].DisAve;
-                                }
 
-                                stationNum = 0;
-                            }
+                        // 331后视1 332前视1 335后视2 336前视2 32视距
+                        var pointCode = arr[2].Substring(0, 3);
+                        if (pointCode != "333" && (rds.Count == 0 || (stationIdx == 0 && rds[rds.Count - 1].BackDis1 != 0))) {
+                            rds.Add(new RawData());
                         }
-                        else if (arr.Length == 2) {
-                            /*PointData pd = new PointData {
-                                Number = Regex.Split(arr[0], "[+]|[-]", RegexOptions.IgnoreCase)[1],
-                                Height = Convert2Double(arr[1])
-                            };
-                            kps.Add(pd);*/
-                            continue;
+                        switch (pointCode) {
+                            case "331":
+                                rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
+                                rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
+                                rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                stationIdx++;
+                                break;
+                            case "332":
+                                rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
+                                rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                stationIdx++;
+                                break;
+                            case "335":
+                                rds[rds.Count - 1].BackDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                rds[rds.Count - 1].BackDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                stationIdx++;
+                                break;
+                            case "336":
+                                rds[rds.Count - 1].FrontDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                rds[rds.Count - 1].FrontDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                stationIdx++;
+                                break;
+                            case "333":
+                                rds[rds.Count - 1].MidPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
+                                rds[rds.Count - 1].MidDis = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
+                                rds[rds.Count - 1].MidNum = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
+                                rds[rds.Count - 1].GetMid();
+                                break;
+                            default:
+                                break;
                         }
-                        else if (arr.Length == 5) {
-                            if (arr[2].Substring(0, 3) == "333") {
-                                continue;
-                            }
-                            if (stationIdx == 0) {
-                                rds.Add(new RawData());
-                            }
-                            stationIdx++;
-                            // 331后视1 332前视1 335后视2 336前视2 32视距
-                            var pointCode = arr[2].Substring(0, 3);
-
-                            switch (pointCode) {
-                                case "331":
-                                    rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
-                                    rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
-                                    rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                    break;
-                                case "332":
-                                    rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
-                                    rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                    rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                    break;
-                                case "335":
-                                    rds[rds.Count - 1].BackDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                    rds[rds.Count - 1].BackDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                    break;
-                                case "336":
-                                    rds[rds.Count - 1].FrontDis2 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
-                                    rds[rds.Count - 1].FrontDiff2 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
-                                    break;
-                                default:
-                                    break;
-                            }
-                            if (stationIdx == 4) {
-                                stationIdx = 0;
-                            }
-                        }
-
-                        else if (arr.Length == 6) {
+                        if (stationIdx == observeCount) {
                             rds[rds.Count - 1].Calc();
                             stationNum++;
+                            stationIdx = 0;
                         }
                     }
-
-                    rds[rds.Count - 1].IsEnd = true;
-                    rds[rds.Count - stationNum].IsStart = true;
-                    //计算测段数据
-                    double totalDisend = 0;
-                    double totalDiffend = 0;
-                    for (int i = rds.Count - stationNum; i < rds.Count; i++) {
-                        totalDiffend += rds[i].DiffAve;
-                        totalDisend += rds[i].DisAve;
-                    }
-
                 }
+
+                rds[rds.Count - 1].IsEnd = true;
+                rds[rds.Count - stationNum].IsStart = true;
             }
-            catch (Exception) {
-                throw new Exception("文件格式有误，读取失败");
-            }
+            rds[ct].IsFileStart = true;
+            rds[rds.Count - 1].IsFileFinish = true;
+
         }
 
 

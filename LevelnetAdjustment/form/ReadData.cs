@@ -34,7 +34,7 @@ namespace LevelnetAdjustment.form {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "DAT观测文件|*.dat;*.DAT|GSI-8观测文件|*.gsi;*.GSI|COSA观测文件|*.in1;*.IN1|已知点文件|*.txt",
+                Filter = "Trimble dini|*.dat;*.DAT|Leica DNA|*.gsi;*.GSI|Cosa in1|*.in1;*.IN1|已知点文件|*.txt",
                 FilterIndex = 1,
                 RestoreDirectory = true,
             };
@@ -161,16 +161,16 @@ namespace LevelnetAdjustment.form {
                 }
             }
             //没有改变文件，直接退出
-            if (!IsFileChange) {
-                Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
-                Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
-                Options.Limit = double.Parse(tb_limit.Text) / 100;
-                Options.UnitRight = rbtn_before.Checked ? 0 : 1;
-                Options.Sigma = double.Parse(textBox1.Text);
-                TransfEvent(Options);
-                Close();
-                return;
-            }
+            /*            if (!IsFileChange) {
+                            Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
+                            Options.PowerMethod = rbtn_dis.Checked ? 0 : 1;
+                            Options.Limit = double.Parse(tb_limit.Text) / 100;
+                            Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+                            Options.Sigma = double.Parse(textBox1.Text);
+                            TransfEvent(Options);
+                            Close();
+                            return;
+                        }*/
 
 
             bool flag = false;
@@ -221,7 +221,7 @@ namespace LevelnetAdjustment.form {
                     }
                     ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
                     ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
-                    ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
+                    ClAdj.Calc_Params();
 
 
                     Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
@@ -270,10 +270,10 @@ namespace LevelnetAdjustment.form {
 
                     switch (Path.GetExtension(fileName).ToLower()) {
                         case ".dat":
-                            FileHelper.ReadDAT(RawDatas, fileName, zd);
+                            FileHelper.ReadDAT(RawDatas, fileName);
                             break;
                         case ".gsi":
-                            FileHelper.ReadGSI(fileName, RawDatas, zd);
+                            FileHelper.ReadGSI(fileName, RawDatas);
                             break;
                         case ".in1":
                             var tup = FileHelper.ReadOriginalFile(KnownPoints, ObservedDatas, fileName);
@@ -291,7 +291,7 @@ namespace LevelnetAdjustment.form {
                 ClAdj.RawDatas = ClAdj.RawDatas != null ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
                 ClAdj.ObservedDatas = ClAdj.ObservedDatas != null ? Commom.Merge(ClAdj.ObservedDatas, ObservedDatas) : ObservedDatas;
                 ClAdj.KnownPoints = ClAdj.KnownPoints != null ? Commom.Merge(ClAdj.KnownPoints, KnownPoints) : KnownPoints;
-                ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);
+                ClAdj.Calc_Params();
 
 
                 Options.Level = rbtn1.Checked ? 1 : rbtn2.Checked ? 2 : rbtn3.Checked ? 3 : 4;
@@ -308,6 +308,7 @@ namespace LevelnetAdjustment.form {
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();
+                /*throw new Exception("文件格式有误");*/
                 throw ex;
             }
         }

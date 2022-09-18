@@ -177,14 +177,17 @@ namespace LevelnetAdjustment.utils {
                 if (rds[i].IsStart) {
                     start = rds[i].BackPoint;
                     var startRowIdx = sheet.LastRowNum + 1;
-                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 4, 0, 0));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx, startRowIdx, 0, cellNum - 1));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 5, 0, 0));
                     sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 1, 2, 3));
                     sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 1, 4, 5));
                     sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 4, 6, 6));
-                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 4, 7, 7));
-                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 4, 8, 8));
-                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 4, 9, 9));
-                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx, startRowIdx, 0, cellNum - 1));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 5, 7, 7));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 5, 8, 8));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 1, startRowIdx + 5, 9, 9));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 5, startRowIdx + 5, 2, 3));
+                    sheet.AddMergedRegion(new CellRangeAddress(startRowIdx + 5, startRowIdx + 5, 4, 5));
+
 
                     //表头第一行
                     var row0 = sheet.CreateRow(sheet.LastRowNum + 1);
@@ -240,6 +243,16 @@ namespace LevelnetAdjustment.utils {
                     row4.GetCell(4).SetCellValue("高差(m)");
                     row4.GetCell(5).SetCellValue("高差(m)");
 
+                    //表头第六行
+                    var row5 = sheet.CreateRow(sheet.LastRowNum + 1);
+                    for (int k = 0; k < cellNum; k++) {
+                        row5.CreateCell(k);
+                        row5.GetCell(k).CellStyle = style3;
+                    }
+                    row5.GetCell(1).SetCellValue("中视");
+                    row5.GetCell(2).SetCellValue("中视视距读数(m)	");
+                    row5.GetCell(4).SetCellValue("中视标尺读数(m)	");
+
                     sectionNum++;
                 }
 
@@ -250,7 +263,12 @@ namespace LevelnetAdjustment.utils {
                 totalDis += rds[i].DisAve;
                 stationNum++;
 
-                sheet.AddMergedRegion(new CellRangeAddress(sheet.LastRowNum + 1, sheet.LastRowNum + 3, 0, 0));
+                if (rds[i].MidDis != 0) {
+                    sheet.AddMergedRegion(new CellRangeAddress(sheet.LastRowNum + 1, sheet.LastRowNum + 4, 0, 0));
+                }
+                else {
+                    sheet.AddMergedRegion(new CellRangeAddress(sheet.LastRowNum + 1, sheet.LastRowNum + 3, 0, 0));
+                }
 
                 //测站数据第一行
                 var row_1 = sheet.CreateRow(sheet.LastRowNum + 1);
@@ -278,6 +296,8 @@ namespace LevelnetAdjustment.utils {
                 row_2.GetCell(4).SetCellValue(rds[i].FrontDiff1);
                 row_2.GetCell(5).SetCellValue(rds[i].FrontDiff2);
                 row_2.GetCell(6).SetCellValue(((rds[i].FrontDiff1 - rds[i].FrontDiff2) * 1000));
+                row_2.GetCell(7).SetCellValue(rds[i].DiffAve);
+                row_2.GetCell(8).SetCellValue(rds[i].DisAve);
 
                 //测站数据第三行
                 var row_3 = sheet.CreateRow(sheet.LastRowNum + 1);
@@ -290,8 +310,21 @@ namespace LevelnetAdjustment.utils {
                 row_3.GetCell(4).SetCellValue(rds[i].Diff1);
                 row_3.GetCell(5).SetCellValue(rds[i].Diff2);
                 row_3.GetCell(6).SetCellValue(((rds[i].Diff1 - rds[i].Diff2) * 1000));
-                row_3.GetCell(7).SetCellValue(rds[i].DiffAve);
-                row_3.GetCell(8).SetCellValue(rds[i].DisAve);
+
+                //测站数据第四行
+                if (rds[i].MidDis != 0) {
+                    sheet.AddMergedRegion(new CellRangeAddress(sheet.LastRowNum + 1, sheet.LastRowNum + 1, 2, 3));
+                    sheet.AddMergedRegion(new CellRangeAddress(sheet.LastRowNum + 1, sheet.LastRowNum + 1, 4, 5));
+                    var row_4 = sheet.CreateRow(sheet.LastRowNum + 1);
+                    for (int k = 0; k < cellNum; k++) {
+                        row_4.CreateCell(k);
+                        row_4.GetCell(k).CellStyle = style3;
+                    }
+                    row_4.GetCell(1).SetCellValue(rds[i].MidPoint);
+                    row_4.GetCell(2).SetCellValue(rds[i].MidDis);
+                    row_4.GetCell(4).SetCellValue(rds[i].MidNum);
+                    row_4.GetCell(7).SetCellValue(rds[i].MidDiff);
+                }
 
 
                 //添加表尾

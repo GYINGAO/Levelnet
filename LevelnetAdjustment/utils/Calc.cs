@@ -64,10 +64,14 @@ namespace LevelnetAdjustment.utils {
         /// <returns></returns>
         public static List<ObservedData> Rd2Od(List<RawData> rds, string zd) {
             List<ObservedData> ods = new List<ObservedData>();
+            List<ObservedData> ods_mid = new List<ObservedData>();
             double totalDis = 0;//距离
             double totalDiff = 0;//高差
             int stationNum = 0;//测站数
             foreach (var rd in rds) {
+                if (rd.MidDis != 0) {
+                    ods_mid.Add(new ObservedData() { Start = rd.BackPoint, End = rd.MidPoint, Distance = rd.MidDis, HeightDiff = rd.MidDiff, StationNum = 1 });
+                }
                 stationNum++;
                 if (stationNum == 1) {
                     ods.Add(new ObservedData() { Start = rd.BackPoint });
@@ -88,14 +92,14 @@ namespace LevelnetAdjustment.utils {
                     totalDiff = 0;
                 }
             }
-            return ods;
+            return Commom.Merge(ods, ods_mid);
         }
 
         static bool IsZD(string zd, string number) {
             if (zd == "num") {
                 return new System.Text.RegularExpressions.Regex("^[0-9]").IsMatch(number);
             }
-            else if(zd.Contains('/')) {
+            else if (zd.Contains('/')) {
                 return number.ToLower().StartsWith(zd.Split('/')[0].ToLower());
             }
             return number.ToLower().StartsWith(zd.ToLower());

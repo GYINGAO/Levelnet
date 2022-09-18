@@ -257,8 +257,7 @@ namespace LevelnetAdjustment {
             this.ClAdj.ObservedDatas = Project.ObservedDatas;
             this.ClAdj.KnownPoints = Project.KnownPoints;
             this.ClAdj.UnknownPoints = Project.UnknownPoints;
-            this.ClAdj.ObservedDatasNoRep = Calc.RemoveDuplicates(ClAdj.ObservedDatas);//去除重复边
-            //ClAdj.CalcApproximateHeight(true);
+            this.ClAdj.Calc_Params();
             ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
             // 获取所有文件
             FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
