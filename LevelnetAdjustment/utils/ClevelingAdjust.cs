@@ -10,13 +10,7 @@ namespace LevelnetAdjustment.utils {
 
 
         // 观测数据列表
-        private List<ObservedData> observedDatas;
-        public List<ObservedData> ObservedDatas {
-            get => observedDatas;
-            set {
-                observedDatas = value;
-            }
-        }
+        public List<ObservedData> ObservedDatas { get; set; }
 
         // 已知点列表(点号，高程)
         private List<PointData> knownPoints;
@@ -781,10 +775,10 @@ namespace LevelnetAdjustment.utils {
                     }
                 }
                 if (max_v > U) {
-                    odError.Add(observedDatas[max_i]);
+                    odError.Add(ObservedDatas[max_i]);
                     V_err.Add(V[max_i, 0]);
                     threshold_err.Add(max_v);
-                    observedDatas.RemoveAt(max_i);
+                    ObservedDatas.RemoveAt(max_i);
                     Calc_Params();
                 }
                 else break;
