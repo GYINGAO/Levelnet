@@ -105,9 +105,9 @@ namespace LevelnetAdjustment.form {
             this.label1.Font = new System.Drawing.Font("华文新魏", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label1.Location = new System.Drawing.Point(16, 52);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(150, 21);
+            this.label1.Size = new System.Drawing.Size(190, 21);
             this.label1.TabIndex = 4;
-            this.label1.Text = "水准网平差软件";
+            this.label1.Text = "高程网数据处理软件";
             // 
             // About
             // 

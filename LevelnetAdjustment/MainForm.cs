@@ -847,6 +847,9 @@ namespace LevelnetAdjustment {
 
         }
 
+        private void 检查更新ToolStripMenuItem_Click(object sender, EventArgs e) {
+            Update();
+        }
     }
 }
 
