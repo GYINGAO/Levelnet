@@ -51,9 +51,7 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="rds"></param>
         /// <param name="ods"></param>
-        internal static void ExportHandbook(List<RawData> rds, List<ObservedData> ods, string path, List<InputFile> files) {
-
-
+        internal static void ExportHandbook(List<RawData> rds, string path, List<InputFile> files) {
             IWorkbook workbook;
             string fileExt = Path.GetExtension(path).ToLower();
             if (fileExt == ".xlsx") { workbook = new XSSFWorkbook(); }
@@ -135,12 +133,19 @@ namespace LevelnetAdjustment.utils {
             style4.SetFont(font4);
             #endregion
 
-
             // 在WriteWorkbook 上添加名为 观测手簿 的数据表
             for (int i = 0; i < files.Count; i++) {
-                var ext = Path.GetExtension(files[i].FileName).ToLower();
+                var ext = Path.GetExtension(files[i].FilePath).ToLower();
                 if (ext.Contains("dat") || ext.Contains("gsi")) {
-                    ISheet sheet_base = workbook.CreateSheet(Path.GetFileNameWithoutExtension(files[i].FileName));
+                    ISheet sheet_base;
+                    int num = 0;
+                    if (workbook.GetSheet(Path.GetFileNameWithoutExtension(files[i].FilePath)) == null) {
+                        sheet_base = workbook.CreateSheet(Path.GetFileNameWithoutExtension(files[i].FilePath));
+                    }
+                    else {
+                        num++;
+                        sheet_base = workbook.CreateSheet(Path.GetFileNameWithoutExtension(files[i].FilePath) + $"({num})");
+                    }
                     //写入表格标题
                     IRow row_title = sheet_base.CreateRow(0);
                     sheet_base.AddMergedRegion(new CellRangeAddress(0, 0, 0, cellNum - 1));

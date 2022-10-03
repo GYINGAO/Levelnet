@@ -65,31 +65,35 @@ namespace LevelnetAdjustment.utils {
         public static List<ObservedData> Rd2Od(List<RawData> rds, string zd) {
             List<ObservedData> ods = new List<ObservedData>();
             List<ObservedData> ods_mid = new List<ObservedData>();
-            double totalDis = 0;//距离
-            double totalDiff = 0;//高差
-            int stationNum = 0;//测站数
+            int fileNum = 0;
+            int stationNum = 0;
             foreach (var rd in rds) {
+                if (rd.IsFileStart) {
+                    stationNum = 0;
+                    fileNum++;
+                }
+                if (rd.IsStart) {
+                    stationNum++;
+                }
                 if (rd.MidDis != 0) {
                     ods_mid.Add(new ObservedData() { Start = rd.BackPoint, End = rd.MidPoint, Distance = rd.MidDis, HeightDiff = rd.MidDiff, StationNum = 1 });
                 }
-                stationNum++;
-                if (stationNum == 1) {
-                    ods.Add(new ObservedData() { Start = rd.BackPoint });
-                }
-                //有转点
-                totalDiff += rd.DiffAve;
-                totalDis += rd.DisAve;
-                if (IsZD(zd, rd.FrontPoint)) {
-                    continue;
+                ods.Add(new ObservedData() {
+                    StationNum = 1,
+                    Distance = rd.DisAve,
+                    HeightDiff = rd.DiffAve
+                });
+                if (IsZD(zd, rd.BackPoint)) {
+                    ods[ods.Count - 1].Start = fileNum.ToString().PadLeft(2, '0') + stationNum.ToString().PadLeft(3, '0') + rd.BackPoint;
                 }
                 else {
-                    ods[ods.Count - 1].StationNum = stationNum;
-                    ods[ods.Count - 1].Distance = totalDis;
-                    ods[ods.Count - 1].HeightDiff = totalDiff;
+                    ods[ods.Count - 1].Start = rd.BackPoint;
+                }
+                if (IsZD(zd, rd.FrontPoint)) {
+                    ods[ods.Count - 1].End = fileNum.ToString().PadLeft(2, '0') + stationNum.ToString().PadLeft(3, '0') + rd.FrontPoint; ;
+                }
+                else {
                     ods[ods.Count - 1].End = rd.FrontPoint;
-                    stationNum = 0;
-                    totalDis = 0;
-                    totalDiff = 0;
                 }
             }
             return Commom.Merge(ods, ods_mid);

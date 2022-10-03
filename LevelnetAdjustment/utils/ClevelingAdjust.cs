@@ -19,11 +19,9 @@ namespace LevelnetAdjustment.utils {
             set {
                 knownPoints = value;
                 // 更新已知点
-                KnownPoints_array = new ArrayList();
                 KnownPointEable = new List<PointData>();
                 value.ForEach(item => {
                     if (item.Enable) {
-                        KnownPoints_array.Add(item.Number);
                         KnownPointEable.Add(item);
                     }
                 });
@@ -34,7 +32,7 @@ namespace LevelnetAdjustment.utils {
         // 所有点的信息(点号，高程)
         public List<PointData> UnknownPoints { get; set; } = new List<PointData>();// 定义列表存储近似高程(点号，高程)
         public ArrayList UnknownPoints_array { get; set; } = new ArrayList();// 未知点点号数组
-        public ArrayList KnownPoints_array { get; set; } = new ArrayList();// 已知点点号数组
+        //public ArrayList KnownPoints_array { get; set; } = new ArrayList();// 已知点点号数组
         //public List<PointData> AllPoints { get; set; } = new List<PointData>(); //所有点数据
         //public ArrayList AllPoint_array { get; set; } = new ArrayList();// 所有点号数组
         public List<ObservedData> ObservedDatasNoRep { get; set; } = new List<ObservedData>();// 去除重复边的观测数据
@@ -82,10 +80,10 @@ namespace LevelnetAdjustment.utils {
             KnPnumber = KnownPointEable.Count;
             UnknownPoints_array = new ArrayList();
             ObservedDatas.ForEach(item => {
-                if (!UnknownPoints_array.Contains(item.Start) && !KnownPoints_array.Contains(item.Start)) {
+                if (!UnknownPoints_array.Contains(item.Start) && !KnownPointEable.Exists(t => t.Number == item.Start)) {
                     UnknownPoints_array.Add(item.Start);
                 }
-                if (!UnknownPoints_array.Contains(item.End) && !KnownPoints_array.Contains(item.End)) {
+                if (!UnknownPoints_array.Contains(item.End) && !KnownPointEable.Exists(t => t.Number == item.End)) {
                     UnknownPoints_array.Add(item.End);
                 }
                 TotalDistence += item.Distance;
@@ -630,7 +628,7 @@ namespace LevelnetAdjustment.utils {
         /// <param name="roundi"></param>
         /// <returns></returns>
         private string LineClosure(double roundi, string split, string space) {
-            int m_knPnumber = KnownPoints_array.Count;
+            int m_knPnumber = KnownPointEable.Count;
             int m_Pnumber = M;
             StringBuilder strClosure = new StringBuilder();
 
@@ -715,8 +713,8 @@ namespace LevelnetAdjustment.utils {
             #endregion
 
             Closures = new List<Closure>();
-            string strLoop = LoopClosure(Options.Coefficient, split, space);
-            string strLine = LineClosure(Options.Coefficient, split, space);
+            string strLoop = LoopClosure(Options.LevelParams.Huan, split, space);
+            string strLine = LineClosure(Options.LevelParams.FuHe, split, space);
             string msg = $"\r\n{split}\r\n{space}超限路线\r\n{split}\r\n";
             for (int i = 0; i < Closures.Count; i++) {
                 if (Math.Abs(Closures[i].Error) > Math.Abs(Closures[i].Limit)) {

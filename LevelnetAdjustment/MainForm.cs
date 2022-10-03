@@ -26,7 +26,7 @@ namespace LevelnetAdjustment {
 
         public bool IsImport { get; set; } = false;
 
-        public string StartProj { get; set; }
+        public string StartProj { get; set; } = "";
 
         public bool DirectExit { get; set; } = false;
 
@@ -61,10 +61,9 @@ namespace LevelnetAdjustment {
             menuStrip1.RenderMode = ToolStripRenderMode.Professional;
             NewDropItem.Image = Properties.Resources._new;
             toolStripMenuItem_open.Image = Properties.Resources.open;
-            toolStripMenuItem_read.Image = Properties.Resources.import2;
             ExitDropItem.Image = Properties.Resources.close2;
-            COSADropItem.Image = Properties.Resources.TXT;
-            HandbookDropItem.Image = Properties.Resources.excel_01;
+            生成平差文件ToolStripMenuItem.Image = Properties.Resources.TXT;
+            生成观测手簿ToolStripMenuItem.Image = Properties.Resources.excel_01;
             AboutDropItem.Image = Properties.Resources.about2;
             使用说明ToolStripMenuItem.Image = Properties.Resources.帮助中心编辑;
 
@@ -74,9 +73,8 @@ namespace LevelnetAdjustment {
             GrossErrorDropItem.Enabled = false;
             ConstraintNetworkDropItem.Enabled = false;
             RankDefectNetworkDropItem.Enabled = false;
-            COSADropItem.Enabled = false;
-            HandbookDropItem.Enabled = false;
-            toolStripMenuItem_read.Enabled = false;
+            生成平差文件ToolStripMenuItem.Enabled = false;
+            生成观测手簿ToolStripMenuItem.Enabled = false;
 
 
             //添加最近打开的项目
@@ -143,42 +141,22 @@ namespace LevelnetAdjustment {
 
         #region 文件管理
         /// <summary>
-        /// 读取数据
+        /// 设置与选项
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
-            ReadData rd = new ReadData(ClAdj, Project);
-            rd.TransfEvent += ChangeImportState;
+            FrmADJSetting rd = new FrmADJSetting(ClAdj.Options);
+            rd.TransfEvent += ChangeLevelParams;
             rd.ShowDialog();
         }
 
-        void ChangeImportState(Option options) {
-            this.IsImport = true;
-            this.ClAdj.Options = options;
-            this.Project.Options = options;
-
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
-            string msg = "";
-            int j = 0;
-            for (int i = 0; i < ClAdj.KnownPoints.Count; i++) {
-                if (ClAdj.ObservedDatas.Exists(l => l.Start == ClAdj.KnownPoints[i].Number || l.End == ClAdj.KnownPoints[i].Number)) {
-                    continue;
-                }
-                else {
-                    j++;
-                    msg += $"{j}、点号：{ClAdj.KnownPoints[i].Number}，高程：{ClAdj.KnownPoints[i].Height}\r\n";
-                    ClAdj.KnownPoints[i].Enable = false;
-                }
-            }
-            if (msg != "") {
-                MessageBox.Show($"以下已知点在观测文件中未找到!\r\n{msg}", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                ClAdj.Calc_Params();
-            }
-            else {
-                MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+        void ChangeLevelParams(Option option) {
+            this.ClAdj.Options = option;
+            this.Project.Options = option;
         }
+
+
 
         /// <summary>
         /// 关闭所有的子窗体
@@ -509,52 +487,9 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void HandbookDropItem_Click(object sender, EventArgs e) {
-            if (File.Exists(Project.Options.OutputFiles.Handbook)) {
-                if (MessageBox.Show("观测手簿已存在，是否重新导出？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
-                    Process.Start(Project.Options.OutputFiles.Handbook);
-                    return;
-                }
-            }
-            SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
-            //将Loaing窗口，注入到 SplashScreenManager 来管理
-            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-            loading.ShowLoading();
-            try {
-                ExceHelperl.ExportHandbook(ClAdj.RawDatas, ClAdj.ObservedDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
-                loading.CloseWaitForm();
-                if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                    Process.Start(Project.Options.OutputFiles.Handbook);
-            }
-            catch (Exception ex) {
-                loading.CloseWaitForm();
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// 导出COSA按距离定权 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DisPower_Click(object sender, EventArgs e) {
-
-            FileHelper.ExportCOSA(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSADis);
-            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
-        }
-
-        /// <summary>
-        /// 导出COSA按测站数定权
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StationPower_Click(object sender, EventArgs e) {
-            FileHelper.ExportCOSAStationPower(ClAdj.ObservedDatas, ClAdj.KnownPointEable, Project.Options.OutputFiles.COSASta);
-
-            AddTabPage(Project.Options.OutputFiles.COSASta);  // 新建窗体同时新建一个标签
-            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
+
 
         #endregion
 
@@ -782,19 +717,12 @@ namespace LevelnetAdjustment {
                 RankDefectNetworkDropItem.Enabled = true;
             }
             if (ClAdj.RawDatas.Count == 0) {
-                COSADropItem.Enabled = false;
-                HandbookDropItem.Enabled = false;
+                生成平差文件ToolStripMenuItem.Enabled = false;
+                生成观测手簿ToolStripMenuItem.Enabled = false;
             }
             else {
-                COSADropItem.Enabled = true;
-                HandbookDropItem.Enabled = true;
-            }
-
-            if (Project == null) {
-                toolStripMenuItem_read.Enabled = false;
-            }
-            else {
-                toolStripMenuItem_read.Enabled = true;
+                生成平差文件ToolStripMenuItem.Enabled = true;
+                生成观测手簿ToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -839,16 +767,167 @@ namespace LevelnetAdjustment {
 
 
         public partial class Response {
-            public string CurrentVersion { get; set; }
-            public string LatestVersion { get; set; }
-            public string Remark { get; set; }
+            public string CurrentVersion { get; set; } = "";
+            public string LatestVersion { get; set; } = "";
+            public string Remark { get; set; } = "";
             public bool Update { get; set; }
-            public string AppName { get; set; }
+            public string AppName { get; set; } = "";
 
         }
 
         private void 检查更新ToolStripMenuItem_Click(object sender, EventArgs e) {
             Update();
+        }
+
+        private void 生成观测手簿ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (File.Exists(Project.Options.OutputFiles.Handbook)) {
+                if (MessageBox.Show("观测手簿已存在，是否重新导出？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                    Process.Start(Project.Options.OutputFiles.Handbook);
+                    return;
+                }
+            }
+            SimpleLoading loadingfrm = new SimpleLoading(this, "导出中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                ExceHelperl.ExportHandbook(ClAdj.RawDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
+                loading.CloseWaitForm();
+                if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    Process.Start(Project.Options.OutputFiles.Handbook);
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
+        }
+
+        private void 生成平差文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            FrmZDSelect frmZDSelect = new FrmZDSelect();
+            frmZDSelect.TransfEvevn += ChangeZD;
+            frmZDSelect.ShowDialog();
+        }
+        void ChangeZD(string zd) {
+            FileHelper.ExportIN1(ClAdj.RawDatas, ClAdj.KnownPoints, zd, Project.Options.OutputFiles.COSADis);
+            MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
+        }
+        private void 导入观测文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = true,
+                Title = "打开",
+                Filter = "Trimble DINI|*.dat;*.DAT|Leica DNA|*.gsi;*.GSI",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+                SimpleLoading loadingfrm = new SimpleLoading(this, "读取中，请稍等...");
+                //将Loaing窗口，注入到 SplashScreenManager 来管理
+                GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+                loading.ShowLoading();
+                try {
+                    var RawDatas = new List<RawData>();
+                    foreach (var item in openFile.FileNames) {
+                        if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {
+                            continue;
+                        }
+                        //把文件复制到项目文件夹中
+                        FileInfo fileInfo1 = new FileInfo(item);
+                        string targetPath = Path.Combine(Project.Path, Project.Name, "ImportFiles", Path.GetFileName(item));
+                        if (File.Exists(targetPath)) File.Delete(targetPath);
+                        fileInfo1.CopyTo(targetPath);
+                        ClAdj.Options.ImportFiles.Add(new InputFile {
+                            FilePath = item,
+                            FileName = Path.GetFileName(item)
+                        });
+                        switch (Path.GetExtension(item).ToLower()) {
+                            case ".dat":
+                                FileHelper.ReadDAT(RawDatas, item);
+                                break;
+                            case ".gsi":
+                                FileHelper.ReadGSI(item, RawDatas);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+                    loading.CloseWaitForm();
+                }
+                catch (Exception ex) {
+                    loading.CloseWaitForm();
+                    throw ex;
+                }
+            }
+
+
+        }
+
+        private void 选择平差文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (ClAdj.ObservedDatas.Count != 0) {
+                if (MessageBox.Show("是否重新导入？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
+                    return;
+                }
+            }
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = false,
+                Title = "打开",
+                Filter = "in1 file|*.in1;*.IN1",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+                InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles")
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+                var knownPoints = new List<PointData>();
+                var observedDatas = new List<ObservedData>();
+                FileHelper.ReadOriginalFile(knownPoints, observedDatas, openFile.FileName);
+                if (knownPoints.Count == 0) {
+                    throw new Exception("缺少已知点，请检查");
+                }
+                ClAdj.KnownPoints = knownPoints;
+                ClAdj.ObservedDatas = observedDatas;
+                ClAdj.Calc_Params();
+                ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+                string msg = "";
+                int j = 0;
+                for (int i = 0; i < ClAdj.KnownPoints.Count; i++) {
+                    if (ClAdj.ObservedDatas.Exists(l => l.Start == ClAdj.KnownPoints[i].Number || l.End == ClAdj.KnownPoints[i].Number)) {
+                        continue;
+                    }
+                    else {
+                        j++;
+                        msg += $"{j}、点号：{ClAdj.KnownPoints[i].Number}，高程：{ClAdj.KnownPoints[i].Height}\r\n";
+                        ClAdj.KnownPoints[i].Enable = false;
+                    }
+                }
+                if (msg != "") {
+                    MessageBox.Show($"以下已知点在观测文件中未找到!\r\n{msg}", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ClAdj.Calc_Params();
+                }
+                else {
+                    MessageBox.Show("读取成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void 设置处理参数ToolStripMenuItem_Click(object sender, EventArgs e) {
+            FrmADJSetting rd = new FrmADJSetting(ClAdj.Options);
+            rd.TransfEvent += ChangeLevelParams;
+            rd.ShowDialog();
+        }
+
+        private void 导入已知点ToolStripMenuItem_Click(object sender, EventArgs e) {
+            OpenFileDialog openFile = new OpenFileDialog {
+                Multiselect = false,
+                Title = "打开",
+                Filter = "已知点文件|*.txt",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            if (openFile.ShowDialog() == DialogResult.OK) {
+                ClAdj.KnownPoints = new List<PointData>();
+                FileHelper.ReadKnPoints(openFile.FileName, ClAdj.KnownPoints);
+            }
         }
     }
 }

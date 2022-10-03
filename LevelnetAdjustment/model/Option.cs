@@ -12,51 +12,31 @@ namespace LevelnetAdjustment.model {
         public double Limit { get; set; } = 0.01; //平差迭代限差 m
         public int AdjustMethod { get; set; } = 0; //平差方法 0约束网平差 1拟稳平差
         public int UnitRight { get; set; } = 0; //单位权选择 0先验1后验
-        // 水准等级
-        private int level;
-        public int Level {
-            get => level;
-            set {
-                level = value;
-                Coefficient = value;
-            }
-        }
-        // 闭合差限差系数
-        private int coefficient;
-        public int Coefficient {
-            get => coefficient;
 
-            set {
-                int c;
-                switch (value) {
-                    case 3:
-                        c = 12;
-                        break;
-                    case 4:
-                        c = 20;
-                        break;
-                    case 5:
-                        c = 30;
-                        break;
-                    default:
-                        c = 4;
-                        break;
-                }
-                coefficient = c;
-            }
-        }
         public List<InputFile> ImportFiles { get; set; } = new List<InputFile>(); //文件列表
         public OutputFile OutputFiles { get; set; } = new OutputFile();// 文件输出路径
-
-        public LevelParam LevelParams { get; set; } = new LevelParam();
+        public LevelParam LevelParams { get; set; } = new LevelParam();//高程网观测等级及限差系数
         public Option() {
-            this.Level = 2;
-            this.Coefficient = 4;
+
         }
     }
 
+    /// <summary>
+    /// 高程网观测等级及限差系数
+    /// </summary>
     public class LevelParam {
-        public int Type { get; set; } = 0; //水准仪类型
-        public string ZD { get; set; } = "Z/z"; //转点
+        enum Level {
+            one = 1,
+            two,
+            three,
+            four,
+            precise,
+            other
+        }
+        public int LevelingGrade { get; set; } = (int)Level.two;  // 水准等级
+        public double WangFan { get; set; } = 4; //往返测限差
+        public double Huan { get; set; } = 4; //环闭合差
+        public double FuHe { get; set; } = 4; //附和路线闭合差
     }
+
 }

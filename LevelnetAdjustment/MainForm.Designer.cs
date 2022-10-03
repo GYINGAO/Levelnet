@@ -38,7 +38,6 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.NewDropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_read = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AdjToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,15 +45,16 @@ namespace LevelnetAdjustment {
             this.GrossErrorDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ConstraintNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RankDefectNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.COSADropItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.DisPower = new System.Windows.Forms.ToolStripMenuItem();
-            this.StationPower = new System.Windows.Forms.ToolStripMenuItem();
-            this.HandbookDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.使用说明ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.检查更新ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.水准仪数据预处理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.导入观测文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.观测数据检核ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.生成平差文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.生成观测手簿ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.新建NToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.打开OToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -69,7 +69,11 @@ namespace LevelnetAdjustment {
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.检查更新ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.选择平差文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.导入已知点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.设置处理参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -129,7 +133,6 @@ namespace LevelnetAdjustment {
             this.FileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_open,
             this.NewDropItem,
-            this.toolStripMenuItem_read,
             this.toolStripSeparator7,
             this.ExitDropItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
@@ -143,7 +146,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear,
             this.toolStripSeparator1});
             this.toolStripMenuItem_open.Name = "toolStripMenuItem_open";
-            this.toolStripMenuItem_open.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem_open.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem_open.Text = "打开项目";
             // 
             // toolStripMenuItem_choose
@@ -168,106 +171,63 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(160, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
             this.NewDropItem.Text = "新建项目";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
-            // 
-            // toolStripMenuItem_read
-            // 
-            this.toolStripMenuItem_read.Name = "toolStripMenuItem_read";
-            this.toolStripMenuItem_read.Size = new System.Drawing.Size(160, 22);
-            this.toolStripMenuItem_read.Text = "数据输入与设置";
-            this.toolStripMenuItem_read.Click += new System.EventHandler(this.toolStripMenuItem_read_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(160, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
             // AdjToolStripMenuItem
             // 
             this.AdjToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.选择平差文件ToolStripMenuItem,
+            this.设置处理参数ToolStripMenuItem,
+            this.toolStripMenuItem1,
             this.ClosureErrorDropItem,
             this.GrossErrorDropItem,
             this.ConstraintNetworkDropItem,
             this.RankDefectNetworkDropItem});
             this.AdjToolStripMenuItem.Name = "AdjToolStripMenuItem";
-            this.AdjToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
-            this.AdjToolStripMenuItem.Text = "数据处理";
+            this.AdjToolStripMenuItem.Size = new System.Drawing.Size(104, 21);
+            this.AdjToolStripMenuItem.Text = "高程网平差处理";
             // 
             // ClosureErrorDropItem
             // 
             this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-            this.ClosureErrorDropItem.Size = new System.Drawing.Size(136, 22);
+            this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
             this.ClosureErrorDropItem.Text = "闭合差计算";
             this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
             // 
             // GrossErrorDropItem
             // 
             this.GrossErrorDropItem.Name = "GrossErrorDropItem";
-            this.GrossErrorDropItem.Size = new System.Drawing.Size(136, 22);
+            this.GrossErrorDropItem.Size = new System.Drawing.Size(180, 22);
             this.GrossErrorDropItem.Text = "粗差探测";
             this.GrossErrorDropItem.Click += new System.EventHandler(this.GrossErrorDropItem_Click);
             // 
             // ConstraintNetworkDropItem
             // 
             this.ConstraintNetworkDropItem.Name = "ConstraintNetworkDropItem";
-            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(136, 22);
+            this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(180, 22);
             this.ConstraintNetworkDropItem.Text = "约束网平差";
             this.ConstraintNetworkDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
             // 
             // RankDefectNetworkDropItem
             // 
             this.RankDefectNetworkDropItem.Name = "RankDefectNetworkDropItem";
-            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(136, 22);
+            this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(180, 22);
             this.RankDefectNetworkDropItem.Text = "拟稳平差";
             this.RankDefectNetworkDropItem.Click += new System.EventHandler(this.RankDefectNetworkDropItem_Click);
-            // 
-            // ReportToolStripMenuItem
-            // 
-            this.ReportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.COSADropItem,
-            this.HandbookDropItem});
-            this.ReportToolStripMenuItem.Name = "ReportToolStripMenuItem";
-            this.ReportToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.ReportToolStripMenuItem.Text = "报表";
-            // 
-            // COSADropItem
-            // 
-            this.COSADropItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.DisPower,
-            this.StationPower});
-            this.COSADropItem.Name = "COSADropItem";
-            this.COSADropItem.Size = new System.Drawing.Size(157, 22);
-            this.COSADropItem.Text = "COSA数据格式";
-            // 
-            // DisPower
-            // 
-            this.DisPower.Name = "DisPower";
-            this.DisPower.Size = new System.Drawing.Size(148, 22);
-            this.DisPower.Text = "按距离定权";
-            this.DisPower.Click += new System.EventHandler(this.DisPower_Click);
-            // 
-            // StationPower
-            // 
-            this.StationPower.Name = "StationPower";
-            this.StationPower.Size = new System.Drawing.Size(148, 22);
-            this.StationPower.Text = "按测站数定权";
-            this.StationPower.Click += new System.EventHandler(this.StationPower_Click);
-            // 
-            // HandbookDropItem
-            // 
-            this.HandbookDropItem.Name = "HandbookDropItem";
-            this.HandbookDropItem.Size = new System.Drawing.Size(157, 22);
-            this.HandbookDropItem.Text = "观测手簿";
-            this.HandbookDropItem.Click += new System.EventHandler(this.HandbookDropItem_Click);
             // 
             // HelpToolStripMenuItem
             // 
@@ -293,14 +253,21 @@ namespace LevelnetAdjustment {
             this.使用说明ToolStripMenuItem.Text = "使用说明";
             this.使用说明ToolStripMenuItem.Click += new System.EventHandler(this.使用说明ToolStripMenuItem_Click);
             // 
+            // 检查更新ToolStripMenuItem
+            // 
+            this.检查更新ToolStripMenuItem.Name = "检查更新ToolStripMenuItem";
+            this.检查更新ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.检查更新ToolStripMenuItem.Text = "检查更新";
+            this.检查更新ToolStripMenuItem.Click += new System.EventHandler(this.检查更新ToolStripMenuItem_Click);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.BackColor = System.Drawing.SystemColors.Control;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
+            this.水准仪数据预处理ToolStripMenuItem,
             this.AdjToolStripMenuItem,
-            this.ReportToolStripMenuItem,
             this.HelpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -310,6 +277,46 @@ namespace LevelnetAdjustment {
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemAdded += new System.Windows.Forms.ToolStripItemEventHandler(this.menuStrip1_ItemAdded);
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
+            // 
+            // 水准仪数据预处理ToolStripMenuItem
+            // 
+            this.水准仪数据预处理ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.导入观测文件ToolStripMenuItem,
+            this.导入已知点ToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.观测数据检核ToolStripMenuItem,
+            this.生成平差文件ToolStripMenuItem,
+            this.生成观测手簿ToolStripMenuItem});
+            this.水准仪数据预处理ToolStripMenuItem.Name = "水准仪数据预处理ToolStripMenuItem";
+            this.水准仪数据预处理ToolStripMenuItem.Size = new System.Drawing.Size(116, 21);
+            this.水准仪数据预处理ToolStripMenuItem.Text = "水准仪数据预处理";
+            // 
+            // 导入观测文件ToolStripMenuItem
+            // 
+            this.导入观测文件ToolStripMenuItem.Name = "导入观测文件ToolStripMenuItem";
+            this.导入观测文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.导入观测文件ToolStripMenuItem.Text = "导入观测文件";
+            this.导入观测文件ToolStripMenuItem.Click += new System.EventHandler(this.导入观测文件ToolStripMenuItem_Click);
+            // 
+            // 观测数据检核ToolStripMenuItem
+            // 
+            this.观测数据检核ToolStripMenuItem.Name = "观测数据检核ToolStripMenuItem";
+            this.观测数据检核ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.观测数据检核ToolStripMenuItem.Text = "观测数据检核";
+            // 
+            // 生成平差文件ToolStripMenuItem
+            // 
+            this.生成平差文件ToolStripMenuItem.Name = "生成平差文件ToolStripMenuItem";
+            this.生成平差文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.生成平差文件ToolStripMenuItem.Text = "生成平差文件";
+            this.生成平差文件ToolStripMenuItem.Click += new System.EventHandler(this.生成平差文件ToolStripMenuItem_Click);
+            // 
+            // 生成观测手簿ToolStripMenuItem
+            // 
+            this.生成观测手簿ToolStripMenuItem.Name = "生成观测手簿ToolStripMenuItem";
+            this.生成观测手簿ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.生成观测手簿ToolStripMenuItem.Text = "生成观测手簿";
+            this.生成观测手簿ToolStripMenuItem.Click += new System.EventHandler(this.生成观测手簿ToolStripMenuItem_Click);
             // 
             // toolStrip1
             // 
@@ -432,12 +439,36 @@ namespace LevelnetAdjustment {
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // 检查更新ToolStripMenuItem
+            // 选择平差文件ToolStripMenuItem
             // 
-            this.检查更新ToolStripMenuItem.Name = "检查更新ToolStripMenuItem";
-            this.检查更新ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.检查更新ToolStripMenuItem.Text = "检查更新";
-            this.检查更新ToolStripMenuItem.Click += new System.EventHandler(this.检查更新ToolStripMenuItem_Click);
+            this.选择平差文件ToolStripMenuItem.Name = "选择平差文件ToolStripMenuItem";
+            this.选择平差文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.选择平差文件ToolStripMenuItem.Text = "选择平差文件";
+            this.选择平差文件ToolStripMenuItem.Click += new System.EventHandler(this.选择平差文件ToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // 导入已知点ToolStripMenuItem
+            // 
+            this.导入已知点ToolStripMenuItem.Name = "导入已知点ToolStripMenuItem";
+            this.导入已知点ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.导入已知点ToolStripMenuItem.Text = "导入已知点";
+            this.导入已知点ToolStripMenuItem.Click += new System.EventHandler(this.导入已知点ToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            // 
+            // 设置处理参数ToolStripMenuItem
+            // 
+            this.设置处理参数ToolStripMenuItem.Name = "设置处理参数ToolStripMenuItem";
+            this.设置处理参数ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.设置处理参数ToolStripMenuItem.Text = "设置处理参数";
+            this.设置处理参数ToolStripMenuItem.Click += new System.EventHandler(this.设置处理参数ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -488,11 +519,6 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem GrossErrorDropItem;
         private System.Windows.Forms.ToolStripMenuItem ConstraintNetworkDropItem;
         private System.Windows.Forms.ToolStripMenuItem RankDefectNetworkDropItem;
-        private System.Windows.Forms.ToolStripMenuItem ReportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem COSADropItem;
-        private System.Windows.Forms.ToolStripMenuItem DisPower;
-        private System.Windows.Forms.ToolStripMenuItem StationPower;
-        private System.Windows.Forms.ToolStripMenuItem HandbookDropItem;
         private System.Windows.Forms.ToolStripMenuItem HelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AboutDropItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -504,7 +530,6 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_open;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_read;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem 使用说明ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_choose;
@@ -522,6 +547,16 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem 在文件夹中打开ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 检查更新ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 水准仪数据预处理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 导入观测文件ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 观测数据检核ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 生成平差文件ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 生成观测手簿ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 选择平差文件ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 导入已知点ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem 设置处理参数ToolStripMenuItem;
     }
 }
 

@@ -215,6 +215,12 @@
     <Compile Include="form\FileView.Designer.cs">
       <DependentUpon>FileView.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\FrmADJSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmADJSetting.Designer.cs">
+      <DependentUpon>FrmADJSetting.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\FrmZDSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -226,12 +232,6 @@
     </Compile>
     <Compile Include="form\MultiFuncLoading.Designer.cs">
       <DependentUpon>MultiFuncLoading.cs</DependentUpon>
-    </Compile>
-    <Compile Include="form\ReadData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="form\ReadData.Designer.cs">
-      <DependentUpon>ReadData.cs</DependentUpon>
     </Compile>
     <Compile Include="form\SimpleLoading.cs">
       <SubType>Form</SubType>
@@ -282,14 +282,14 @@
     <EmbeddedResource Include="form\FileView.resx">
       <DependentUpon>FileView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmADJSetting.resx">
+      <DependentUpon>FrmADJSetting.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="form\FrmZDSelect.resx">
       <DependentUpon>FrmZDSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\MultiFuncLoading.resx">
       <DependentUpon>MultiFuncLoading.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="form\ReadData.resx">
-      <DependentUpon>ReadData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\SimpleLoading.resx">
       <DependentUpon>SimpleLoading.cs</DependentUpon>

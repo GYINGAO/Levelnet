@@ -21,8 +21,7 @@ namespace LevelnetAdjustment.model {
                         OutpathAdjFree = System.IO.Path.Combine(basePath, "拟稳平差结果.ou4"),
                         OutpathClosure = System.IO.Path.Combine(basePath, "闭合差计算结果.ou1"),
                         OutpathGrossError = System.IO.Path.Combine(basePath, "粗差探测结果.ou2"),
-                        COSADis = System.IO.Path.Combine(basePath, "按距离定权.in1"),
-                        COSASta = System.IO.Path.Combine(basePath, "按测站数定权.in1"),
+                        COSADis = System.IO.Path.Combine(basePath, "平差文件.in1"),
                         Handbook = System.IO.Path.Combine(basePath, "观测手簿.xls"),
                     };
                 }
@@ -42,8 +41,7 @@ namespace LevelnetAdjustment.model {
                         OutpathAdjFree = System.IO.Path.Combine(basePath, "拟稳平差结果.ou4"),
                         OutpathClosure = System.IO.Path.Combine(basePath, "闭合差计算结果.ou1"),
                         OutpathGrossError = System.IO.Path.Combine(basePath, "粗差探测结果.ou2"),
-                        COSADis = System.IO.Path.Combine(basePath, "按距离定权.in1"),
-                        COSASta = System.IO.Path.Combine(basePath, "按测站数定权.in1"),
+                        COSADis = System.IO.Path.Combine(basePath, "平差文件.in1"),
                         Handbook = System.IO.Path.Combine(basePath, "观测手簿.xls"),
                     };
                 }

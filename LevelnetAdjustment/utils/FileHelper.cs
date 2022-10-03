@@ -24,20 +24,15 @@ namespace LevelnetAdjustment.utils {
         /// <param name="knownPoints"></param>
         /// <param name="observedDatas"></param>
         /// <param name="fileName"></param>
-        internal static Tuple<int, int> ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, string fileName) {
+        internal static void ReadOriginalFile(List<PointData> knownPoints, List<ObservedData> observedDatas, string fileName) {
             try {
-                int level = 2;
-                int method = 0;//默认按距离定权
                 using (StreamReader sr = new StreamReader(fileName)) {
                     string line;
                     string[] dataArray;
                     while (sr.Peek() > -1) {
                         line = sr.ReadLine().Trim();
                         dataArray = Regex.Split(line, "(?:\\s*[,|，]\\s*)", RegexOptions.IgnoreCase); // 正则匹配逗号（允许空格）
-                        if (dataArray.Length == 1) {
-                            level = int.Parse(dataArray[0]);
-                        }
-                        else if (dataArray.Length == 2) {
+                        if (dataArray.Length == 2) {
                             PointData knownPoint = new PointData {
                                 Number = dataArray[0],
                                 Height = double.Parse(dataArray[1])
@@ -56,18 +51,13 @@ namespace LevelnetAdjustment.utils {
                             };
                             if (dataArray.Length >= 5) {
                                 observedData.StationNum = int.Parse(dataArray[4]);
-                                method = 1;
+
                             }
                             observedDatas.Add(observedData);
-                            //if (observedDatasNoRep.Exists(p => p.End == dataArray[0] && p.Start == dataArray[1]) || observedDatasNoRep.Exists(p => p.Start == dataArray[0] && p.End == dataArray[1])) {
-                            //    continue;
-                            //}
-                            ////过滤重复的测段(往返测)
-                            //observedDatasNoRep.Add(observedData);
                         }
                     }
                 }
-                return new Tuple<int, int>(level, method);
+
             }
             catch (Exception) {
                 throw new Exception("文件格式有误");
@@ -310,7 +300,8 @@ namespace LevelnetAdjustment.utils {
         /// <param name="ods"></param>
         /// <param name="pds"></param>
         /// <param name="path"></param>
-        internal static void ExportCOSA(List<ObservedData> ods, List<PointData> pds, string path) {
+        internal static void ExportIN1(List<RawData> rds, List<PointData> pds, string zd, string path) {
+            List<ObservedData> ods = Calc.Rd2Od(rds, zd);
             FileStream fileStream = new FileStream(path, FileMode.Create);
             StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.Default);
             if (pds != null && pds.Count > 0) {
