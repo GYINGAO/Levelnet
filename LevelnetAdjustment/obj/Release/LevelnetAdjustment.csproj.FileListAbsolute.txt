@@ -109,14 +109,16 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.Mem
 F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.Numerics.Vectors.xml
 F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
 F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\System.ValueTuple.xml
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.About.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseKnownPoint.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseStablePoint.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.CreatePrj.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FileView.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmADJSetting.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmCheckObsData.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmZDSelect.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\SplashScreenDemo.MultiFuncLoading.resources
-F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ReadData.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\SplashScreenDemo.SimpleLoading.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.MainForm.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.Properties.Resources.resources
