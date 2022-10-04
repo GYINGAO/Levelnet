@@ -129,3 +129,4 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdju
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ChooseKnownPoint.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmZDSelect.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmADJSetting.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmCheckObsData.resources

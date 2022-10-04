@@ -221,6 +221,12 @@
     <Compile Include="form\FrmADJSetting.Designer.cs">
       <DependentUpon>FrmADJSetting.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\FrmCheckObsData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmCheckObsData.Designer.cs">
+      <DependentUpon>FrmCheckObsData.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\FrmZDSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -284,6 +290,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="form\FrmADJSetting.resx">
       <DependentUpon>FrmADJSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmCheckObsData.resx">
+      <DependentUpon>FrmCheckObsData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\FrmZDSelect.resx">
       <DependentUpon>FrmZDSelect.cs</DependentUpon>
@@ -352,6 +361,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\更新.png" />
+    <None Include="Resources\更新2.png" />
+    <None Include="Resources\选择文件.png" />
+    <None Include="Resources\比较图.png" />
+    <None Include="Resources\班级圈.png" />
+    <None Include="Resources\搜索.png" />
+    <None Include="Resources\约束.png" />
+    <None Include="Resources\自由.png" />
+    <None Include="Resources\辅助检查.png" />
+    <None Include="Resources\坐标.png" />
+    <None Include="Resources\import11.png" />
+    <None Include="Resources\设置.png" />
     <None Include="Resources\backgroundimage.png" />
     <None Include="Resources\帮助中心编辑.png" />
     <None Include="Resources\about2.png" />

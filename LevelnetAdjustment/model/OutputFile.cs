@@ -13,5 +13,6 @@ namespace LevelnetAdjustment.model {
         public string COSADis { get; set; }//按距离定权
         public string Handbook { get; set; }//观测手簿
         public string WFDiff { get; set; }//往返测较差
+        public string CheakRawData { get; set; }//往返测较差
     }
 }

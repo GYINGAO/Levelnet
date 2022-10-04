@@ -67,15 +67,23 @@ namespace LevelnetAdjustment {
             生成观测手簿ToolStripMenuItem.Image = Properties.Resources.excel_01;
             AboutDropItem.Image = Properties.Resources.about2;
             使用说明ToolStripMenuItem.Image = Properties.Resources.帮助中心编辑;
+            设置处理参数ToolStripMenuItem.Image = Properties.Resources.设置;
+            导入观测文件ToolStripMenuItem.Image = Properties.Resources.import11;
+            导入已知点ToolStripMenuItem.Image = Properties.Resources.坐标;
+            观测数据检核ToolStripMenuItem.Image = Properties.Resources.辅助检查;
+            选择平差文件ToolStripMenuItem.Image = Properties.Resources.选择文件;
+            往返测高差较差ToolStripMenuItem.Image = Properties.Resources.比较图;
+            ClosureErrorDropItem.Image = Properties.Resources.班级圈;
+            GrossErrorDropItem.Image = Properties.Resources.搜索;
+            ConstraintNetworkDropItem.Image = Properties.Resources.约束;
+            RankDefectNetworkDropItem.Image = Properties.Resources.自由;
+            检查更新ToolStripMenuItem.Image = Properties.Resources.更新2;
+
 
 
             //部分按钮禁用
-            ClosureErrorDropItem.Enabled = false;
-            GrossErrorDropItem.Enabled = false;
-            ConstraintNetworkDropItem.Enabled = false;
-            RankDefectNetworkDropItem.Enabled = false;
-            生成平差文件ToolStripMenuItem.Enabled = false;
-            生成观测手簿ToolStripMenuItem.Enabled = false;
+            水准仪数据预处理ToolStripMenuItem.Enabled = false;
+            AdjToolStripMenuItem.Enabled = false;
 
 
             //添加最近打开的项目
@@ -146,16 +154,8 @@ namespace LevelnetAdjustment {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripMenuItem_read_Click(object sender, EventArgs e) {
-            FrmADJSetting rd = new FrmADJSetting(ClAdj.Options);
-            rd.TransfEvent += ChangeLevelParams;
-            rd.ShowDialog();
-        }
 
-        void ChangeLevelParams(Option option) {
-            this.ClAdj.Options = option;
-            this.Project.Options = option;
-        }
+
 
 
 
@@ -187,6 +187,9 @@ namespace LevelnetAdjustment {
         /// </summary>
         /// <param name="project"></param>
         public void UpDateProject(ProjectInfo project) {
+            水准仪数据预处理ToolStripMenuItem.Enabled = true;
+            AdjToolStripMenuItem.Enabled = true;
+
             this.ClAdj = new ClevelingAdjust();
             this.Project = project;
             ClAdj.Options = project.Options;
@@ -248,6 +251,8 @@ namespace LevelnetAdjustment {
             }
             toolStripStatusLabel2.Text = "当前项目：" + Path.GetDirectoryName(projname);
             MessageBox.Show("打开成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            水准仪数据预处理ToolStripMenuItem.Enabled = true;
+            AdjToolStripMenuItem.Enabled = true;
         }
 
         /// <summary>
@@ -702,28 +707,42 @@ namespace LevelnetAdjustment {
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+            //没有新建项目
             if (ClAdj == null) {
+                水准仪数据预处理ToolStripMenuItem.Enabled = false;
+                AdjToolStripMenuItem.Enabled = false;
                 return;
             }
-            if (ClAdj.ObservedDatasNoRep.Count == 0) {
+            else {
+                水准仪数据预处理ToolStripMenuItem.Enabled = true;
+                AdjToolStripMenuItem.Enabled = true;
+            }
+            // 没有导入观测文件
+            if (ClAdj.RawDatas?.Count == 0) {
+                观测数据检核ToolStripMenuItem.Enabled = false;
+                生成平差文件ToolStripMenuItem.Enabled = false;
+                生成观测手簿ToolStripMenuItem.Enabled = false;
+            }
+            else {
+                观测数据检核ToolStripMenuItem.Enabled = true;
+                生成平差文件ToolStripMenuItem.Enabled = true;
+                生成观测手簿ToolStripMenuItem.Enabled = true;
+            }
+
+            //没有导入平差文件
+            if (ClAdj.ObservedDatas?.Count == 0) {
+                往返测高差较差ToolStripMenuItem.Enabled = false;
                 ClosureErrorDropItem.Enabled = false;
                 GrossErrorDropItem.Enabled = false;
                 ConstraintNetworkDropItem.Enabled = false;
                 RankDefectNetworkDropItem.Enabled = false;
             }
             else {
+                往返测高差较差ToolStripMenuItem.Enabled = true;
                 ClosureErrorDropItem.Enabled = true;
                 GrossErrorDropItem.Enabled = true;
                 ConstraintNetworkDropItem.Enabled = true;
                 RankDefectNetworkDropItem.Enabled = true;
-            }
-            if (ClAdj.RawDatas.Count == 0) {
-                生成平差文件ToolStripMenuItem.Enabled = false;
-                生成观测手簿ToolStripMenuItem.Enabled = false;
-            }
-            else {
-                生成平差文件ToolStripMenuItem.Enabled = true;
-                生成观测手簿ToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -817,7 +836,7 @@ namespace LevelnetAdjustment {
             OpenFileDialog openFile = new OpenFileDialog {
                 Multiselect = true,
                 Title = "打开",
-                Filter = "Trimble DINI|*.dat;*.DAT|Leica DNA|*.gsi;*.GSI",
+                Filter = "Trimble DINI|*.dat;*.DAT|Leica DNA|*.gsi;*.GSI|All files|*.*",
                 FilterIndex = 1,
                 RestoreDirectory = true,
             };
@@ -826,12 +845,18 @@ namespace LevelnetAdjustment {
                 //将Loaing窗口，注入到 SplashScreenManager 来管理
                 GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
                 loading.ShowLoading();
+                for (int i = ClAdj.Options.ImportFiles.Count - 1; i >= 0; i--) {
+                    string ext = Path.GetExtension(ClAdj.Options.ImportFiles[i].FileName).ToLower();
+                    if (ext.Contains("dat") || ext.Contains("gsi")) {
+                        ClAdj.Options.ImportFiles.RemoveAt(i);
+                    }
+                }
                 try {
                     var RawDatas = new List<RawData>();
                     foreach (var item in openFile.FileNames) {
-                        if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {
-                            continue;
-                        }
+                        /* if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {
+                             continue;
+                         }*/
                         //把文件复制到项目文件夹中
                         FileInfo fileInfo1 = new FileInfo(item);
                         string targetPath = Path.Combine(Project.Path, Project.Name, "ImportFiles", Path.GetFileName(item));
@@ -852,7 +877,8 @@ namespace LevelnetAdjustment {
                                 break;
                         }
                     }
-                    ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+                    // ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+                    ClAdj.RawDatas = RawDatas;
                     loading.CloseWaitForm();
                 }
                 catch (Exception ex) {
@@ -916,6 +942,10 @@ namespace LevelnetAdjustment {
             rd.TransfEvent += ChangeLevelParams;
             rd.ShowDialog();
         }
+        void ChangeLevelParams(Option option) {
+            this.ClAdj.Options = option;
+            this.Project.Options = option;
+        }
 
         private void 导入已知点ToolStripMenuItem_Click(object sender, EventArgs e) {
             OpenFileDialog openFile = new OpenFileDialog {
@@ -964,6 +994,41 @@ namespace LevelnetAdjustment {
             }
 
 
+        }
+        private void 观测数据检核ToolStripMenuItem_Click(object sender, EventArgs e) {
+            FrmCheckObsData frm = new FrmCheckObsData(ClAdj.Options.ObsDataLimits);
+            frm.TransfEvent += SetObserverDataLimit;
+            frm.ShowDialog();
+        }
+        void SetObserverDataLimit(ObsDataLimit limit) {
+            ClAdj.Options.ObsDataLimits = limit;
+            Project.Options.ObsDataLimits = limit;
+            StringBuilder sb = new StringBuilder();
+            int stationNum = 0;
+            double total = 0;
+            ClAdj.RawDatas.ForEach(r => {
+                stationNum++;
+                if (r.IsStart) {
+                    sb.AppendLine($"测站   后视    前视     后尺读数1   后视距1   前尺读数1   前视距1   后尺读数2   后视距2   前尺读数2   前视距2  前后视距差 累计前后视距差");
+                    sb.AppendLine("Start-Line");
+                }
+                double dis = r.DisDiffAve * 1000;
+                total += dis;
+                string backdiff1 = r.BackDiff1 < ClAdj.Options.ObsDataLimits.StafLow ? r.BackDiff1.ToString("#0.00000") + "!!!" : r.BackDiff1.ToString("#0.00000");
+                string backdiff2 = r.BackDiff2 < ClAdj.Options.ObsDataLimits.StafLow ? r.BackDiff2.ToString("#0.00000") + "!!!" : r.BackDiff2.ToString("#0.00000");
+                string frontdiff1 = r.FrontDiff1 < ClAdj.Options.ObsDataLimits.StafLow ? r.FrontDiff1.ToString("#0.00000") + "!!!" : r.FrontDiff1.ToString("#0.00000");
+                string frontdiff2 = r.FrontDiff2 < ClAdj.Options.ObsDataLimits.StafLow ? r.FrontDiff2.ToString("#0.00000") + "!!!" : r.FrontDiff2.ToString("#0.00000");
+                string disdiff = Math.Abs(dis) > ClAdj.Options.ObsDataLimits.FBDis ? dis.ToString("#0.000") + "!!!" : dis.ToString("#0.000");
+                string totaldis = Math.Abs(total) > ClAdj.Options.ObsDataLimits.FBDisSum ? total.ToString("#0.000") + "!!!" : total.ToString("#0.000");
+                sb.AppendLine($"{stationNum,-5}{r.BackPoint,-10}{r.FrontPoint,-10}{backdiff1,-12}{r.BackDis1 * 1000,-10:#0.000}{frontdiff1,-12}{r.FrontDis1 * 1000,-10:#0.000}{backdiff2,-12}{r.BackDis2 * 1000,-10:#0.000}{frontdiff2,-12}{r.FrontDis2 * 1000,-10:#0.000}{disdiff,-10}{totaldis,-10}");
+                if (r.IsEnd) {
+                    sb.AppendLine("End-Line");
+                    sb.AppendLine("");
+                    total = 0;
+                }
+            });
+            FileHelper.WriteStrToTxt(sb.ToString(), Project.Options.OutputFiles.CheakRawData);
+            AddTabPage(Project.Options.OutputFiles.CheakRawData);
         }
     }
 }

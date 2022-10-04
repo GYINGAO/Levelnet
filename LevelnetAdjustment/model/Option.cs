@@ -16,6 +16,7 @@ namespace LevelnetAdjustment.model {
         public List<InputFile> ImportFiles { get; set; } = new List<InputFile>(); //文件列表
         public OutputFile OutputFiles { get; set; } = new OutputFile();// 文件输出路径
         public LevelParam LevelParams { get; set; } = new LevelParam();//高程网观测等级及限差系数
+        public ObsDataLimit ObsDataLimits { get; set; } = new ObsDataLimit();//观测数据限差
         public Option() {
 
         }
@@ -40,5 +41,14 @@ namespace LevelnetAdjustment.model {
         public bool IsCP3 { get; set; } = false; //是否为cp3高程网
         public double CP3WangFan { get; set; } = 1; //往返测限差
         public double CP3Huan { get; set; } = 1; //往返测限差
+    }
+
+    /// <summary>
+    /// 观测数据限差
+    /// </summary>
+    public class ObsDataLimit {
+        public double FBDis { get; set; } = 2.0;//前后视距差/m
+        public double FBDisSum { get; set; } = 6.0;//前后累计视距差/m
+        public double StafLow { get; set; } = 0.45;//视线高度/m
     }
 }
