@@ -31,4 +31,14 @@ namespace LevelnetAdjustment.model {
         /// </summary>
         public int StationNum { get; set; }
     }
+
+    public class ObservedDataWF {
+        public string Start { get; set; }//起点
+        public string End { get; set; }//终点
+        public double Distance_W { get; set; }//往测距离/km
+        public double Distance_F { get; set; }//返测距离/km
+        public double HeightDiff_W { get; set; }//往测高差/m
+        public double HeightDiff_F { get; set; }//返测高差/m
+        public double HeightDiff_Diff { get; set; }//较差/mm
+    }
 }

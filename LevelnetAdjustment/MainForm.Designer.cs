@@ -41,6 +41,9 @@ namespace LevelnetAdjustment {
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AdjToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.选择平差文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.设置处理参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.ClosureErrorDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrossErrorDropItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ConstraintNetworkDropItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +55,8 @@ namespace LevelnetAdjustment {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.水准仪数据预处理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.导入观测文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.导入已知点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.观测数据检核ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.生成平差文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.生成观测手簿ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,11 +74,8 @@ namespace LevelnetAdjustment {
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.选择平差文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.导入已知点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.设置处理参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.往返测高差较差ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -146,7 +148,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear,
             this.toolStripSeparator1});
             this.toolStripMenuItem_open.Name = "toolStripMenuItem_open";
-            this.toolStripMenuItem_open.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem_open.Size = new System.Drawing.Size(124, 22);
             this.toolStripMenuItem_open.Text = "打开项目";
             // 
             // toolStripMenuItem_choose
@@ -171,19 +173,19 @@ namespace LevelnetAdjustment {
             // NewDropItem
             // 
             this.NewDropItem.Name = "NewDropItem";
-            this.NewDropItem.Size = new System.Drawing.Size(180, 22);
+            this.NewDropItem.Size = new System.Drawing.Size(124, 22);
             this.NewDropItem.Text = "新建项目";
             this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(121, 6);
             // 
             // ExitDropItem
             // 
             this.ExitDropItem.Name = "ExitDropItem";
-            this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitDropItem.Size = new System.Drawing.Size(124, 22);
             this.ExitDropItem.Text = "退出";
             this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
             // 
@@ -193,13 +195,34 @@ namespace LevelnetAdjustment {
             this.选择平差文件ToolStripMenuItem,
             this.设置处理参数ToolStripMenuItem,
             this.toolStripMenuItem1,
+            this.往返测高差较差ToolStripMenuItem,
             this.ClosureErrorDropItem,
+            this.toolStripMenuItem3,
             this.GrossErrorDropItem,
             this.ConstraintNetworkDropItem,
             this.RankDefectNetworkDropItem});
             this.AdjToolStripMenuItem.Name = "AdjToolStripMenuItem";
             this.AdjToolStripMenuItem.Size = new System.Drawing.Size(104, 21);
             this.AdjToolStripMenuItem.Text = "高程网平差处理";
+            // 
+            // 选择平差文件ToolStripMenuItem
+            // 
+            this.选择平差文件ToolStripMenuItem.Name = "选择平差文件ToolStripMenuItem";
+            this.选择平差文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.选择平差文件ToolStripMenuItem.Text = "选择平差文件";
+            this.选择平差文件ToolStripMenuItem.Click += new System.EventHandler(this.选择平差文件ToolStripMenuItem_Click);
+            // 
+            // 设置处理参数ToolStripMenuItem
+            // 
+            this.设置处理参数ToolStripMenuItem.Name = "设置处理参数ToolStripMenuItem";
+            this.设置处理参数ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.设置处理参数ToolStripMenuItem.Text = "设置处理参数";
+            this.设置处理参数ToolStripMenuItem.Click += new System.EventHandler(this.设置处理参数ToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // ClosureErrorDropItem
             // 
@@ -297,6 +320,18 @@ namespace LevelnetAdjustment {
             this.导入观测文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.导入观测文件ToolStripMenuItem.Text = "导入观测文件";
             this.导入观测文件ToolStripMenuItem.Click += new System.EventHandler(this.导入观测文件ToolStripMenuItem_Click);
+            // 
+            // 导入已知点ToolStripMenuItem
+            // 
+            this.导入已知点ToolStripMenuItem.Name = "导入已知点ToolStripMenuItem";
+            this.导入已知点ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.导入已知点ToolStripMenuItem.Text = "导入已知点";
+            this.导入已知点ToolStripMenuItem.Click += new System.EventHandler(this.导入已知点ToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
             // 观测数据检核ToolStripMenuItem
             // 
@@ -439,36 +474,17 @@ namespace LevelnetAdjustment {
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // 选择平差文件ToolStripMenuItem
+            // 往返测高差较差ToolStripMenuItem
             // 
-            this.选择平差文件ToolStripMenuItem.Name = "选择平差文件ToolStripMenuItem";
-            this.选择平差文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.选择平差文件ToolStripMenuItem.Text = "选择平差文件";
-            this.选择平差文件ToolStripMenuItem.Click += new System.EventHandler(this.选择平差文件ToolStripMenuItem_Click);
+            this.往返测高差较差ToolStripMenuItem.Name = "往返测高差较差ToolStripMenuItem";
+            this.往返测高差较差ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.往返测高差较差ToolStripMenuItem.Text = "往返测高差较差";
+            this.往返测高差较差ToolStripMenuItem.Click += new System.EventHandler(this.往返测高差较差ToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
+            // toolStripMenuItem3
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // 导入已知点ToolStripMenuItem
-            // 
-            this.导入已知点ToolStripMenuItem.Name = "导入已知点ToolStripMenuItem";
-            this.导入已知点ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.导入已知点ToolStripMenuItem.Text = "导入已知点";
-            this.导入已知点ToolStripMenuItem.Click += new System.EventHandler(this.导入已知点ToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
-            // 
-            // 设置处理参数ToolStripMenuItem
-            // 
-            this.设置处理参数ToolStripMenuItem.Name = "设置处理参数ToolStripMenuItem";
-            this.设置处理参数ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.设置处理参数ToolStripMenuItem.Text = "设置处理参数";
-            this.设置处理参数ToolStripMenuItem.Click += new System.EventHandler(this.设置处理参数ToolStripMenuItem_Click);
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(177, 6);
             // 
             // MainForm
             // 
@@ -557,6 +573,8 @@ namespace LevelnetAdjustment {
         private System.Windows.Forms.ToolStripMenuItem 导入已知点ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem 设置处理参数ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 往返测高差较差ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
     }
 }
 

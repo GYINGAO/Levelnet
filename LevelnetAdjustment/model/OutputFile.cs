@@ -12,5 +12,6 @@ namespace LevelnetAdjustment.model {
         public string OutpathGrossError { get; set; }//粗差
         public string COSADis { get; set; }//按距离定权
         public string Handbook { get; set; }//观测手簿
+        public string WFDiff { get; set; }//往返测较差
     }
 }

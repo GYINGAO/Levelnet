@@ -26,17 +26,19 @@ namespace LevelnetAdjustment.model {
     /// </summary>
     public class LevelParam {
         enum Level {
-            one = 1,
+            one = 0,
             two,
             three,
             four,
             precise,
             other
         }
-        public int LevelingGrade { get; set; } = (int)Level.two;  // 水准等级
+        public int LevelingGrade { get; set; } = (int)Level.one;  // 水准等级
         public double WangFan { get; set; } = 4; //往返测限差
         public double Huan { get; set; } = 4; //环闭合差
         public double FuHe { get; set; } = 4; //附和路线闭合差
+        public bool IsCP3 { get; set; } = false; //是否为cp3高程网
+        public double CP3WangFan { get; set; } = 1; //往返测限差
+        public double CP3Huan { get; set; } = 1; //往返测限差
     }
-
 }

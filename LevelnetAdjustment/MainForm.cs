@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace LevelnetAdjustment {
@@ -316,8 +317,8 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LevelnetDropItem_Click(object sender, EventArgs e) {
-            if (ClAdj.ObservedDatas == null) {
-                throw new Exception("请打开观测文件");
+            if (ClAdj.ObservedDatasNoRep == null) {
+                throw new Exception("请选择平差文件");
             }
             if (File.Exists(Project.Options.OutputFiles.OutpathAdj)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
@@ -360,8 +361,8 @@ namespace LevelnetAdjustment {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void RankDefectNetworkDropItem_Click(object sender, EventArgs e) {
-            if (ClAdj.ObservedDatas == null) {
-                throw new Exception("请打开观测文件");
+            if (ClAdj.ObservedDatasNoRep == null) {
+                throw new Exception("请选择平差文件");
             }
             if (File.Exists(Project.Options.OutputFiles.OutpathAdjFree)) {
                 if (MessageBox.Show("平差结果文件已存在，是否重新计算？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
@@ -704,7 +705,7 @@ namespace LevelnetAdjustment {
             if (ClAdj == null) {
                 return;
             }
-            if (ClAdj.ObservedDatas.Count == 0) {
+            if (ClAdj.ObservedDatasNoRep.Count == 0) {
                 ClosureErrorDropItem.Enabled = false;
                 GrossErrorDropItem.Enabled = false;
                 ConstraintNetworkDropItem.Enabled = false;
@@ -864,7 +865,7 @@ namespace LevelnetAdjustment {
         }
 
         private void 选择平差文件ToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (ClAdj.ObservedDatas.Count != 0) {
+            if (ClAdj.ObservedDatasNoRep.Count != 0) {
                 if (MessageBox.Show("是否重新导入？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) {
                     return;
                 }
@@ -891,7 +892,7 @@ namespace LevelnetAdjustment {
                 string msg = "";
                 int j = 0;
                 for (int i = 0; i < ClAdj.KnownPoints.Count; i++) {
-                    if (ClAdj.ObservedDatas.Exists(l => l.Start == ClAdj.KnownPoints[i].Number || l.End == ClAdj.KnownPoints[i].Number)) {
+                    if (ClAdj.ObservedDatasNoRep.Exists(l => l.Start == ClAdj.KnownPoints[i].Number || l.End == ClAdj.KnownPoints[i].Number)) {
                         continue;
                     }
                     else {
@@ -928,6 +929,41 @@ namespace LevelnetAdjustment {
                 ClAdj.KnownPoints = new List<PointData>();
                 FileHelper.ReadKnPoints(openFile.FileName, ClAdj.KnownPoints);
             }
+        }
+
+        private void 往返测高差较差ToolStripMenuItem_Click(object sender, EventArgs e) {
+            SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+            //将Loaing窗口，注入到 SplashScreenManager 来管理
+            GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+            loading.ShowLoading();
+            try {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(split);
+                sb.AppendLine(space + "往返测高差较差统计结果");
+                sb.AppendLine(split);
+                sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-7}{"往测距离/km",-9}{"返测距离/km",-9}{"往测高差/m",-9}{"返测高差/m",-8}{"较差/mm",-8}{"限差/mm",-10}");
+                double limit = ClAdj.Options.LevelParams.IsCP3 ? ClAdj.Options.LevelParams.CP3WangFan : ClAdj.Options.LevelParams.WangFan;
+                int i = 0;
+                double m = 0.0;
+                ClAdj.ObservedDataWFs.ForEach(l => {
+                    i++;
+                    m += Math.Pow(l.HeightDiff_Diff, 2) / ((l.Distance_W + l.Distance_F) / 2);
+                    sb.AppendLine($"{i,-7}{l.Start,-10}{l.End,-11}{l.Distance_W,-12:#0.000}{l.Distance_F,-13:#0.000}{l.HeightDiff_W,-12:#0.00000}{l.HeightDiff_F,-13:#0.00000}{l.HeightDiff_Diff,-9:#0.00}{limit,-11:#0.00}");
+                });
+                m = Math.Sqrt(m / (4 * i));
+                sb.AppendLine(split);
+                sb.AppendLine($"{space}每公里水准测量的高差偶然中误差：{m,-6:#0.000}(mm)");
+                sb.AppendLine(split);
+                FileHelper.WriteStrToTxt(sb.ToString(), Project.Options.OutputFiles.WFDiff);
+                AddTabPage(Project.Options.OutputFiles.WFDiff);
+                loading.CloseWaitForm();
+            }
+            catch (Exception ex) {
+                loading.CloseWaitForm();
+                throw ex;
+            }
+
+
         }
     }
 }

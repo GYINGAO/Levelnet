@@ -24,16 +24,16 @@ namespace LevelnetAdjustment.form {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChooseKnownPoint));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Height = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Enable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Height = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Enable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -59,27 +59,6 @@ namespace LevelnetAdjustment.form {
             this.dataGridView1.Size = new System.Drawing.Size(403, 425);
             this.dataGridView1.TabIndex = 12;
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
-            // 
-            // Number
-            // 
-            this.Number.DataPropertyName = "Number";
-            this.Number.HeaderText = "已知点名";
-            this.Number.Name = "Number";
-            // 
-            // Height
-            // 
-            this.Height.DataPropertyName = "Height";
-            dataGridViewCellStyle3.Format = "N5";
-            dataGridViewCellStyle3.NullValue = null;
-            this.Height.DefaultCellStyle = dataGridViewCellStyle3;
-            this.Height.HeaderText = "高程";
-            this.Height.Name = "Height";
-            // 
-            // Enable
-            // 
-            this.Enable.DataPropertyName = "Enable";
-            this.Enable.HeaderText = "是否启用";
-            this.Enable.Name = "Enable";
             // 
             // tableLayoutPanel1
             // 
@@ -134,6 +113,27 @@ namespace LevelnetAdjustment.form {
             this.button2.Text = "取消";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // Number
+            // 
+            this.Number.DataPropertyName = "Number";
+            this.Number.HeaderText = "已知点名";
+            this.Number.Name = "Number";
+            // 
+            // Height
+            // 
+            this.Height.DataPropertyName = "Height";
+            dataGridViewCellStyle1.Format = "N5";
+            dataGridViewCellStyle1.NullValue = null;
+            this.Height.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Height.HeaderText = "高程";
+            this.Height.Name = "Height";
+            // 
+            // Enable
+            // 
+            this.Enable.DataPropertyName = "Enable";
+            this.Enable.HeaderText = "选择已知点";
+            this.Enable.Name = "Enable";
             // 
             // ChooseKnownPoint
             // 

@@ -47,14 +47,34 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="ods"></param>
         /// <returns></returns>
-        public static List<ObservedData> RemoveDuplicates(List<ObservedData> ods) {
+        public static Tuple<List<ObservedData>, List<ObservedDataWF>> RemoveDuplicates(List<ObservedData> ods) {
             List<ObservedData> ods_new = new List<ObservedData>();
+            List<ObservedDataWF> ods_wf = new List<ObservedDataWF>();
             ods.ForEach(l => {
-                if (!ods_new.Exists(p => (p.Start == l.Start && p.End == l.End) || (p.Start == l.End && p.End == l.Start))) {
-                    ods_new.Add(l);
+                if (ods_new.FindIndex(p => p.Start == l.Start && p.End == l.End) == -1) {
+                    int idx = ods_new.FindIndex(p => p.Start == l.End && p.End == l.Start);
+                    if (idx != -1) {
+                        ods_wf.Add(new ObservedDataWF {
+                            Start = ods_new[idx].Start,
+                            End = ods_new[idx].End,
+                            Distance_W = ods_new[idx].Distance,
+                            HeightDiff_W = ods_new[idx].HeightDiff,
+                            Distance_F = l.Distance,
+                            HeightDiff_F = l.HeightDiff,
+                            HeightDiff_Diff = Math.Abs(Math.Abs(ods_new[idx].HeightDiff) - Math.Abs(l.HeightDiff)) * 1000,
+                        });
+                        var lastwf = ods_wf.Last();
+                        double disave = (lastwf.Distance_F + lastwf.Distance_W) / 2;
+                        double diffave = Math.Sign(lastwf.HeightDiff_W) * (Math.Abs(lastwf.HeightDiff_F) + Math.Abs(lastwf.HeightDiff_W)) / 2;
+                        ods_new[idx].Distance = disave;
+                        ods_new[idx].HeightDiff = diffave;
+                    }
+                    else {
+                        ods_new.Add(l);
+                    }
                 }
             });
-            return ods_new;
+            return new Tuple<List<ObservedData>, List<ObservedDataWF>>(ods_new, ods_wf);
         }
 
         /// <summary>

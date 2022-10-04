@@ -28,15 +28,36 @@ namespace LevelnetAdjustment.form {
         /// <param name="e"></param>
         private void rbtn_before_CheckedChanged(object sender, EventArgs e) {
             if ((sender as RadioButton).Checked) {
-                this.textBox1.Visible = true;
+                this.textBox4.Visible = true;
             }
             else {
-                this.textBox1.Visible = false;
+                this.textBox4.Visible = false;
             }
         }
 
         private void FrmADJSetting_Load(object sender, EventArgs e) {
             this.comboBox1.SelectedIndex = Options.LevelParams.LevelingGrade;
+            this.textBox1.Text = Options.LevelParams.WangFan.ToString();
+            this.textBox2.Text = Options.LevelParams.FuHe.ToString();
+            this.textBox3.Text = Options.LevelParams.Huan.ToString();
+            this.textBox6.Text = Options.LevelParams.CP3WangFan.ToString();
+            this.textBox5.Text = Options.LevelParams.CP3Huan.ToString();
+            this.checkBox2.Checked = Options.LevelParams.IsCP3;
+
+            switch (Options.UnitRight) {
+                case 0:
+                    this.rbtn_before.Checked = true;
+                    break;
+                case 1:
+                    this.rbtn_after.Checked = true;
+                    break;
+                default:
+                    break;
+            }
+
+            this.textBox4.Text = Options.Sigma.ToString();
+            this.textBox4.Visible = rbtn_before.Checked ? true : false;
+            tb_limit.Text = (Options.Limit * 100).ToString();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
@@ -77,6 +98,17 @@ namespace LevelnetAdjustment.form {
         }
 
         private void button1_Click(object sender, EventArgs e) {
+            Options.LevelParams.LevelingGrade = this.comboBox1.SelectedIndex;
+            Options.LevelParams.WangFan = double.Parse(this.textBox1.Text);
+            Options.LevelParams.FuHe = double.Parse(this.textBox2.Text);
+            Options.LevelParams.Huan = double.Parse(this.textBox3.Text);
+            Options.LevelParams.CP3WangFan = double.Parse(this.textBox6.Text);
+            Options.LevelParams.CP3Huan = double.Parse(this.textBox5.Text);
+            Options.LevelParams.IsCP3 = this.checkBox2.Checked;
+            Options.Sigma = double.Parse(this.textBox4.Text);
+            Options.Limit = double.Parse(tb_limit.Text) / 100;
+            Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+
             TransfEvent(Options);
             Close();
         }
