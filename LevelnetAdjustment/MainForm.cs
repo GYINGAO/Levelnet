@@ -5,6 +5,7 @@ using LevelnetAdjustment.utils;
 using Newtonsoft.Json;
 using SplashScreenDemo;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -823,9 +824,71 @@ namespace LevelnetAdjustment {
         }
 
         private void 生成平差文件ToolStripMenuItem_Click(object sender, EventArgs e) {
-            FrmZDSelect frmZDSelect = new FrmZDSelect();
+            /*FrmZDSelect frmZDSelect = new FrmZDSelect();
             frmZDSelect.TransfEvevn += ChangeZD;
-            frmZDSelect.ShowDialog();
+            frmZDSelect.ShowDialog();*/
+
+
+
+            List<ObservedData> ods = new List<ObservedData>();
+            List<ObservedData> ods_mid = new List<ObservedData>();
+            List<ObservedData> ods_rep = new List<ObservedData>();
+
+            int stationNum = 0;
+            ArrayList list = new ArrayList();
+            List<RawData> rds = new List<RawData>();
+            foreach (var item in ClAdj.RawDatas) {
+                if (item.IsStart) {
+                    stationNum++;
+                }
+                var m = rds.FindAll(r => r.BackPoint == item.BackPoint || r.FrontPoint == item.FrontPoint);
+                if (m.Count > 0 && !list.Contains(stationNum)) {
+                    list.Add(stationNum);
+                }
+                rds.Add(item);
+            }
+            FrmModifyPointName frm = new FrmModifyPointName(rds, ClAdj.KnownPoints, Project.Options.OutputFiles.COSADis, list);
+            frm.TransEvent += ExportFile;
+            MessageBox.Show("请检查每个测段点名是否重复\r\n如重复请修改，否则将按照同一个点处理！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            frm.ShowDialog();
+
+
+            /* foreach (var item in ClAdj.RawDatas) {
+                 if (item.MidDis != 0) {
+                     ods_mid.Add(new ObservedData() { Start = item.BackPoint, End = item.MidPoint, Distance = item.MidDis, HeightDiff = item.MidDiff, StationNum = 1 });
+                 }
+                 var m = ods.FindAll(l => l.Start == item.BackPoint || l.Start == item.FrontPoint || l.End == item.BackPoint || l.End == item.FrontPoint);
+                 if (m?.Count >= 2) {
+                     m.ForEach(l => ods.Remove(l));
+                     ods_rep.Add(new ObservedData() {
+                         StationNum = 1,
+                         Distance = item.DisAve,
+                         HeightDiff = item.DiffAve,
+                         End = item.FrontPoint,
+                         Start = item.BackPoint,
+                     });
+                     ods_rep.AddRange(m);
+                 }
+                 else {
+                     ods.Add(new ObservedData() {
+                         StationNum = 1,
+                         Distance = item.DisAve,
+                         HeightDiff = item.DiffAve,
+                         End = item.FrontPoint,
+                         Start = item.BackPoint,
+                     });
+                 }
+             }
+
+
+
+             MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+             AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签*/
+
+        }
+
+        void ExportFile() {
+            AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
         }
         void ChangeZD(string zd) {
             FileHelper.ExportIN1(ClAdj.RawDatas, ClAdj.KnownPoints, zd, Project.Options.OutputFiles.COSADis);
