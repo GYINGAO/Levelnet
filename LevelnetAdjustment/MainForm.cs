@@ -241,7 +241,6 @@ namespace LevelnetAdjustment {
             this.ClAdj.KnownPoints = Project.KnownPoints;
             this.ClAdj.UnknownPoints = Project.UnknownPoints;
             this.ClAdj.Calc_Params();
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
             // 获取所有文件
             FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
             foreach (var file in files) {
@@ -341,8 +340,7 @@ namespace LevelnetAdjustment {
 
         void CalcLS(List<PointData> Points) {
             ClAdj.KnownPoints = Points;
-            ClAdj.CalcApproximateHeight(true);
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+            ClAdj.Calc_Params();
             SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -434,8 +432,7 @@ namespace LevelnetAdjustment {
 
         void CalcClosureError(List<PointData> Points) {
             ClAdj.KnownPoints = Points;
-            ClAdj.CalcApproximateHeight(true);
-            ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+            ClAdj.Calc_Params();
             SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -977,7 +974,7 @@ namespace LevelnetAdjustment {
                 ClAdj.KnownPoints = knownPoints;
                 ClAdj.ObservedDatas = observedDatas;
                 ClAdj.Calc_Params();
-                ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, ClAdj.UnknownPoints);
+
                 string msg = "";
                 int j = 0;
                 for (int i = 0; i < ClAdj.KnownPoints.Count; i++) {

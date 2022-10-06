@@ -12,9 +12,19 @@ namespace LevelnetAdjustment.model {
         public string Start { get; set; }
 
         /// <summary>
+        /// 起点索引
+        /// </summary>
+        public int StartIndex { get; set; } = -1;
+
+        /// <summary>
         /// 测段终点
         /// </summary>
         public string End { get; set; }
+
+        /// <summary>
+        /// 终点索引
+        /// </summary>
+        public int EndIndex { get; set; } = -1;
 
         /// <summary>
         /// 高差

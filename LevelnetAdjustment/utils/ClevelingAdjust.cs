@@ -83,14 +83,39 @@ namespace LevelnetAdjustment.utils {
             N = ObservedDatasNoRep.Count;
             KnPnumber = KnownPointEable.Count;
             UnknownPoints_array = new ArrayList();
+            int i = 0;
             ObservedDatasNoRep.ForEach(item => {
-                if (!UnknownPoints_array.Contains(item.Start) && !KnownPointEable.Exists(t => t.Number == item.Start)) {
-                    UnknownPoints_array.Add(item.Start);
+                int startIdx = UnknownPoints_array.IndexOf(item.Start);
+                if (startIdx == -1) {
+                    int idx = KnownPointEable.FindIndex(t => t.Number == item.Start);
+                    if (idx == -1) {
+                        UnknownPoints_array.Add(item.Start);
+                        ObservedDatasNoRep[i].StartIndex = UnknownPoints_array.Count - 1 + KnPnumber;
+                    }
+                    else {
+                        ObservedDatasNoRep[i].StartIndex = idx;
+                    }
                 }
-                if (!UnknownPoints_array.Contains(item.End) && !KnownPointEable.Exists(t => t.Number == item.End)) {
-                    UnknownPoints_array.Add(item.End);
+                else {
+                    ObservedDatasNoRep[i].StartIndex = startIdx + KnPnumber;
+                }
+
+                int endIdx = UnknownPoints_array.IndexOf(item.End);
+                if (endIdx == -1) {
+                    int idx = KnownPointEable.FindIndex(t => t.Number == item.End);
+                    if (idx == -1) {
+                        UnknownPoints_array.Add(item.End);
+                        ObservedDatasNoRep[i].EndIndex = UnknownPoints_array.Count - 1 + KnPnumber;
+                    }
+                    else {
+                        ObservedDatasNoRep[i].EndIndex = idx;
+                    }
+                }
+                else {
+                    ObservedDatasNoRep[i].EndIndex = endIdx + KnPnumber;
                 }
                 TotalDistence += item.Distance;
+                i++;
             });
             KnownPointEable = new List<PointData>();
             KnownPointEable.AddRange(knownPoints.FindAll(p => p.Enable));
@@ -100,6 +125,8 @@ namespace LevelnetAdjustment.utils {
             if (KnownPointEable?.Count != 0 && ObservedDatasNoRep?.Count != 0) {
                 CalcApproximateHeight(true);
             }
+            AllPoints = Commom.Merge(KnownPointEable, UnknownPoints);
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -250,17 +277,17 @@ namespace LevelnetAdjustment.utils {
             double[] ls = new double[N];
             if (Options.AdjustMethod == 0) {
                 for (int i = 0; i < N; i++) {
-                    var startH = X[AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[i].Start), 0];
-                    var endH = X[AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[i].End), 0];
+                    var startH = X[ObservedDatasNoRep[i].StartIndex, 0];
+                    var endH = X[ObservedDatasNoRep[i].EndIndex, 0];
                     ls[i] = startH + ObservedDatasNoRep[i].HeightDiff - endH;
                 }// 计算每个常数项的值   
             }
             else {
                 for (int i = 0; i < N; i++) {
-                    var startIdx = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[i].Start);
+                    var startIdx = ObservedDatasNoRep[i].StartIndex;
                     var startH = startIdx < KnPnumber ? KnownPointEable[startIdx].Height : X[startIdx - KnPnumber, 0];
 
-                    var endIdx = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[i].End);
+                    var endIdx = ObservedDatasNoRep[i].EndIndex;
                     var endH = endIdx < KnPnumber ? KnownPointEable[endIdx].Height : X[endIdx - KnPnumber, 0];
                     ls[i] = startH + ObservedDatasNoRep[i].HeightDiff - endH;
                 }// 计算每个常数项的值   
@@ -514,10 +541,10 @@ namespace LevelnetAdjustment.utils {
 
             for (int i = 0; ; i++) {
                 bool successful = true;
-                for (int j = 0; j <= ObservedDatasNoRep.Count - 1; j++) {
+                for (int j = 0; j <= N - 1; j++) {
                     if (j == exclude) continue;
-                    int p1 = AllPoints.FindIndex(pp => pp.Number == ObservedDatasNoRep[j].Start); //起点点号
-                    int p2 = AllPoints.FindIndex(pp => pp.Number == ObservedDatasNoRep[j].End); //终点点号
+                    int p1 = ObservedDatasNoRep[j].StartIndex; //起点点号
+                    int p2 = ObservedDatasNoRep[j].EndIndex; //终点点号
                     double S12 = ObservedDatasNoRep[j].Distance; // p1到p2的距离
                     if (neighbor[p1] < 0 && neighbor[p2] < 0) continue;
 
@@ -565,8 +592,8 @@ namespace LevelnetAdjustment.utils {
                 used[i] = 0;
 
             for (int i = 0; i < m_Lnumber; i++) {
-                int k1 = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[i].Start); //起点点号;
-                int k2 = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[i].End); //终点点号
+                int k1 = ObservedDatasNoRep[i].StartIndex; //起点点号;
+                int k2 = ObservedDatasNoRep[i].EndIndex; //终点点号
                 if (used[i] != 0) continue;
                 if (k2 == k1)   //后面添加修改的
                     return strClosure.ToString();
@@ -591,8 +618,8 @@ namespace LevelnetAdjustment.utils {
                         msg += AllPoints[p1].Number + "-";
                         for (int r = 0; r < m_Lnumber; r++)//将用过的观测值标定
                         {
-                            var startIdx = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[r].Start);
-                            var endIdx = AllPoints.FindIndex(p => p.Number == ObservedDatasNoRep[r].End);
+                            var startIdx = ObservedDatasNoRep[r].StartIndex;
+                            var endIdx = ObservedDatasNoRep[r].EndIndex;
                             if (startIdx == p1 && endIdx == p2) {
                                 used[r] = 1;
                                 break;
@@ -634,8 +661,6 @@ namespace LevelnetAdjustment.utils {
         /// <param name="roundi"></param>
         /// <returns></returns>
         private string LineClosure(double roundi, string split, string space) {
-            int m_knPnumber = KnownPointEable.Count;
-            int m_Pnumber = M;
             StringBuilder strClosure = new StringBuilder();
 
             int line_N = 0;
@@ -643,20 +668,20 @@ namespace LevelnetAdjustment.utils {
             strClosure.AppendLine(split);
             strClosure.AppendLine(space + "附合路线闭合差计算结果");
             strClosure.AppendLine(split);
-            if (m_knPnumber == 1)
+            if (KnPnumber == 1)
                 return strClosure.AppendLine("已知点数小于2").ToString(); // 已知点数小于2
-            if (m_knPnumber <= 0)
+            if (KnPnumber <= 0)
                 return strClosure.AppendLine("未导入已知点").ToString(); // 已知点数等于0
-            int[] neighbor = new int[m_Pnumber];       //邻接点数组
-            double[] diff = new double[m_Pnumber]; //高差累加值数组
-            double[] S = new double[m_Pnumber];    //路线长累加值数组
+            int[] neighbor = new int[M];       //邻接点数组
+            double[] diff = new double[M]; //高差累加值数组
+            double[] S = new double[M];    //路线长累加值数组
 
             for (int ii = 0; ii < KnPnumber; ii++) {
                 FindShortPath(ii, -1, neighbor, diff, S); //搜索最短路线，用所有观测值
 
                 for (int jj = ii + 1; jj < KnPnumber; jj++) {
                     if (neighbor[jj] < 0) {
-                        // strClosure.Append(AllPoint_array[ii] + "-" + AllPoint_array[jj] + "之间找到不到最短路线");
+                        strClosure.Append(KnownPointEable[ii].Number + "-" + KnownPointEable[jj].Number + "之间找到不到最短路线");
                         continue;
                     }
                     // 输出附合路线上的点号
@@ -698,27 +723,27 @@ namespace LevelnetAdjustment.utils {
         public void CalcClosureError(string OutpathClosure, string split, string space) {
             Options.AdjustMethod = 0;
             #region 根据观测数据生成邻接表
-            var pointNum = M;
-            const int inf = 100000000;
-            double[,] cost = new double[pointNum, pointNum];
-            // 对角线为0，其余为inf
-            for (int i = 0; i < pointNum; i++) {
-                for (int j = 0; j < pointNum; j++) {
-                    if (i == j) {
-                        cost[i, j] = 0;
-                    }
-                    else {
-                        cost[i, j] = inf;
-                    }
-                }
-            }
-            // 记录观测数据
-            for (int i = 0; i < N; i++) {
-                var rowIdx = GetStartIdx(i);
-                var columnIdx = GetEndIdx(i);
-                cost[rowIdx, columnIdx] = ObservedDatasNoRep[i].Distance;
-                cost[columnIdx, rowIdx] = ObservedDatasNoRep[i].Distance;
-            }
+            /*            var pointNum = M;
+                        const int inf = 100000000;
+                        double[,] cost = new double[pointNum, pointNum];
+                        // 对角线为0，其余为inf
+                        for (int i = 0; i < pointNum; i++) {
+                            for (int j = 0; j < pointNum; j++) {
+                                if (i == j) {
+                                    cost[i, j] = 0;
+                                }
+                                else {
+                                    cost[i, j] = inf;
+                                }
+                            }
+                        }
+                        // 记录观测数据
+                        for (int i = 0; i < N; i++) {
+                            var rowIdx = GetStartIdx(i);
+                            var columnIdx = GetEndIdx(i);
+                            cost[rowIdx, columnIdx] = ObservedDatasNoRep[i].Distance;
+                            cost[columnIdx, rowIdx] = ObservedDatasNoRep[i].Distance;
+                        }*/
             #endregion
 
             Closures = new List<Closure>();
