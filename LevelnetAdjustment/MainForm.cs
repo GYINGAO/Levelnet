@@ -462,6 +462,7 @@ namespace LevelnetAdjustment {
                     return;
                 }
             }
+            flag = true;
             SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
@@ -473,8 +474,6 @@ namespace LevelnetAdjustment {
 
                 AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
                 MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
             }
             catch (Exception ex) {
                 loading.CloseWaitForm();

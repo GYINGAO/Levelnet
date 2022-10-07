@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LevelnetAdjustment;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -51,6 +52,10 @@ namespace SplashScreenDemo {
             /*TimeSpan ts = TimeSpan.FromSeconds(seconds);
             lbl_tips_son.Text = $"Please Waitting...{ts.Days * 86400 + ts.Hours * 3600 + ts.Minutes * 60 + ts.Seconds}s";*/
             lbl_tips_son.Text = $"Please Waitting...{seconds}s";
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            MainForm.flag = false;
         }
     }
 }

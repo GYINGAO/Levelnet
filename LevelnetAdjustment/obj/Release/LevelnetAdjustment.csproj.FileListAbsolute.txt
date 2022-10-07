@@ -130,4 +130,3 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAd
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.exe
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.pdb
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmModifyPointName.resources
-F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
