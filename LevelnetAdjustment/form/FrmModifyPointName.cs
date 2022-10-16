@@ -16,18 +16,26 @@ using System.Windows.Forms;
 namespace LevelnetAdjustment.form {
 
     public partial class FrmModifyPointName : Form {
-        public delegate void ModifyPointaName();
+        public delegate void ModifyPointaName(List<ArrayList> pointLines);
         public List<RawData> Rds { get; set; }
         public List<PointData> Knownp { get; set; }
-        public ArrayList StationNums { get; set; }
+        public List<ArrayList> PointLines { get; set; }
+        public List<ChangedPoint> ChangePointLists { get; set; } = new List<ChangedPoint>(); //修改过的点名
+
         public string FilePath { get; set; }
 
-        private List<ArrayList> Lists { get; set; }
         public event ModifyPointaName TransEvent;
-        public FrmModifyPointName(List<RawData> rds, List<PointData> knownp, string file, ArrayList list) {
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="rds">观测数据</param>
+        /// <param name="knownp">已知点</param>
+        /// <param name="file">导出文件路径</param>
+        /// <param name="pls">用户修改的点名</param>
+        public FrmModifyPointName(List<RawData> rds, List<PointData> knownp, string file, List<ArrayList> pls) {
             InitializeComponent();
             Rds = rds;
-            StationNums = list;
+            PointLines = pls;
             Knownp = knownp;
             FilePath = file;
         }
@@ -37,39 +45,28 @@ namespace LevelnetAdjustment.form {
             //将Loaing窗口，注入到 SplashScreenManager 来管理
             GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
             loading.ShowLoading();
-            int stationNum = 0;
-            ArrayList array = new ArrayList();
-            Lists = new List<ArrayList>();
-            foreach (var item in Rds) {
-                if (item.IsStart) {
-                    stationNum++;
-                }
-                array.Add(item.BackPoint);
-                if (item.IsEnd) {
-                    array.Add(item.FrontPoint);
-                    Lists.Add(Commom.Clone(array));
-                    array.Clear();
-                }
-            }
+
             //Console.WriteLine("123");
             panel1.AutoScroll = true;
-            for (int i = 0; i < Lists.Count; i++) {
+            for (int i = 0; i < PointLines.Count; i++) {
                 int txtY = 10 + 40 * i;
                 int lblY = 15 + 40 * i;
                 int idx = -1;
-                for (int j = 0; j < Lists[i].Count; j++) {
+                for (int j = 0; j < PointLines[i].Count; j++) {
                     idx++;
                     int txtX = 10 + 100 * j;
                     int lblX = 90 + 100 * j;
                     TextBox text = new TextBox {
                         Name = $"txt-{i}-{j}",
-                        Text = Lists[i][j].ToString(),
+                        Text = PointLines[i][j].ToString(),
                         Location = new Point(txtX, txtY),
                         Size = new Size(75, 21),
                     };
+                    text.Enter += new EventHandler(textbox_enter);
+                    text.Leave += new EventHandler(textbox_leave);
                     panel1.Controls.Add(text);
 
-                    if (idx != Lists[i].Count - 1) {
+                    if (idx != PointLines[i].Count - 1) {
                         Label lbl = new Label {
                             Name = $"lbl-{i}-{j}",
                             Text = "→",
@@ -84,17 +81,33 @@ namespace LevelnetAdjustment.form {
 
         }
 
-        private void button1_Click(object sender, EventArgs e) {
-            foreach (var item in panel1.Controls) {
-                if (item is TextBox) {
-                    TextBox t = (TextBox)item;
-                    string[] str = t.Name.Split('-');
-                    int i = int.Parse(str[1]);
-                    int j = int.Parse(str[2]);
-                    Lists[i][j] = t.Text;
-                }
-            }
+        private void textbox_enter(object sender, EventArgs e) {
 
+        }
+        private void textbox_leave(object sender, EventArgs e) {
+            TextBox textBox = (TextBox)sender;
+            string[] str = textBox.Name.Split('-');
+            int i = int.Parse(str[1]);
+            int j = int.Parse(str[2]);
+            if (PointLines[i][j].ToString().Trim() != textBox.Text) {
+                ChangedPoint point = new ChangedPoint {
+                    Value = textBox.Text.Trim(),
+                    ControlName = textBox.Name,
+                };
+                ChangePointLists.Add(point);
+            }
+            PointLines[i][j] = textBox.Text.Trim();
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            ChangePointLists.getAllRepeated(z => new { z.Value }).ToList().ForEach(z => {
+                TextBox control = (TextBox)panel1.Controls[z.ControlName];
+                control.ForeColor = Color.Red;
+            });
+
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
             List<ObservedData> ods = new List<ObservedData>();
             List<ObservedData> ods_mid = new List<ObservedData>();
 
@@ -110,8 +123,8 @@ namespace LevelnetAdjustment.form {
                 }
                 num++;
                 ods.Add(new ObservedData {
-                    Start = Lists[stationNum][num - 1].ToString(),
-                    End = Lists[stationNum][num].ToString(),
+                    Start = PointLines[stationNum][num - 1].ToString(),
+                    End = PointLines[stationNum][num].ToString(),
                     Distance = item.DisAve,
                     HeightDiff = item.DiffAve,
                     StationNum = 1
@@ -133,11 +146,32 @@ namespace LevelnetAdjustment.form {
             fileStream.Close();
 
             Close();
-            TransEvent();
+            TransEvent(PointLines);
+
         }
 
-        private void button2_Click(object sender, EventArgs e) {
+        private void button3_Click(object sender, EventArgs e) {
             Close();
+        }
+    }
+
+    public class ChangedPoint {
+        public string Value { get; set; }
+        public string ControlName { get; set; }
+    }
+    //静态扩展类
+    public static class Extention {
+        public static IEnumerable<T> getMoreThanOnceRepeated<T>(this IEnumerable<T> extList, Func<T, object> groupProps) where T : class { //返回第二个以后面的重复的元素集合
+            return extList
+                .GroupBy(groupProps)
+                .SelectMany(z => z.Skip(1)); //跳过第一个重复的元素
+        }
+        public static IEnumerable<T> getAllRepeated<T>(this IEnumerable<T> extList, Func<T, object> groupProps) where T : class {
+            //返回所有重复的元素集合
+            return extList
+                .GroupBy(groupProps)
+                .Where(z => z.Count() > 1) //Filter only the distinct one
+                .SelectMany(z => z);//All in where has to be retuned
         }
     }
 }

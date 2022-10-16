@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace LevelnetAdjustment.model {
         public OutputFile OutputFiles { get; set; } = new OutputFile();// 文件输出路径
         public LevelParam LevelParams { get; set; } = new LevelParam();//高程网观测等级及限差系数
         public ObsDataLimit ObsDataLimits { get; set; } = new ObsDataLimit();//观测数据限差
+        public List<ArrayList> ChangedStationLine { get; set; } = new List<ArrayList>();//修改后的点名
         public Option() {
 
         }

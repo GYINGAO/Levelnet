@@ -58,6 +58,7 @@ namespace LevelnetAdjustment.form {
             this.textBox4.Text = Options.Sigma.ToString();
             this.textBox4.Visible = rbtn_before.Checked ? true : false;
             tb_limit.Text = (Options.Limit * 100).ToString();
+            groupBox1.Enabled = checkBox2.Checked;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
@@ -115,6 +116,10 @@ namespace LevelnetAdjustment.form {
 
         private void button2_Click(object sender, EventArgs e) {
             Close();
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e) {
+            groupBox1.Enabled = checkBox2.Checked;       
         }
     }
 }

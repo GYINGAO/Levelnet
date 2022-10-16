@@ -824,66 +824,32 @@ namespace LevelnetAdjustment {
             frmZDSelect.TransfEvevn += ChangeZD;
             frmZDSelect.ShowDialog();*/
 
-
-
-            List<ObservedData> ods = new List<ObservedData>();
-            List<ObservedData> ods_mid = new List<ObservedData>();
-            List<ObservedData> ods_rep = new List<ObservedData>();
-
             int stationNum = 0;
-            ArrayList list = new ArrayList();
-            List<RawData> rds = new List<RawData>();
-            foreach (var item in ClAdj.RawDatas) {
-                if (item.IsStart) {
-                    stationNum++;
+            if (ClAdj.Options.ChangedStationLine?.Count == 0) {
+                ArrayList array = new ArrayList();
+                foreach (var item in ClAdj.RawDatas) {
+                    if (item.IsStart) {
+                        stationNum++;
+                    }
+                    array.Add(item.BackPoint);
+                    if (item.IsEnd) {
+                        array.Add(item.FrontPoint);
+                        ClAdj.Options.ChangedStationLine.Add(Commom.Clone(array));
+                        array.Clear();
+                    }
                 }
-                var m = rds.FindAll(r => r.BackPoint == item.BackPoint || r.FrontPoint == item.FrontPoint);
-                if (m.Count > 0 && !list.Contains(stationNum)) {
-                    list.Add(stationNum);
-                }
-                rds.Add(item);
             }
-            FrmModifyPointName frm = new FrmModifyPointName(rds, ClAdj.KnownPoints, Project.Options.OutputFiles.COSADis, list);
+
+
+            FrmModifyPointName frm = new FrmModifyPointName(ClAdj.RawDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSADis, ClAdj.Options.ChangedStationLine);
             frm.TransEvent += ExportFile;
             MessageBox.Show("请检查每个测段点名是否重复\r\n如重复请修改，否则将按照同一个点处理！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             frm.ShowDialog();
-
-
-            /* foreach (var item in ClAdj.RawDatas) {
-                 if (item.MidDis != 0) {
-                     ods_mid.Add(new ObservedData() { Start = item.BackPoint, End = item.MidPoint, Distance = item.MidDis, HeightDiff = item.MidDiff, StationNum = 1 });
-                 }
-                 var m = ods.FindAll(l => l.Start == item.BackPoint || l.Start == item.FrontPoint || l.End == item.BackPoint || l.End == item.FrontPoint);
-                 if (m?.Count >= 2) {
-                     m.ForEach(l => ods.Remove(l));
-                     ods_rep.Add(new ObservedData() {
-                         StationNum = 1,
-                         Distance = item.DisAve,
-                         HeightDiff = item.DiffAve,
-                         End = item.FrontPoint,
-                         Start = item.BackPoint,
-                     });
-                     ods_rep.AddRange(m);
-                 }
-                 else {
-                     ods.Add(new ObservedData() {
-                         StationNum = 1,
-                         Distance = item.DisAve,
-                         HeightDiff = item.DiffAve,
-                         End = item.FrontPoint,
-                         Start = item.BackPoint,
-                     });
-                 }
-             }
-
-
-
-             MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-             AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签*/
-
         }
 
-        void ExportFile() {
+        void ExportFile(List<ArrayList> pointLines) {
+            ClAdj.Options.ChangedStationLine = pointLines;
+            Project.Options.ChangedStationLine = pointLines;
             AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
         }
         void ChangeZD(string zd) {
@@ -1031,11 +997,12 @@ namespace LevelnetAdjustment {
                 sb.AppendLine(space + "往返测高差较差统计结果");
                 sb.AppendLine(split);
                 sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-7}{"往测距离/km",-9}{"返测距离/km",-9}{"往测高差/m",-9}{"返测高差/m",-8}{"较差/mm",-8}{"限差/mm",-10}");
-                double limit = ClAdj.Options.LevelParams.IsCP3 ? ClAdj.Options.LevelParams.CP3WangFan : ClAdj.Options.LevelParams.WangFan;
+
                 int i = 0;
                 double m = 0.0;
                 ClAdj.ObservedDataWFs.ForEach(l => {
                     i++;
+                    double limit = ClAdj.Options.LevelParams.IsCP3 ? ClAdj.Options.LevelParams.CP3WangFan : ClAdj.Options.LevelParams.WangFan * Math.Sqrt((l.Distance_F + l.Distance_W) / 2);
                     m += Math.Pow(l.HeightDiff_Diff, 2) / ((l.Distance_W + l.Distance_F) / 2);
                     sb.AppendLine($"{i,-7}{l.Start,-10}{l.End,-11}{l.Distance_W,-12:#0.000}{l.Distance_F,-13:#0.000}{l.HeightDiff_W,-12:#0.00000}{l.HeightDiff_F,-13:#0.00000}{l.HeightDiff_Diff,-9:#0.00}{limit,-11:#0.00}");
                 });

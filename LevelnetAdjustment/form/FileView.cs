@@ -26,7 +26,7 @@ namespace LevelnetAdjustment.form {
             rtb.Clear();
 
             if (string.IsNullOrEmpty(FilePath)) {
-                this.Text = "Undefined.ou1*";
+                Text = "Undefined.ou1*";
                 return;
             }
             else {

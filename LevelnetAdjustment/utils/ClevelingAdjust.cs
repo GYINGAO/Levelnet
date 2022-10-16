@@ -519,7 +519,7 @@ namespace LevelnetAdjustment.utils {
             sb.AppendLine(space + "观测总距离：".PadRight(8) + TotalDistence.ToString("#0.000") + "(km)");
             sb.AppendLine(space + "自由度：".PadRight(8) + R);
             sb.AppendLine(space + "PVV：".PadRight(8) + PVV.ToString("#0.000"));
-            sb.AppendLine(space + "验后单位权中误差：".PadRight(8) + Mu.ToString("#0.000"));
+            sb.AppendLine(space + "验后每公里高差偶然中误差：".PadRight(8) + Mu.ToString("#0.000"));
 
             sb.AppendLine(split);
             FileHelper.WriteStrToTxt(sb.ToString(), filePath);
@@ -573,7 +573,8 @@ namespace LevelnetAdjustment.utils {
         /// 最小独立环闭合差计算	
         /// </summary>
         /// <param name="roundi"></param>
-        string LoopClosure(double roundi, string split, string space) {
+        string LoopClosure(string split, string space) {
+            double roundi = Options.LevelParams.Huan;
             int m_Pnumber = M;
             int m_Lnumber = ObservedDatasNoRep.Count;
             StringBuilder strClosure = new StringBuilder();
@@ -648,11 +649,14 @@ namespace LevelnetAdjustment.utils {
                     double SS = S[k1] + ObservedDatasNoRep[i].Distance; //环长
                     double limit = (roundi * Math.Sqrt(SS));
                     Closures.Add(new Closure { Error = -W, Length = SS, Limit = limit, Line = msg });
-                    strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("f2") + "(mm)");
-                    if (Math.Abs(W) > Math.Abs(limit)) {
-                        strClosure.Append("   超限！！！");
+                    string str = Math.Abs(W) > Math.Abs(limit) ? "   超限!!!" : "";
+                    strClosure.AppendLine($"\r\n高差闭合差：{ -W:f2}(mm){str}");
+                    if (Options.LevelParams.IsCP3) {
+                        strClosure.AppendLine($"CPⅢ水准环闭合差限差：{Options.LevelParams.CP3Huan}(mm)");
                     }
-                    strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
+                    else {
+                        strClosure.AppendLine("限差：" + limit.ToString("f4") + "(mm)");
+                    }
                     strClosure.AppendLine($"总长度：{SS}(km)");
                     strClosure.AppendLine();
                 }
@@ -666,11 +670,10 @@ namespace LevelnetAdjustment.utils {
         /// </summary>
         /// <param name="roundi"></param>
         /// <returns></returns>
-        private string LineClosure(double roundi, string split, string space) {
+        private string LineClosure(string split, string space) {
+            double roundi = Options.LevelParams.FuHe;
             StringBuilder strClosure = new StringBuilder();
-
             int line_N = 0;
-
             strClosure.AppendLine(split);
             strClosure.AppendLine(space + "附合路线闭合差计算结果");
             strClosure.AppendLine(split);
@@ -713,11 +716,9 @@ namespace LevelnetAdjustment.utils {
                     double W = (KnownPointEable[ii].Height + diff[jj] - KnownPointEable[jj].Height) * 1000; // 闭合差
                     double limit = roundi * Math.Sqrt(S[jj]);  // 限差
                     Closures.Add(new Closure { Error = -W, Length = S[jj], Limit = limit, Line = msg });
-                    strClosure.AppendLine("\r\n高差闭合差：" + (-W).ToString("#0.00") + "(mm)");
-                    if (Math.Abs(W) > Math.Abs(limit)) {
-                        strClosure.Append("   超限！！！");
-                    }
-                    strClosure.AppendLine("平原限差：" + limit.ToString("f4") + "(mm)");
+                    string str = Math.Abs(W) > Math.Abs(limit) ? "   超限!!!" : "";
+                    strClosure.AppendLine($"\r\n高差闭合差：{-W:#0.00}(mm){str}");
+                    strClosure.AppendLine("限差：" + limit.ToString("f4") + "(mm)");
                     strClosure.AppendLine($"总长度：{S[jj]}(km)");
                     strClosure.AppendLine();
 
@@ -756,11 +757,11 @@ namespace LevelnetAdjustment.utils {
             #endregion
 
             Closures = new List<Closure>();
-            string strLoop = LoopClosure(Options.LevelParams.Huan, split, space);
-            string strLine = LineClosure(Options.LevelParams.FuHe, split, space);
+            string strLoop = LoopClosure(split, space);
+            string strLine = LineClosure(split, space);
 
             double tmse = CalcTMSE();
-            string msg = $"{split}\r\n{space}由闭合差计算的观测值精度\r\n{split}\r\n每公里水准测量的高差全中误差：   {tmse:#0.000}\r\n多边形个数：   {Closures.Count}";
+            string msg = $"{split}\r\n{space}由闭合差计算的观测值精度\r\n{split}\r\n每公里高差中数的偶然中误差：   {tmse:#0.000}\r\n多边形个数：   {Closures.Count}";
 
             FileHelper.WriteStrToTxt(strLine + strLoop + msg, OutpathClosure);
         }
