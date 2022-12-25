@@ -16,11 +16,10 @@ using System.Windows.Forms;
 namespace LevelnetAdjustment.form {
 
     public partial class FrmModifyPointName : Form {
-        public delegate void ModifyPointaName(List<ArrayList> pointLines);
+        public delegate void ModifyPointaName(ManualModify manualModification);
         public List<RawData> Rds { get; set; }
         public List<PointData> Knownp { get; set; }
-        public List<ArrayList> PointLines { get; set; }
-        public List<ChangedPoint> ChangePointLists { get; set; } = new List<ChangedPoint>(); //修改过的点名
+        public ManualModify ManualModification { get; set; }
 
         public string FilePath { get; set; }
 
@@ -32,10 +31,10 @@ namespace LevelnetAdjustment.form {
         /// <param name="knownp">已知点</param>
         /// <param name="file">导出文件路径</param>
         /// <param name="pls">用户修改的点名</param>
-        public FrmModifyPointName(List<RawData> rds, List<PointData> knownp, string file, List<ArrayList> pls) {
+        public FrmModifyPointName(List<RawData> rds, List<PointData> knownp, string file, ManualModify manualModification) {
             InitializeComponent();
             Rds = rds;
-            PointLines = pls;
+            ManualModification = manualModification;
             Knownp = knownp;
             FilePath = file;
         }
@@ -48,17 +47,17 @@ namespace LevelnetAdjustment.form {
 
             //Console.WriteLine("123");
             panel1.AutoScroll = true;
-            for (int i = 0; i < PointLines.Count; i++) {
+            for (int i = 0; i < ManualModification.ChangedStationLine.Count; i++) {
                 int txtY = 10 + 40 * i;
                 int lblY = 15 + 40 * i;
                 int idx = -1;
-                for (int j = 0; j < PointLines[i].Count; j++) {
+                for (int j = 0; j < ManualModification.ChangedStationLine[i].Count; j++) {
                     idx++;
                     int txtX = 10 + 100 * j;
                     int lblX = 90 + 100 * j;
                     TextBox text = new TextBox {
                         Name = $"txt-{i}-{j}",
-                        Text = PointLines[i][j].ToString(),
+                        Text = ManualModification.ChangedStationLine[i][j].ToString(),
                         Location = new Point(txtX, txtY),
                         Size = new Size(75, 21),
                     };
@@ -66,7 +65,7 @@ namespace LevelnetAdjustment.form {
                     text.Leave += new EventHandler(textbox_leave);
                     panel1.Controls.Add(text);
 
-                    if (idx != PointLines[i].Count - 1) {
+                    if (idx != ManualModification.ChangedStationLine[i].Count - 1) {
                         Label lbl = new Label {
                             Name = $"lbl-{i}-{j}",
                             Text = "→",
@@ -77,6 +76,7 @@ namespace LevelnetAdjustment.form {
                     }
                 }
             }
+            button1_Click(sender, e);
             loading.CloseWaitForm();
 
         }
@@ -89,18 +89,29 @@ namespace LevelnetAdjustment.form {
             string[] str = textBox.Name.Split('-');
             int i = int.Parse(str[1]);
             int j = int.Parse(str[2]);
-            if (PointLines[i][j].ToString().Trim() != textBox.Text) {
+            if (ManualModification.ChangedStationLine[i][j].ToString().Trim() != textBox.Text) {
                 ChangedPoint point = new ChangedPoint {
                     Value = textBox.Text.Trim(),
                     ControlName = textBox.Name,
                 };
-                ChangePointLists.Add(point);
+                var idx = ManualModification.ChangedPoints.FindIndex(p => p.ControlName == textBox.Name);
+                if (idx == -1) {
+                    ManualModification.ChangedPoints.Add(point);
+                }
+                else {
+                    ManualModification.ChangedPoints[idx].Value = textBox.Text;
+                }
             }
-            PointLines[i][j] = textBox.Text.Trim();
+            ManualModification.ChangedStationLine[i][j] = textBox.Text.Trim();
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            ChangePointLists.getAllRepeated(z => new { z.Value }).ToList().ForEach(z => {
+            ManualModification.ChangedPoints.ForEach(p => {
+                TextBox control = (TextBox)panel1.Controls[p.ControlName];
+                control.ForeColor = Color.Black;
+            });
+            var list = ManualModification.ChangedPoints.getAllRepeated(z => new { z.Value }).ToList();
+            list.ForEach(z => {
                 TextBox control = (TextBox)panel1.Controls[z.ControlName];
                 control.ForeColor = Color.Red;
             });
@@ -123,8 +134,8 @@ namespace LevelnetAdjustment.form {
                 }
                 num++;
                 ods.Add(new ObservedData {
-                    Start = PointLines[stationNum][num - 1].ToString(),
-                    End = PointLines[stationNum][num].ToString(),
+                    Start = ManualModification.ChangedStationLine[stationNum][num - 1].ToString(),
+                    End = ManualModification.ChangedStationLine[stationNum][num].ToString(),
                     Distance = item.DisAve,
                     HeightDiff = item.DiffAve,
                     StationNum = 1
@@ -146,7 +157,7 @@ namespace LevelnetAdjustment.form {
             fileStream.Close();
 
             Close();
-            TransEvent(PointLines);
+            TransEvent(ManualModification);
 
         }
 
@@ -155,10 +166,7 @@ namespace LevelnetAdjustment.form {
         }
     }
 
-    public class ChangedPoint {
-        public string Value { get; set; }
-        public string ControlName { get; set; }
-    }
+
     //静态扩展类
     public static class Extention {
         public static IEnumerable<T> getMoreThanOnceRepeated<T>(this IEnumerable<T> extList, Func<T, object> groupProps) where T : class { //返回第二个以后面的重复的元素集合

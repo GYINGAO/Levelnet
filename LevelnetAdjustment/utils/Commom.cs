@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LevelnetAdjustment.utils {
@@ -38,6 +39,32 @@ namespace LevelnetAdjustment.utils {
             List<T> listMerge1 = list1.Union(list2).ToList();//不允许有重复项
             List<T> listMerge2 = list1.Concat(list2).ToList();//允许出现重复项
             return listMerge2;
+        }
+
+        /// <summary>
+        /// 判断是否为数字
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsFloat(string str) {
+            string regextext = "[+-]?[0-9]+(\\.[0-9]+)?";
+            Regex regex = new Regex(regextext, RegexOptions.None);
+            return regex.IsMatch(str);
+        }
+
+        /// <summary>
+        /// 判断是否为整数
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsInteger(string str) {
+            try {
+                int i = Convert.ToInt32(str);
+                return true;
+            }
+            catch {
+                return false;
+            }
         }
 
     }

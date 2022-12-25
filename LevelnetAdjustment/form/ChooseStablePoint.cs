@@ -11,7 +11,6 @@ namespace LevelnetAdjustment.form {
     public delegate void ChangeStable(List<PointData> Points);
     public partial class ChooseStablePoint : Form {
         public List<PointData> Points { get; set; }
-        public List<PointData> Points_Copy { get; set; }
         public event ChangeStable TransfChangeStable;
 
         public ChooseStablePoint(List<PointData> points) {
@@ -35,8 +34,7 @@ namespace LevelnetAdjustment.form {
 
         private void ChooseStablePoint_Load(object sender, EventArgs e) {
             this.dataGridView1.AutoGenerateColumns = false;
-            Points_Copy = Commom.Clone(Points);
-            this.dataGridView1.DataSource = new BindingList<PointData>(Points_Copy);
+            this.dataGridView1.DataSource = new BindingList<PointData>(Points);
         }
 
         private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e) {
@@ -58,7 +56,7 @@ namespace LevelnetAdjustment.form {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e) {
-            TransfChangeStable(Points_Copy);
+            TransfChangeStable(Points);
             this.Close();
         }
     }

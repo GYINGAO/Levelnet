@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MathNet.Numerics;
+using LevelnetAdjustment.utils;
 
 namespace LevelnetAdjustment.form {
     public delegate void TransfDelegate(Option option);
@@ -59,6 +61,8 @@ namespace LevelnetAdjustment.form {
             this.textBox4.Visible = rbtn_before.Checked ? true : false;
             tb_limit.Text = (Options.Limit * 100).ToString();
             groupBox1.Enabled = checkBox2.Checked;
+
+            txt_xianzhu.Text = Options.Alpha.ToString();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
@@ -99,16 +103,18 @@ namespace LevelnetAdjustment.form {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            Options.LevelParams.LevelingGrade = this.comboBox1.SelectedIndex;
-            Options.LevelParams.WangFan = double.Parse(this.textBox1.Text);
-            Options.LevelParams.FuHe = double.Parse(this.textBox2.Text);
-            Options.LevelParams.Huan = double.Parse(this.textBox3.Text);
-            Options.LevelParams.CP3WangFan = double.Parse(this.textBox6.Text);
-            Options.LevelParams.CP3Huan = double.Parse(this.textBox5.Text);
-            Options.LevelParams.IsCP3 = this.checkBox2.Checked;
-            Options.Sigma = double.Parse(this.textBox4.Text);
+            Options.LevelParams.LevelingGrade = comboBox1.SelectedIndex;
+            Options.LevelParams.WangFan = double.Parse(textBox1.Text);
+            Options.LevelParams.FuHe = double.Parse(textBox2.Text);
+            Options.LevelParams.Huan = double.Parse(textBox3.Text);
+            Options.LevelParams.CP3WangFan = double.Parse(textBox6.Text);
+            Options.LevelParams.CP3Huan = double.Parse(textBox5.Text);
+            Options.LevelParams.IsCP3 = checkBox2.Checked;
+            Options.Sigma = double.Parse(textBox4.Text);
             Options.Limit = double.Parse(tb_limit.Text) / 100;
             Options.UnitRight = rbtn_before.Checked ? 0 : 1;
+            Options.Alpha = double.Parse(txt_xianzhu.Text);
+            Options.AlphaLimit = double.Parse(lbl_xiancha.Text);
 
             TransfEvent(Options);
             Close();
@@ -119,7 +125,22 @@ namespace LevelnetAdjustment.form {
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e) {
-            groupBox1.Enabled = checkBox2.Checked;       
+            groupBox1.Enabled = checkBox2.Checked;
+        }
+
+        private void txt_xianzhu_TextChanged(object sender, EventArgs e) {
+            if (!Commom.IsFloat(txt_xianzhu.Text)) {
+                return;
+            }
+            try {
+                Options.Alpha = double.Parse(txt_xianzhu.Text);
+                Options.AlphaLimit = ExcelFunctions.NormSInv(1 - Options.Alpha / 2);
+                lbl_xiancha.Text = Options.AlphaLimit.ToString();
+            }
+            catch (Exception) {
+                return;
+            }
+
         }
     }
 }

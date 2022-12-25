@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>LevelnetAdjustment</RootNamespace>
     <AssemblyName>LNADJ</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -191,6 +191,18 @@
     <Compile Include="form\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\ChooseExportOb.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\ChooseExportOb.Designer.cs">
+      <DependentUpon>ChooseExportOb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="form\ChooseExport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\ChooseExport.Designer.cs">
+      <DependentUpon>ChooseExport.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\ChooseKnownPoint.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -257,6 +269,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="model\Export.cs" />
     <Compile Include="model\PointData.cs" />
     <Compile Include="model\Closure.cs" />
     <Compile Include="model\InputFile.cs" />
@@ -272,6 +285,7 @@
     <Compile Include="utils\ClevelingAdjust.cs" />
     <Compile Include="utils\Commom.cs" />
     <Compile Include="utils\ConfigHelper.cs" />
+    <Compile Include="utils\DataGridHelper.cs" />
     <Compile Include="utils\Dijkstra.cs" />
     <Compile Include="utils\ExceHelperl.cs" />
     <Compile Include="utils\FileHelper.cs" />
@@ -281,6 +295,12 @@
     <Compile Include="utils\SplashScreenManager.cs" />
     <EmbeddedResource Include="form\About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\ChooseExportOb.resx">
+      <DependentUpon>ChooseExportOb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\ChooseExport.resx">
+      <DependentUpon>ChooseExport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\ChooseKnownPoint.resx">
       <DependentUpon>ChooseKnownPoint.cs</DependentUpon>
@@ -370,6 +390,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\清空.png" />
     <None Include="Resources\更新.png" />
     <None Include="Resources\更新2.png" />
     <None Include="Resources\选择文件.png" />

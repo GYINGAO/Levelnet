@@ -131,3 +131,6 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdju
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmADJSetting.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmCheckObsData.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmModifyPointName.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.csproj.SuggestedBindingRedirects.cache
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ChooseExport.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ChooseExportOb.resources
