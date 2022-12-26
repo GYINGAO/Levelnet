@@ -168,6 +168,8 @@
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -257,6 +259,12 @@
     <Compile Include="form\MultiFuncLoading.Designer.cs">
       <DependentUpon>MultiFuncLoading.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\MultiPeriodComparison.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\MultiPeriodComparison.Designer.cs">
+      <DependentUpon>MultiPeriodComparison.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\SimpleLoading.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -328,6 +336,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="form\MultiFuncLoading.resx">
       <DependentUpon>MultiFuncLoading.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\MultiPeriodComparison.resx">
+      <DependentUpon>MultiPeriodComparison.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\SimpleLoading.resx">
       <DependentUpon>SimpleLoading.cs</DependentUpon>

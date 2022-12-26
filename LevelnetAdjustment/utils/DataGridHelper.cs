@@ -27,5 +27,14 @@ namespace LevelnetAdjustment.utils {
         HeaderText = headerText,
       };
     }
+    public static DataGridViewLinkColumn LinkAdd(string headerText, string name,string linkText) {
+      return new DataGridViewLinkColumn() {
+        Name = name,
+        HeaderText = headerText,
+        DefaultCellStyle = new DataGridViewCellStyle() {
+          NullValue = linkText
+        }
+      };
+    }
   }
 }

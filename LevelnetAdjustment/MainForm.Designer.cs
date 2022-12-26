@@ -66,6 +66,8 @@ namespace LevelnetAdjustment {
       this.报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.高程平差报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.高差平差报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+      this.高程多期对比ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.新建NToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.打开OToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -80,8 +82,6 @@ namespace LevelnetAdjustment {
       this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-      this.高程多期对比ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
       this.menuStrip1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
@@ -214,59 +214,59 @@ namespace LevelnetAdjustment {
       // 选择平差文件ToolStripMenuItem
       // 
       this.选择平差文件ToolStripMenuItem.Name = "选择平差文件ToolStripMenuItem";
-      this.选择平差文件ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.选择平差文件ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.选择平差文件ToolStripMenuItem.Text = "选择平差文件";
       this.选择平差文件ToolStripMenuItem.Click += new System.EventHandler(this.选择平差文件ToolStripMenuItem_Click);
       // 
       // 设置处理参数ToolStripMenuItem
       // 
       this.设置处理参数ToolStripMenuItem.Name = "设置处理参数ToolStripMenuItem";
-      this.设置处理参数ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.设置处理参数ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.设置处理参数ToolStripMenuItem.Text = "设置处理参数";
       this.设置处理参数ToolStripMenuItem.Click += new System.EventHandler(this.设置处理参数ToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(157, 6);
       // 
       // 往返测高差较差ToolStripMenuItem
       // 
       this.往返测高差较差ToolStripMenuItem.Name = "往返测高差较差ToolStripMenuItem";
-      this.往返测高差较差ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.往返测高差较差ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.往返测高差较差ToolStripMenuItem.Text = "往返测高差较差";
       this.往返测高差较差ToolStripMenuItem.Click += new System.EventHandler(this.往返测高差较差ToolStripMenuItem_Click);
       // 
       // ClosureErrorDropItem
       // 
       this.ClosureErrorDropItem.Name = "ClosureErrorDropItem";
-      this.ClosureErrorDropItem.Size = new System.Drawing.Size(180, 22);
+      this.ClosureErrorDropItem.Size = new System.Drawing.Size(160, 22);
       this.ClosureErrorDropItem.Text = "附和/环闭合差";
       this.ClosureErrorDropItem.Click += new System.EventHandler(this.ClosureErrorDropItem_Click);
       // 
       // toolStripMenuItem3
       // 
       this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-      this.toolStripMenuItem3.Size = new System.Drawing.Size(177, 6);
+      this.toolStripMenuItem3.Size = new System.Drawing.Size(157, 6);
       // 
       // GrossErrorDropItem
       // 
       this.GrossErrorDropItem.Name = "GrossErrorDropItem";
-      this.GrossErrorDropItem.Size = new System.Drawing.Size(180, 22);
+      this.GrossErrorDropItem.Size = new System.Drawing.Size(160, 22);
       this.GrossErrorDropItem.Text = "粗差探测";
       this.GrossErrorDropItem.Click += new System.EventHandler(this.GrossErrorDropItem_Click);
       // 
       // ConstraintNetworkDropItem
       // 
       this.ConstraintNetworkDropItem.Name = "ConstraintNetworkDropItem";
-      this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(180, 22);
+      this.ConstraintNetworkDropItem.Size = new System.Drawing.Size(160, 22);
       this.ConstraintNetworkDropItem.Text = "约束网平差";
       this.ConstraintNetworkDropItem.Click += new System.EventHandler(this.LevelnetDropItem_Click);
       // 
       // RankDefectNetworkDropItem
       // 
       this.RankDefectNetworkDropItem.Name = "RankDefectNetworkDropItem";
-      this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(180, 22);
+      this.RankDefectNetworkDropItem.Size = new System.Drawing.Size(160, 22);
       this.RankDefectNetworkDropItem.Text = "拟稳平差";
       this.RankDefectNetworkDropItem.Click += new System.EventHandler(this.RankDefectNetworkDropItem_Click);
       // 
@@ -406,6 +406,18 @@ namespace LevelnetAdjustment {
       this.高差平差报表ToolStripMenuItem.Text = "高差平差报表";
       this.高差平差报表ToolStripMenuItem.Click += new System.EventHandler(this.高差平差报表ToolStripMenuItem_Click);
       // 
+      // toolStripMenuItem4
+      // 
+      this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 6);
+      // 
+      // 高程多期对比ToolStripMenuItem
+      // 
+      this.高程多期对比ToolStripMenuItem.Name = "高程多期对比ToolStripMenuItem";
+      this.高程多期对比ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.高程多期对比ToolStripMenuItem.Text = "多期对比";
+      this.高程多期对比ToolStripMenuItem.Click += new System.EventHandler(this.高程多期对比ToolStripMenuItem_Click);
+      // 
       // toolStrip1
       // 
       this.toolStrip1.BackColor = System.Drawing.SystemColors.Control;
@@ -526,18 +538,6 @@ namespace LevelnetAdjustment {
       // timer1
       // 
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
-      // toolStripMenuItem4
-      // 
-      this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-      this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 6);
-      // 
-      // 高程多期对比ToolStripMenuItem
-      // 
-      this.高程多期对比ToolStripMenuItem.Name = "高程多期对比ToolStripMenuItem";
-      this.高程多期对比ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-      this.高程多期对比ToolStripMenuItem.Text = "高程多期对比";
-      this.高程多期对比ToolStripMenuItem.Click += new System.EventHandler(this.高程多期对比ToolStripMenuItem_Click);
       // 
       // MainForm
       // 

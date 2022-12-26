@@ -10,7 +10,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -236,13 +239,16 @@ namespace LevelnetAdjustment {
       UpDateMenu(Path.GetDirectoryName(projname));
       ClearForms();
       // 读取文件信息
-      this.Project = JsonHelper.ReadJson(projname);
-      this.ClAdj.Options = Project.Options;
-      this.ClAdj.RawDatas = Project.RawDatas;
-      this.ClAdj.ObservedDatas = Project.ObservedDatas;
-      this.ClAdj.KnownPoints = Project.KnownPoints;
-      this.ClAdj.UnknownPoints = Project.UnknownPoints;
-      this.ClAdj.Calc_Params(false);
+      Project = JsonHelper.ReadJson(projname);
+      var dic = Path.GetDirectoryName(projname);
+      Project.Path = dic.Substring(0, dic.LastIndexOf(@"\"));
+      Project.Name = dic.Substring(dic.LastIndexOf(@"\") + 1);
+      ClAdj.Options = Project.Options;
+      ClAdj.RawDatas = Project.RawDatas;
+      ClAdj.ObservedDatas = Project.ObservedDatas;
+      ClAdj.KnownPoints = Project.KnownPoints;
+      ClAdj.UnknownPoints = Project.UnknownPoints;
+      ClAdj.Calc_Params(false);
       // 获取所有文件
       FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
       foreach (var file in files) {
@@ -803,7 +809,7 @@ namespace LevelnetAdjustment {
 
     private void 生成观测手簿ToolStripMenuItem_Click(object sender, EventArgs e) {
       if (File.Exists(Project.Options.OutputFiles.Handbook)) {
-        if (MessageBox.Show("观测手簿已存在，是否重新导出？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+        if (MessageBox.Show("观测手簿已存在，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
           Process.Start(Project.Options.OutputFiles.Handbook);
           return;
         }
@@ -813,10 +819,10 @@ namespace LevelnetAdjustment {
       GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
       loading.ShowLoading();
       try {
-        ExceHelperl.ExportHandbook(ClAdj.RawDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
+        var path = ExceHelperl.ExportHandbook(ClAdj.RawDatas, Project.Options.OutputFiles.Handbook, ClAdj.Options.ImportFiles);
         loading.CloseWaitForm();
         if (MessageBox.Show("导出成功，是否查看？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-          Process.Start(Project.Options.OutputFiles.Handbook);
+          Process.Start(path);
       }
       catch (Exception ex) {
         loading.CloseWaitForm();
@@ -1155,9 +1161,46 @@ namespace LevelnetAdjustment {
         FilterIndex = 1,
       };
       if (openFile.ShowDialog() == DialogResult.OK) {
+        List<List<ExportHeight>> lists = new List<List<ExportHeight>>();
+        List<string> filenames = new List<string>();
+        //读取文本文件为list
         foreach (var item in openFile.FileNames) {
-
+          filenames.Add(Path.GetFileNameWithoutExtension(item));
+          lists.Add(FileHelper.readHeight(item));
         }
+        //求所有list的交集
+        List<ExportHeight> result = lists[0];
+        for (int i = 1; i < lists.Count; i++) {
+          result = result.Where(a => lists[i].Any(b => b.PointName.ToLower() == a.PointName.ToLower())).ToList();
+        }
+
+        //读取交集的各期数据
+        List<Comparison> comparisons = new List<Comparison>();
+        int period = lists.Count;
+        result.ForEach(t => {
+          Dictionary<string, double> dic = new Dictionary<string, double>();
+          for (int i = 0; i < period; i++) {
+            dic.Add($"Height_{i + 1}", lists[i].Find(p => p.PointName.ToLower() == t.PointName.ToLower()).Height);
+          }
+          dynamic dynamicComparison = new Comparison() { PointName = t.PointName, PeriodData = dic };
+          comparisons.Add(dynamicComparison);
+        });
+        MultiPeriodComparison multi = new MultiPeriodComparison() { Size = new Size((period + 2) * 120, 460) };
+        multi.dataGridView1.Columns.Add(DataGridHelper.TextBoxAdd("点名", "PointName"));
+        for (int i = 0; i < lists.Count; i++) {
+          multi.dataGridView1.Columns.Add(DataGridHelper.TextBoxAdd(filenames[i], $"Height_{i + 1}"));
+        }
+        multi.dataGridView1.Columns.Add(DataGridHelper.LinkAdd("趋势图", "Check", "查看"));
+        for (int i = 0; i < comparisons.Count; i++) {
+          int idx = multi.dataGridView1.Rows.Add();
+          multi.dataGridView1.Rows[idx].Cells[0].Value = comparisons[i].PointName;
+          var data = comparisons[i].PeriodData;
+          for (int j = 0; j < data.Count; j++) {
+            data.TryGetValue($"Height_{j + 1}", out double value);
+            multi.dataGridView1.Rows[idx].Cells[j + 1].Value = value;
+          }
+        }
+        multi.Show();
       }
     }
   }
