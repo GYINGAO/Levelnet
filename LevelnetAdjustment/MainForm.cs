@@ -257,7 +257,7 @@ namespace LevelnetAdjustment {
       // 获取所有文件
       FileInfo[] files = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(projname), "ExportFiles")).GetFiles();
       foreach (var file in files) {
-        if (!file.Extension.ToLower().Contains("ou")) {
+        if (!file.Extension.ToLower().Contains("txt")) {
           continue;
         }
         AddTabPage(file.FullName);  // 新建窗体同时新建一个标签

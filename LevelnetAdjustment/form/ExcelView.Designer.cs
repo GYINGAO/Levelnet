@@ -46,6 +46,7 @@
       // 
       // cboSheet
       // 
+      this.cboSheet.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cboSheet.FormattingEnabled = true;
       this.cboSheet.Location = new System.Drawing.Point(3, 3);
       this.cboSheet.Name = "cboSheet";
@@ -65,7 +66,6 @@
       this.dataGridView1.RowTemplate.Height = 23;
       this.dataGridView1.Size = new System.Drawing.Size(851, 474);
       this.dataGridView1.TabIndex = 1;
-
       // 
       // ExcelView
       // 
