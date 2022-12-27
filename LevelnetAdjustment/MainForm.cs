@@ -3,6 +3,7 @@ using LevelnetAdjustment.form;
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using SplashScreenDemo;
 using System;
 using System.Collections;
@@ -84,12 +85,16 @@ namespace LevelnetAdjustment {
       RankDefectNetworkDropItem.Image = Properties.Resources.自由;
       检查更新ToolStripMenuItem.Image = Properties.Resources.更新2;
       清空数据ToolStripMenuItem.Image = Properties.Resources.清空;
-
-
+      高程平差报表ToolStripMenuItem.Image = Properties.Resources.txt2;
+      高差平差报表ToolStripMenuItem.Image = Properties.Resources.txt2;
+      多期对比ToolStripMenuItem.Image = Properties.Resources.comparison;
+      eyesToolStripMenuItem.Image = Properties.Resources.eye_open;
 
       //部分按钮禁用
       水准仪数据预处理ToolStripMenuItem.Enabled = false;
       AdjToolStripMenuItem.Enabled = false;
+      高程平差报表ToolStripMenuItem.Enabled = false;
+      高差平差报表ToolStripMenuItem.Enabled = false;
 
 
       //添加最近打开的项目
@@ -515,19 +520,38 @@ namespace LevelnetAdjustment {
       if (idx != -1) {
         CloseTabPage(idx);
       }
-      FileView fv = new FileView(filename) {
-        MdiParent = this,//WindowState = FormWindowState.Maximized,
-        ShowIcon = false,
-        ShowInTaskbar = false,
-        Dock = DockStyle.Fill,
-        FormBorderStyle = FormBorderStyle.None,
-      };
-      fv.Show();
-      TabPage tp = new TabPage {
-        Tag = fv,  // 当前标签控制的窗体对象记录在Tag属性中
-        Text = fv.Text,
-        ToolTipText = fv.Text
-      };
+      TabPage tp;
+      var ext = Path.GetExtension(filename);
+      if (ext.Contains("xls")) {
+        ExcelView excel = new ExcelView(filename) {
+          MdiParent = this,//WindowState = FormWindowState.Maximized,
+          ShowIcon = false,
+          ShowInTaskbar = false,
+          Dock = DockStyle.Fill,
+          FormBorderStyle = FormBorderStyle.None,
+        };
+        excel.Show();
+        tp = new TabPage {
+          Tag = excel,  // 当前标签控制的窗体对象记录在Tag属性中
+          Text = excel.Text,
+          ToolTipText = excel.Text
+        };
+      }
+      else {
+        FileView fv = new FileView(filename) {
+          MdiParent = this,//WindowState = FormWindowState.Maximized,
+          ShowIcon = false,
+          ShowInTaskbar = false,
+          Dock = DockStyle.Fill,
+          FormBorderStyle = FormBorderStyle.None,
+        };
+        fv.Show();
+        tp = new TabPage {
+          Tag = fv,  // 当前标签控制的窗体对象记录在Tag属性中
+          Text = fv.Text,
+          ToolTipText = fv.Text
+        };
+      }
       tabControl1.TabPages.Add(tp);
       tabControl1.SelectedIndex = tabControl1.TabCount - 1;  // 默认选中最后一个新建的标签
       if (!tabControl1.Visible) tabControl1.Visible = true;  // 如果自己是隐藏的则显示自己
@@ -752,6 +776,8 @@ namespace LevelnetAdjustment {
         ConstraintNetworkDropItem.Enabled = true;
         RankDefectNetworkDropItem.Enabled = true;
       }
+      高程平差报表ToolStripMenuItem.Enabled = ClAdj.X?.RowCount > 0;
+      高差平差报表ToolStripMenuItem.Enabled = ClAdj.L?.Length > 0;
     }
 
     private void MainForm_DragEnter(object sender, DragEventArgs e) {
@@ -1201,6 +1227,15 @@ namespace LevelnetAdjustment {
           }
         }
         multi.Show();
+      }
+    }
+
+    private void 打开文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+      string basePath = string.IsNullOrEmpty(Project?.Path) ? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) : Path.Combine(Project.Path, Project.Name, "ExportFiles");
+      using (OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "All Files|*.*", InitialDirectory = basePath }) {
+        if (openFileDialog.ShowDialog() == DialogResult.OK) {
+          AddTabPage(openFileDialog.FileName);
+        }
       }
     }
   }

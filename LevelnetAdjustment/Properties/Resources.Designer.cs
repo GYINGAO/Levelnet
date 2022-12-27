@@ -133,9 +133,29 @@ namespace LevelnetAdjustment.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap comparison {
+            get {
+                object obj = ResourceManager.GetObject("comparison", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap excel_01 {
             get {
                 object obj = ResourceManager.GetObject("excel-01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap eye_open {
+            get {
+                object obj = ResourceManager.GetObject("eye_open", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,6 +216,16 @@ namespace LevelnetAdjustment.Properties {
         internal static System.Drawing.Bitmap TXT {
             get {
                 object obj = ResourceManager.GetObject("TXT", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap txt2 {
+            get {
+                object obj = ResourceManager.GetObject("txt2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

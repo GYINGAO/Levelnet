@@ -135,3 +135,6 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdju
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ChooseExport.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ChooseExportOb.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.MultiPeriodComparison.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Debug\ExcelDataReader.xml
+F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Debug\ExcelDataReader.DataSet.xml
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.ExcelView.resources

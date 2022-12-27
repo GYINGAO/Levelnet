@@ -67,13 +67,9 @@ namespace LevelnetAdjustment {
       this.高程平差报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.高差平差报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-      this.高程多期对比ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.多期对比ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.新建NToolStripButton = new System.Windows.Forms.ToolStripButton();
-      this.打开OToolStripButton = new System.Windows.Forms.ToolStripButton();
-      this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
       this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-      this.帮助LToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.helpProvider1 = new System.Windows.Forms.HelpProvider();
@@ -82,6 +78,11 @@ namespace LevelnetAdjustment {
       this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
+      this.eyesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.新建NToolStripButton = new System.Windows.Forms.ToolStripButton();
+      this.打开OToolStripButton = new System.Windows.Forms.ToolStripButton();
+      this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+      this.帮助LToolStripButton = new System.Windows.Forms.ToolStripButton();
       this.contextMenuStrip1.SuspendLayout();
       this.menuStrip1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
@@ -142,6 +143,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_open,
             this.NewDropItem,
             this.toolStripSeparator7,
+            this.eyesToolStripMenuItem,
             this.ExitDropItem});
       this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
       this.FileToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
@@ -154,7 +156,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear,
             this.toolStripSeparator1});
       this.toolStripMenuItem_open.Name = "toolStripMenuItem_open";
-      this.toolStripMenuItem_open.Size = new System.Drawing.Size(124, 22);
+      this.toolStripMenuItem_open.Size = new System.Drawing.Size(180, 22);
       this.toolStripMenuItem_open.Text = "打开项目";
       // 
       // toolStripMenuItem_choose
@@ -179,19 +181,19 @@ namespace LevelnetAdjustment {
       // NewDropItem
       // 
       this.NewDropItem.Name = "NewDropItem";
-      this.NewDropItem.Size = new System.Drawing.Size(124, 22);
+      this.NewDropItem.Size = new System.Drawing.Size(180, 22);
       this.NewDropItem.Text = "新建项目";
       this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
       // 
       // toolStripSeparator7
       // 
       this.toolStripSeparator7.Name = "toolStripSeparator7";
-      this.toolStripSeparator7.Size = new System.Drawing.Size(121, 6);
+      this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
       // 
       // ExitDropItem
       // 
       this.ExitDropItem.Name = "ExitDropItem";
-      this.ExitDropItem.Size = new System.Drawing.Size(124, 22);
+      this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
       this.ExitDropItem.Text = "退出";
       this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
       // 
@@ -387,7 +389,7 @@ namespace LevelnetAdjustment {
             this.高程平差报表ToolStripMenuItem,
             this.高差平差报表ToolStripMenuItem,
             this.toolStripMenuItem4,
-            this.高程多期对比ToolStripMenuItem});
+            this.多期对比ToolStripMenuItem});
       this.报表ToolStripMenuItem.Name = "报表ToolStripMenuItem";
       this.报表ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
       this.报表ToolStripMenuItem.Text = "报表";
@@ -395,28 +397,28 @@ namespace LevelnetAdjustment {
       // 高程平差报表ToolStripMenuItem
       // 
       this.高程平差报表ToolStripMenuItem.Name = "高程平差报表ToolStripMenuItem";
-      this.高程平差报表ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.高程平差报表ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
       this.高程平差报表ToolStripMenuItem.Text = "高程平差报表";
       this.高程平差报表ToolStripMenuItem.Click += new System.EventHandler(this.高程平差报表ToolStripMenuItem_Click);
       // 
       // 高差平差报表ToolStripMenuItem
       // 
       this.高差平差报表ToolStripMenuItem.Name = "高差平差报表ToolStripMenuItem";
-      this.高差平差报表ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.高差平差报表ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
       this.高差平差报表ToolStripMenuItem.Text = "高差平差报表";
       this.高差平差报表ToolStripMenuItem.Click += new System.EventHandler(this.高差平差报表ToolStripMenuItem_Click);
       // 
       // toolStripMenuItem4
       // 
       this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-      this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 6);
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(145, 6);
       // 
-      // 高程多期对比ToolStripMenuItem
+      // 多期对比ToolStripMenuItem
       // 
-      this.高程多期对比ToolStripMenuItem.Name = "高程多期对比ToolStripMenuItem";
-      this.高程多期对比ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-      this.高程多期对比ToolStripMenuItem.Text = "多期对比";
-      this.高程多期对比ToolStripMenuItem.Click += new System.EventHandler(this.高程多期对比ToolStripMenuItem_Click);
+      this.多期对比ToolStripMenuItem.Name = "多期对比ToolStripMenuItem";
+      this.多期对比ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+      this.多期对比ToolStripMenuItem.Text = "多期对比";
+      this.多期对比ToolStripMenuItem.Click += new System.EventHandler(this.高程多期对比ToolStripMenuItem_Click);
       // 
       // toolStrip1
       // 
@@ -433,50 +435,10 @@ namespace LevelnetAdjustment {
       this.toolStrip1.TabIndex = 5;
       this.toolStrip1.Text = "toolStrip1";
       // 
-      // 新建NToolStripButton
-      // 
-      this.新建NToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.新建NToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("新建NToolStripButton.Image")));
-      this.新建NToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.新建NToolStripButton.Name = "新建NToolStripButton";
-      this.新建NToolStripButton.Size = new System.Drawing.Size(23, 22);
-      this.新建NToolStripButton.Text = "新建项目(&N)";
-      this.新建NToolStripButton.Click += new System.EventHandler(this.新建NToolStripButton_Click);
-      // 
-      // 打开OToolStripButton
-      // 
-      this.打开OToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.打开OToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("打开OToolStripButton.Image")));
-      this.打开OToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.打开OToolStripButton.Name = "打开OToolStripButton";
-      this.打开OToolStripButton.Size = new System.Drawing.Size(23, 22);
-      this.打开OToolStripButton.Text = "打开项目(&O)";
-      this.打开OToolStripButton.Click += new System.EventHandler(this.打开OToolStripButton_Click);
-      // 
-      // toolStripButton1
-      // 
-      this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-      this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.toolStripButton1.Name = "toolStripButton1";
-      this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-      this.toolStripButton1.Text = "保存项目(&S)";
-      this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
-      // 
       // toolStripSeparator
       // 
       this.toolStripSeparator.Name = "toolStripSeparator";
       this.toolStripSeparator.Size = new System.Drawing.Size(6, 25);
-      // 
-      // 帮助LToolStripButton
-      // 
-      this.帮助LToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.帮助LToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("帮助LToolStripButton.Image")));
-      this.帮助LToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.帮助LToolStripButton.Name = "帮助LToolStripButton";
-      this.帮助LToolStripButton.Size = new System.Drawing.Size(23, 22);
-      this.帮助LToolStripButton.Text = "帮助(&L)";
-      this.帮助LToolStripButton.Click += new System.EventHandler(this.帮助LToolStripButton_Click);
       // 
       // tabControl1
       // 
@@ -538,6 +500,53 @@ namespace LevelnetAdjustment {
       // timer1
       // 
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+      // 
+      // eyesToolStripMenuItem
+      // 
+      this.eyesToolStripMenuItem.Name = "eyesToolStripMenuItem";
+      this.eyesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.eyesToolStripMenuItem.Text = "查看文件";
+      this.eyesToolStripMenuItem.Click += new System.EventHandler(this.打开文件ToolStripMenuItem_Click);
+      // 
+      // 新建NToolStripButton
+      // 
+      this.新建NToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.新建NToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("新建NToolStripButton.Image")));
+      this.新建NToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.新建NToolStripButton.Name = "新建NToolStripButton";
+      this.新建NToolStripButton.Size = new System.Drawing.Size(23, 22);
+      this.新建NToolStripButton.Text = "新建项目(&N)";
+      this.新建NToolStripButton.Click += new System.EventHandler(this.新建NToolStripButton_Click);
+      // 
+      // 打开OToolStripButton
+      // 
+      this.打开OToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.打开OToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("打开OToolStripButton.Image")));
+      this.打开OToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.打开OToolStripButton.Name = "打开OToolStripButton";
+      this.打开OToolStripButton.Size = new System.Drawing.Size(23, 22);
+      this.打开OToolStripButton.Text = "打开项目(&O)";
+      this.打开OToolStripButton.Click += new System.EventHandler(this.打开OToolStripButton_Click);
+      // 
+      // toolStripButton1
+      // 
+      this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+      this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton1.Name = "toolStripButton1";
+      this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+      this.toolStripButton1.Text = "保存项目(&S)";
+      this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+      // 
+      // 帮助LToolStripButton
+      // 
+      this.帮助LToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.帮助LToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("帮助LToolStripButton.Image")));
+      this.帮助LToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.帮助LToolStripButton.Name = "帮助LToolStripButton";
+      this.帮助LToolStripButton.Size = new System.Drawing.Size(23, 22);
+      this.帮助LToolStripButton.Text = "帮助(&L)";
+      this.帮助LToolStripButton.Click += new System.EventHandler(this.帮助LToolStripButton_Click);
       // 
       // MainForm
       // 
@@ -633,7 +642,8 @@ namespace LevelnetAdjustment {
     private System.Windows.Forms.ToolStripMenuItem 高程平差报表ToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem 高差平差报表ToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
-    private System.Windows.Forms.ToolStripMenuItem 高程多期对比ToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem 多期对比ToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem eyesToolStripMenuItem;
   }
 }
 
