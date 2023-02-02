@@ -3,18 +3,15 @@ using LevelnetAdjustment.form;
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
 using Newtonsoft.Json;
-using NPOI.SS.Formula.Functions;
 using SplashScreenDemo;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -907,18 +904,18 @@ namespace LevelnetAdjustment {
         //将Loaing窗口，注入到 SplashScreenManager 来管理
         GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
         loading.ShowLoading();
-        for (int i = ClAdj.Options.ImportFiles.Count - 1; i >= 0; i--) {
-          string ext = Path.GetExtension(ClAdj.Options.ImportFiles[i].FileName).ToLower();
-          if (ext.Contains("dat") || ext.Contains("gsi")) {
-            ClAdj.Options.ImportFiles.RemoveAt(i);
-          }
-        }
+        //for (int i = ClAdj.Options.ImportFiles.Count - 1; i >= 0; i--) {
+        //  string ext = Path.GetExtension(ClAdj.Options.ImportFiles[i].FileName).ToLower();
+        //  if (ext.Contains("dat") || ext.Contains("gsi")) {
+        //    ClAdj.Options.ImportFiles.RemoveAt(i);
+        //  }
+        //}
         try {
           var RawDatas = new List<RawData>();
           foreach (var item in openFile.FileNames) {
-            /* if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {
-                 continue;
-             }*/
+            if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {
+              continue;
+            }
             //把文件复制到项目文件夹中
             FileInfo fileInfo1 = new FileInfo(item);
             string targetPath = Path.Combine(Project.Path, Project.Name, "ImportFiles", Path.GetFileName(item));
@@ -939,8 +936,8 @@ namespace LevelnetAdjustment {
                 break;
             }
           }
-          // ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
-          ClAdj.RawDatas = RawDatas;
+          ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+          //ClAdj.RawDatas = RawDatas;
           loading.CloseWaitForm();
         }
         catch (Exception ex) {
@@ -1099,6 +1096,7 @@ namespace LevelnetAdjustment {
       }
       ClAdj.RawDatas.Clear();
       Project.RawDatas.Clear();
+      ClAdj.Options.ImportFiles.Clear();
       ClAdj.Options.ManualModification = new ManualModify();
       Project.Options.ManualModification = new ManualModify();
     }
