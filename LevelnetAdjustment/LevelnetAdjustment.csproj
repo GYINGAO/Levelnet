@@ -259,6 +259,18 @@
     <Compile Include="form\FrmModifyPointName.Designer.cs">
       <DependentUpon>FrmModifyPointName.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\FrmShowRawData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmShowRawData.Designer.cs">
+      <DependentUpon>FrmShowRawData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="form\FrmShowKnowPoint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmShowKnowPoint.Designer.cs">
+      <DependentUpon>FrmShowKnowPoint.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\FrmZDSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -345,6 +357,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="form\FrmModifyPointName.resx">
       <DependentUpon>FrmModifyPointName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmShowRawData.resx">
+      <DependentUpon>FrmShowRawData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmShowKnowPoint.resx">
+      <DependentUpon>FrmShowKnowPoint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\FrmZDSelect.resx">
       <DependentUpon>FrmZDSelect.cs</DependentUpon>

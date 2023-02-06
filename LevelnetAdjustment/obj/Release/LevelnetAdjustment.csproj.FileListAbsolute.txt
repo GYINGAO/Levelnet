@@ -130,3 +130,13 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAd
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.exe
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LNADJ.pdb
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmModifyPointName.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\ExcelDataReader.xml
+F:\编程\水准网平差程序\client\LevelnetAdjustment\bin\Release\ExcelDataReader.DataSet.xml
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.AssemblyReference.cache
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.csproj.SuggestedBindingRedirects.cache
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseExportOb.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ChooseExport.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.ExcelView.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.MultiPeriodComparison.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmShowKnowPoint.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Release\LevelnetAdjustment.form.FrmShowRawData.resources

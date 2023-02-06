@@ -936,9 +936,11 @@ namespace LevelnetAdjustment {
                 break;
             }
           }
-          ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
-          //ClAdj.RawDatas = RawDatas;
           loading.CloseWaitForm();
+          ClAdj.RawDatas = ClAdj?.RawDatas.Count != 0 ? Commom.Merge(ClAdj.RawDatas, RawDatas) : RawDatas;
+          FrmShowRawData frm = new FrmShowRawData(ClAdj.RawDatas);
+          frm.Show();
+          //ClAdj.RawDatas = RawDatas;
         }
         catch (Exception ex) {
           loading.CloseWaitForm();
@@ -1016,6 +1018,8 @@ namespace LevelnetAdjustment {
       if (openFile.ShowDialog() == DialogResult.OK) {
         ClAdj.KnownPoints = new List<PointData>();
         FileHelper.ReadKnPoints(openFile.FileName, ClAdj.KnownPoints);
+        FrmShowKnowPoint frm = new FrmShowKnowPoint(ClAdj.KnownPoints);
+        frm.ShowDialog();
       }
     }
 
