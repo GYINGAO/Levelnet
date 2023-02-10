@@ -25,7 +25,7 @@ namespace LevelnetAdjustment.model {
             CheakRawData = System.IO.Path.Combine(basePath, "观测数据检核.ou6"),
             COSADis = System.IO.Path.Combine(basePath, "平差文件.in1"),
             Handbook = System.IO.Path.Combine(basePath, "观测手簿.xls"),
-            ExportHeightPath = System.IO.Path.Combine(basePath, $"{Name}.txt"),
+            ExportHeightPath = System.IO.Path.Combine(basePath, "高程平差成果.txt"),
             ExportObPath = System.IO.Path.Combine(basePath, "高差平差成果.txt"),
           };
         }
@@ -49,7 +49,7 @@ namespace LevelnetAdjustment.model {
             CheakRawData = System.IO.Path.Combine(basePath, "观测数据检核.ou6"),
             COSADis = System.IO.Path.Combine(basePath, "平差文件.in1"),
             Handbook = System.IO.Path.Combine(basePath, "观测手簿.xls"),
-            ExportHeightPath = System.IO.Path.Combine(basePath, $"{value}.txt"),
+            ExportHeightPath = System.IO.Path.Combine(basePath, "高程平差成果.txt"),
             ExportObPath = System.IO.Path.Combine(basePath, "高差平差成果.txt"),
           };
         }

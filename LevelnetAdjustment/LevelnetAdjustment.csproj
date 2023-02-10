@@ -259,6 +259,12 @@
     <Compile Include="form\FrmModifyPointName.Designer.cs">
       <DependentUpon>FrmModifyPointName.cs</DependentUpon>
     </Compile>
+    <Compile Include="form\FrmNotFoundKnowPoint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="form\FrmNotFoundKnowPoint.Designer.cs">
+      <DependentUpon>FrmNotFoundKnowPoint.cs</DependentUpon>
+    </Compile>
     <Compile Include="form\FrmShowRawData.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -357,6 +363,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="form\FrmModifyPointName.resx">
       <DependentUpon>FrmModifyPointName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="form\FrmNotFoundKnowPoint.resx">
+      <DependentUpon>FrmNotFoundKnowPoint.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="form\FrmShowRawData.resx">
       <DependentUpon>FrmShowRawData.cs</DependentUpon>

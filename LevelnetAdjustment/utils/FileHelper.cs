@@ -34,7 +34,7 @@ namespace LevelnetAdjustment.utils {
             dataArray = Regex.Split(line, "(?:\\s*[,|，]\\s*)", RegexOptions.IgnoreCase); // 正则匹配逗号（允许空格）
             if (dataArray.Length == 2) {
               PointData knownPoint = new PointData {
-                Number = dataArray[0].TrimStart('0'),
+                Number = dataArray[0],
                 Height = double.Parse(dataArray[1])
               };
               knownPoints.Add(knownPoint);
@@ -44,8 +44,8 @@ namespace LevelnetAdjustment.utils {
                 continue;
               }
               ObservedData observedData = new ObservedData {
-                Start = dataArray[0].TrimStart('0'),
-                End = dataArray[1].TrimStart('0'),
+                Start = dataArray[0],
+                End = dataArray[1],
                 HeightDiff = double.Parse(dataArray[2]),
                 Distance = double.Parse(dataArray[3])
               };
@@ -145,7 +145,7 @@ namespace LevelnetAdjustment.utils {
               if (dats[dats.Count - 1].BackDis1 == 0) {
                 dats[dats.Count - 1].BackDiff1 = Convert.ToDouble(arr3[1]) * c1;
                 dats[dats.Count - 1].BackDis1 = Convert.ToDouble(arr4[1]) * c2;
-                dats[dats.Count - 1].BackPoint = arr2[1].TrimStart('0');
+                dats[dats.Count - 1].BackPoint = arr2[1];
               }
               else {
                 dats[dats.Count - 1].BackDiff2 = Convert.ToDouble(arr3[1]) * c1;
@@ -156,7 +156,7 @@ namespace LevelnetAdjustment.utils {
               if (dats[dats.Count - 1].FrontDis1 == 0) {
                 dats[dats.Count - 1].FrontDiff1 = Convert.ToDouble(arr3[1]) * c1;
                 dats[dats.Count - 1].FrontDis1 = Convert.ToDouble(arr4[1]) * c2;
-                dats[dats.Count - 1].FrontPoint = arr2[1].TrimStart('0');
+                dats[dats.Count - 1].FrontPoint = arr2[1];
               }
               else {
                 dats[dats.Count - 1].FrontDiff2 = Convert.ToDouble(arr3[1]) * c1;
@@ -224,13 +224,13 @@ namespace LevelnetAdjustment.utils {
             }
             switch (pointCode) {
               case "331":
-                rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
+                rds[rds.Count - 1].BackPoint = arr[0].Substring(arr[0].Length - 8, 8);
                 rds[rds.Count - 1].BackDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000; //转换为km
                 rds[rds.Count - 1].BackDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
                 stationIdx++;
                 break;
               case "332":
-                rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0'); ;
+                rds[rds.Count - 1].FrontPoint = arr[0].Substring(arr[0].Length - 8, 8); ;
                 rds[rds.Count - 1].FrontDis1 = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
                 rds[rds.Count - 1].FrontDiff1 = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
                 stationIdx++;
@@ -246,7 +246,7 @@ namespace LevelnetAdjustment.utils {
                 stationIdx++;
                 break;
               case "333":
-                rds[rds.Count - 1].MidPoint = arr[0].Substring(arr[0].Length - 8, 8).TrimStart('0');
+                rds[rds.Count - 1].MidPoint = arr[0].Substring(arr[0].Length - 8, 8);
                 rds[rds.Count - 1].MidDis = Convert2Double(arr[1].Substring(arr[1].Length - 9, 9)) / 1000;
                 rds[rds.Count - 1].MidNum = Convert2Double(arr[2].Substring(arr[2].Length - 9, 9));
                 rds[rds.Count - 1].GetMid();

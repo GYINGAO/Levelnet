@@ -90,13 +90,12 @@ namespace LevelnetAdjustment.form {
       int i = int.Parse(str[1]);
       int j = int.Parse(str[2]);
       if (ManualModification.ChangedStationLine[i][j].ToString().Trim() != textBox.Text) {
-        ChangedPoint point = new ChangedPoint {
-          Value = textBox.Text.Trim(),
-          ControlName = textBox.Name,
-        };
         var idx = ManualModification.ChangedPoints.FindIndex(p => p.ControlName == textBox.Name);
         if (idx == -1) {
-          ManualModification.ChangedPoints.Add(point);
+          ManualModification.ChangedPoints.Add(new ChangedPoint {
+            Value = textBox.Text.Trim(),
+            ControlName = textBox.Name,
+          });
         }
         else {
           ManualModification.ChangedPoints[idx].Value = textBox.Text;
@@ -161,10 +160,6 @@ namespace LevelnetAdjustment.form {
 
     }
 
-    private void button3_Click(object sender, EventArgs e) {
-      Close();
-    }
-
     private void 自动修改转点名ToolStripMenuItem_Click(object sender, EventArgs e) {
       int idx = 1;
       for (int i = 0; i < ManualModification.ChangedStationLine.Count; i++) {
@@ -172,8 +167,21 @@ namespace LevelnetAdjustment.form {
           if (ManualModification.ChangedStationLine[i][j].ToString().ToLower().Contains('z')) {
             string newName = $"Z{idx.ToString().PadLeft(3, '0')}";
             ManualModification.ChangedStationLine[i][j] = newName;
-            ((TextBox)(panel1.Controls.Find($"txt-{i}-{j}", false))[0]).Text = newName;
+            TextBox textBox = (TextBox)(panel1.Controls.Find($"txt-{i}-{j}", false))[0];
+            textBox.Text = newName;
             idx++;
+
+            /*//记录修改的点   
+            int idxFind = ManualModification.ChangedPoints.FindIndex(p => p.ControlName == textBox.Name);
+            if (idxFind == -1) {
+              ManualModification.ChangedPoints.Add(new ChangedPoint {
+                Value = textBox.Text.Trim(),
+                ControlName = textBox.Name,
+              });
+            }
+            else {
+              ManualModification.ChangedPoints[idx].Value = textBox.Text;
+            }*/
           }
         }
       }
