@@ -10,9 +10,13 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace LevelnetAdjustment.utils {
   public class ClevelingAdjust {
-    // 观测数据列表
+    /// <summary>
+    /// 观测数据列表
+    /// </summary>
     public List<ObservedData> ObservedDatas { get; set; }
-    // 已知点列表(点号，高程)
+    /// <summary>
+    /// 已知点列表(点号，高程)
+    /// </summary>
     private List<PointData> knownPoints;
     public List<PointData> KnownPoints {
       get => knownPoints;
@@ -30,43 +34,137 @@ namespace LevelnetAdjustment.utils {
     }
 
     public List<PointData> KnownPointEable { get; set; }
-    // 所有点的信息(点号，高程)
-    public List<PointData> UnknownPoints { get; set; } = new List<PointData>();// 定义列表存储近似高程(点号，高程)
-                                                                               //public ArrayList UnknownPoints_array { get; set; } = new ArrayList();// 未知点点号数组
-    public List<ObservedData> ObservedDatasNoRep { get; set; } = new List<ObservedData>();// 去除重复边的观测数据
-    public List<ObservedDataWF> ObservedDataWFs { get; set; } = new List<ObservedDataWF>();//测段往返测
+    /// <summary>
+    /// 所有点的信息(点号，高程)
+    /// 定义列表存储近似高程(点号，高程)
+    /// </summary>
+    public List<PointData> UnknownPoints { get; set; } = new List<PointData>();
+    /// <summary>
+    /// 去除重复边的观测数据
+    /// </summary>
+    public List<ObservedData> ObservedDatasNoRep { get; set; } = new List<ObservedData>();
+    /// <summary>
+    /// 测段往返测
+    /// </summary>
+    public List<ObservedDataWF> ObservedDataWFs { get; set; } = new List<ObservedDataWF>();
+    /// <summary>
+    /// 所有点
+    /// </summary>
     public List<PointData> AllPoints { get; set; } = new List<PointData>();
-    public List<RawData> RawDatas { get; set; } = new List<RawData>();// 原始观测数据
-    public List<Closure> Closures { get; set; } //闭合差
-    public int N { get; set; } = 0;// 观测数
-    public int T { get; set; } = 0;// 必要观测数
-    public int R { get; set; } = 0;// 多余观测数
-    public int M { get; set; } = 0;//总点数
-    public int KnPnumber { get; set; } = 0; //已知点数
-    public Matrix<double> P { get; set; }//权阵
-    public Matrix<double> B { get; set; }//误差方程系数阵
-    public Matrix<double> l { get; set; }//误差方程常数项
-    public Matrix<double> NBB { get; set; }//法方程系数阵
-    public Matrix<double> W { get; set; }//法方程常数项
-    public Matrix<double> x { get; set; }//高程改正数
-    public Matrix<double> X { get; set; }//高程真实值
-    public Matrix<double> V { get; set; }//观测值改正数
+    /// <summary>
+    /// 原始观测数据
+    /// </summary>
+    public List<RawData> RawDatas { get; set; } = new List<RawData>();
+    /// <summary>
+    /// 闭合差
+    /// </summary>
+    public List<Closure> Closures { get; set; }
+    /// <summary>
+    /// 观测数
+    /// </summary>
+    public int N { get; set; } = 0;
+    /// <summary>
+    /// 必要观测数
+    /// </summary>
+    public int T { get; set; } = 0;
+    /// <summary>
+    /// 多余观测数
+    /// </summary>
+    public int R { get; set; } = 0;
+    /// <summary>
+    /// 总点数
+    /// </summary>
+    public int M { get; set; } = 0;
+    /// <summary>
+    /// 已知点数
+    /// </summary>
+    public int KnPnumber { get; set; } = 0;
+    /// <summary>
+    /// 权阵
+    /// </summary>
+    public Matrix<double> P { get; set; }
+    /// <summary>
+    /// 误差方程系数阵
+    /// </summary>
+    public Matrix<double> B { get; set; }
+    /// <summary>
+    /// 误差方程常数项
+    /// </summary>
+    public Matrix<double> l { get; set; }
+    /// <summary>
+    /// 法方程系数阵
+    /// </summary>
+    public Matrix<double> NBB { get; set; }
+    /// <summary>
+    /// 法方程常数项
+    /// </summary>
+    public Matrix<double> W { get; set; }
+    /// <summary>
+    /// 高程改正数
+    /// </summary>
+    public Matrix<double> x { get; set; }
+    /// <summary>
+    /// 高程真实值
+    /// </summary>
+    public Matrix<double> X { get; set; }
+    /// <summary>
+    /// 观测值改正数
+    /// </summary>
+    public Matrix<double> V { get; set; }
     public Matrix<double> VTPV { get; set; }
-    public Matrix<double> Qxx { get; set; }//未知数协因数矩阵
-    public Matrix<double> x_total { get; set; }//高程累计改正量
-    public Matrix<double> V_total { get; set; }//观测值累计改正量
-    public Matrix<double> Qll { get; set; }//观测值协因数矩阵
-    public Matrix<double> Qvv { get; set; }//改正数协因数矩阵
+    /// <summary>
+    /// 未知数协因数矩阵
+    /// </summary>
+    public Matrix<double> Qxx { get; set; }
+    /// <summary>
+    /// 高程累计改正量
+    /// </summary>
+    public Matrix<double> x_total { get; set; }
+    /// <summary>
+    /// 观测值累计改正量
+    /// </summary>
+    public Matrix<double> V_total { get; set; }
+    /// <summary>
+    /// 观测值协因数矩阵
+    /// </summary>
+    public Matrix<double> Qll { get; set; }
+    /// <summary>
+    /// 改正数协因数矩阵
+    /// </summary>
+    public Matrix<double> Qvv { get; set; }
     public Matrix<double> RR { get; set; }
-    public double PVV { get; set; } //观测值残差
-    public double[] L { get; set; } //真实观测值
-    public double[] Mh_P { get; set; } //高差中误差
-    public double[] Mh_L { get; set; } //观测值中误差
-    public double Mu { get; set; } //验后单位权中误差       
-    public double TotalDistence { get; set; } = 0; //观测总距离
-
-    public Option Options { get; set; } = new Option();  //设置与选项
-    public ArrayList Threshold { get; set; } = new ArrayList(); //观测值残差阈值
+    /// <summary>
+    /// 观测值残差
+    /// </summary>
+    public double PVV { get; set; }
+    /// <summary>
+    /// 真实观测值
+    /// </summary>
+    public double[] L { get; set; }
+    /// <summary>
+    /// 高差中误差
+    /// </summary>
+    public double[] Mh_P { get; set; }
+    /// <summary>
+    /// 观测值中误差
+    /// </summary>
+    public double[] Mh_L { get; set; }
+    /// <summary>
+    /// 验后单位权中误差 
+    /// </summary>
+    public double Mu { get; set; }
+    /// <summary>
+    /// 观测总距离
+    /// </summary>
+    public double TotalDistence { get; set; } = 0;
+    /// <summary>
+    /// 设置与选项
+    /// </summary>
+    public Option Options { get; set; } = new Option();
+    /// <summary>
+    /// 观测值残差阈值
+    /// </summary>
+    public ArrayList Threshold { get; set; } = new ArrayList();
     public ClevelingAdjust() {
       ObservedDatas = new List<ObservedData>();
       KnownPoints = new List<PointData>();
@@ -1011,9 +1109,10 @@ namespace LevelnetAdjustment.utils {
     /// <returns></returns>
     public void CalcThreshold() {
       Threshold = new ArrayList();
-      var s = Options.UnitRight == 0 ? Options.Sigma : Mu;
+      //double s = Options.UnitRight == 0 ? Options.Sigma : Mu;
+      double s = Mu;
       for (int i = 0; i < RR.RowCount; i++) {
-        if (RR[i, i] == 0) {
+        if (RR[i, i] == 1) {
           Threshold.Add(Options.AlphaLimit * s * Math.Sqrt(Qvv[i, i]));
         }
         else {
@@ -1027,8 +1126,9 @@ namespace LevelnetAdjustment.utils {
     /// 返回警示等级
     /// </summary>
     int StartNumber(int i) {
-      var s = Options.UnitRight == 0 ? Options.Sigma : Mu;
-      var wi = V[i, 0] / (s * Math.Sqrt(Qvv[i, i]));
+      //double s = Options.UnitRight == 0 ? Options.Sigma : Mu;
+      double s = Mu;
+      double wi = V[i, 0] / (s * Math.Sqrt(Qvv[i, i]));
       if (wi < Options.AlphaLimit)
         return 0;
       if (wi > Options.AlphaLimit && wi < 10)
