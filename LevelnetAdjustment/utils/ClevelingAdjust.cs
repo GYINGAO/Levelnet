@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace LevelnetAdjustment.utils {
@@ -132,6 +133,7 @@ namespace LevelnetAdjustment.utils {
     /// 改正数协因数矩阵
     /// </summary>
     public Matrix<double> Qvv { get; set; }
+    public Matrix<double> Q { get; set; }
     public Matrix<double> RR { get; set; }
     /// <summary>
     /// 观测值残差
@@ -165,6 +167,10 @@ namespace LevelnetAdjustment.utils {
     /// 观测值残差阈值
     /// </summary>
     public ArrayList Threshold { get; set; } = new ArrayList();
+    /// <summary>
+    /// 警示等级
+    /// </summary>
+    public ArrayList WarningLevel { get; set; } = new ArrayList();
     public ClevelingAdjust() {
       ObservedDatas = new List<ObservedData>();
       KnownPoints = new List<PointData>();
@@ -413,11 +419,13 @@ namespace LevelnetAdjustment.utils {
       }
 
       // 求观测值协因数矩阵
-      Qll = P.Inverse();
+      Q = P.Inverse();
 
-      Qvv = Qll - B * NBB.Inverse() * B.Transpose();
+      Qll = B * NBB.Inverse() * B.Transpose();
 
-      RR = Qvv * P;
+      Qvv = Q - Qll;
+
+      RR = CalcRR();
     }
 
     /// <summary>
@@ -509,10 +517,10 @@ namespace LevelnetAdjustment.utils {
       sb.AppendLine(split);
       sb.AppendLine(space + "观测值平差值及其精度");
       sb.AppendLine(split);
-      sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"距离/km",-9}{"高差平差值/m",-9}{"中误差/mm",-8}{"多余观测分量",-8}{"改正数/mm",-8}{"阈值/mm",-6}{"警示",-8}");
+      sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"距离/km",-9}{"高差平差值/m",-9}{"中误差/mm",-8}{"多余观测分量",-8}{"改正数/mm",-8}{"阈值/mm",-8}{"警示",-8}");
       sb.AppendLine(split);
       for (int i = 0; i < N; i++) {
-        sb.AppendLine($"{i + 1,-7}{ObservedDatasNoRep[i].Start,-10}{ObservedDatasNoRep[i].End,-10}{ObservedDatasNoRep[i].Distance,-11:#0.0000}{L[i],-15:#0.00000}{Mh_L[i],-12:#0.00}{RR[i, i],-12:#0.000}{V[i, 0] * 1000,-11:#0.000}{Convert.ToDouble(Threshold[i]),-9:#0.000}{new string('*', StartNumber(i)),-8}");
+        sb.AppendLine($"{i + 1,-7}{ObservedDatasNoRep[i].Start,-10}{ObservedDatasNoRep[i].End,-10}{ObservedDatasNoRep[i].Distance,-11:#0.0000}{L[i],-15:#0.00000}{Mh_L[i],-12:#0.00}{RR[i, i],-12:#0.000}{V[i, 0] * 1000,-11:#0.000}{Convert.ToDouble(Threshold[i]),-11:#0.000}{new string('*', Convert.ToInt32(WarningLevel[i]))}");
       }
       sb.AppendLine(split);
       sb.AppendLine(space + "    水准网总体信息");
@@ -990,7 +998,7 @@ namespace LevelnetAdjustment.utils {
       // 求观测值协因数矩阵
       Qll = P.Inverse();
       Qvv = Qll - B * NBB.Inverse() * B.Transpose();
-      RR = Qvv * P;
+      RR = CalcRR();
       Calc_PVV();
       Mu = Math.Sqrt(PVV / (R - 1));
 
@@ -1069,7 +1077,7 @@ namespace LevelnetAdjustment.utils {
 
       Qvv = Qll - B * NBB.Inverse() * B.Transpose();
 
-      RR = Qvv * P;
+      RR = CalcRR();
 
       Calc_PVV();
       Mu = Math.Sqrt(PVV / (R - 1));
@@ -1108,33 +1116,60 @@ namespace LevelnetAdjustment.utils {
     /// </summary>
     /// <returns></returns>
     public void CalcThreshold() {
-      Threshold = new ArrayList();
+      Threshold.Clear();
+      WarningLevel.Clear();
       //double s = Options.UnitRight == 0 ? Options.Sigma : Mu;
       double s = Mu;
       for (int i = 0; i < RR.RowCount; i++) {
-        if (RR[i, i] == 1) {
-          Threshold.Add(Options.AlphaLimit * s * Math.Sqrt(Qvv[i, i]));
+        double t, max, c;
+        c = Mh_L[i] * Math.Sqrt(RR[i, i]);
+        t = Options.AlphaLimit * c;
+        max = 9.9 * c;
+        /*if (RR[i, i] == 0) {
+          c = s * Math.Sqrt(Qvv[i, i]);
+          t = Options.AlphaLimit * c;
+          max = 9.9 * c;
         }
         else {
-          Threshold.Add(Options.AlphaLimit * Mh_L[i] * Math.Sqrt(RR[i, i]));
+          c = Mh_L[i] * Math.Sqrt(RR[i, i]);
+          t = Options.AlphaLimit * c;
+          max = 9.9 * c;
+        }*/
+        if (i>132) {
+          Console.WriteLine(1);
         }
+        Threshold.Add(t);
+        WarningLevel.Add(StartNumber(V[i, 0], t, max));
       }
-
     }
 
     /// <summary>
     /// 返回警示等级
     /// </summary>
-    int StartNumber(int i) {
-      //double s = Options.UnitRight == 0 ? Options.Sigma : Mu;
-      double s = Mu;
-      double wi = V[i, 0] / (s * Math.Sqrt(Qvv[i, i]));
-      if (wi < Options.AlphaLimit)
+    /// <param name="v">改正数</param>
+    /// <param name="a">一星警示值</param>
+    /// <param name="b">三星警示值</param>
+    /// <returns></returns>
+    int StartNumber(double v, double a, double b) {
+      double absV = Math.Abs(v) * 1000;
+      if (absV < a)
         return 0;
-      if (wi > Options.AlphaLimit && wi < 10)
+      else if (absV > a && absV < b)
         return 1;
       else
         return 3;
+    }
+
+    /// <summary>
+    /// 计算平差因子
+    /// </summary>
+    /// <returns></returns>
+    public Matrix<double> CalcRR() {
+      /*Matrix<double> J = B * NBB.Inverse() * B.Transpose() * P;
+      return Matrix<double>.Build.DenseIdentity(J.RowCount) - J;*/
+
+      Matrix<double> J = Qvv * P;
+      return Matrix<double>.Build.DenseIdentity(J.RowCount) - J;
     }
   }
 }
