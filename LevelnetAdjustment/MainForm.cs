@@ -1044,6 +1044,7 @@ namespace LevelnetAdjustment {
         ExportHeight height = new ExportHeight() {
           PointName = p.Number,
           Height = ClAdj.X[i, 0],
+          RMSE = ClAdj.Mh_P[i]
         };
         if (p.Number.StartsWith("z", true, null)) {
           height.IsExport = false;
@@ -1061,12 +1062,12 @@ namespace LevelnetAdjustment {
 
     private void Export_TransfEvent(List<ExportHeight> lists) {
       StringBuilder sb = new StringBuilder();
-      sb.AppendLine($"{"序号",-8}{"点名",-10}{"高程/m",-11}");
+      sb.AppendLine($"{"序号",-8}{"点名",-10}{"高程/m",-11}{"中误差/mm"}");
       int i = 0;
       lists.ForEach(p => {
         if (p.IsExport) {
           i++;
-          sb.AppendLine($"{i,-9}{p.PointName,-12}{p.Height,-11:#0.00000}");
+          sb.AppendLine($"{i,-9}{p.PointName,-12}{p.Height,-15:#0.00000}{p.RMSE,-11:#0.00}");
         }
       });
 

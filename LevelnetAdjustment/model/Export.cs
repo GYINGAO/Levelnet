@@ -5,6 +5,10 @@ namespace LevelnetAdjustment.model {
   public class ExportHeight {
     public string PointName { get; set; }
     public double Height { get; set; }
+    /// <summary>
+    /// 中误差
+    /// </summary>
+    public double RMSE { get; set; }
     public bool IsExport { get; set; } = true;
   }
 

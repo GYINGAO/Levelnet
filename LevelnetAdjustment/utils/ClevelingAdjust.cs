@@ -275,10 +275,8 @@ namespace LevelnetAdjustment.utils {
         }
         if (idx == 5) {
           idx = 0;
-          if (count == UnknownPoints.Count) {
-            KnownPoints.Clear();
-            ObservedDatas.Clear();
-            throw new Exception("无法计算未知点近似高程\r\n请检查已知点或者观测文件");
+          if (count == UnknownPoints.Count) {           
+            throw new Exception("无法计算未知点近似高程\r                         请检查已知点或者观测文件");
           }
         }
       }

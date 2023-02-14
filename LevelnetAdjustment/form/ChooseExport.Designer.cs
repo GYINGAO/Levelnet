@@ -23,8 +23,9 @@
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
       this.dataGridView1 = new System.Windows.Forms.DataGridView();
       this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -32,6 +33,7 @@
       this.button2 = new System.Windows.Forms.Button();
       this.PointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Height = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.RMSE = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.IsExport = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.tableLayoutPanel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -65,12 +67,13 @@
       this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.PointName,
             this.Height,
+            this.RMSE,
             this.IsExport});
       this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView1.Location = new System.Drawing.Point(3, 3);
       this.dataGridView1.Name = "dataGridView1";
-      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridView1.RowTemplate.Height = 23;
       this.dataGridView1.Size = new System.Drawing.Size(403, 425);
       this.dataGridView1.TabIndex = 0;
@@ -130,6 +133,15 @@
       this.Height.HeaderText = "高程/m";
       this.Height.Name = "Height";
       // 
+      // RMSE
+      // 
+      this.RMSE.DataPropertyName = "RMSE";
+      dataGridViewCellStyle2.Format = "N2";
+      dataGridViewCellStyle2.NullValue = "-";
+      this.RMSE.DefaultCellStyle = dataGridViewCellStyle2;
+      this.RMSE.HeaderText = "中误差";
+      this.RMSE.Name = "RMSE";
+      // 
       // IsExport
       // 
       this.IsExport.DataPropertyName = "IsExport";
@@ -162,6 +174,7 @@
     public System.Windows.Forms.DataGridView dataGridView1;
     private System.Windows.Forms.DataGridViewTextBoxColumn PointName;
     private System.Windows.Forms.DataGridViewTextBoxColumn Height;
+    private System.Windows.Forms.DataGridViewTextBoxColumn RMSE;
     private System.Windows.Forms.DataGridViewCheckBoxColumn IsExport;
   }
 }

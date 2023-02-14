@@ -48,7 +48,11 @@ namespace LevelnetAdjustment.form {
 
     private void button1_Click(object sender, EventArgs e) {
       TransfChangeKnownPoint(Points);
-      this.Close();
+      Close();
+    }
+
+    private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e) {
+
     }
   }
 }

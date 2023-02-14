@@ -61,6 +61,7 @@ namespace LevelnetAdjustment.form {
       this.dataGridView1.RowTemplate.Height = 23;
       this.dataGridView1.Size = new System.Drawing.Size(403, 425);
       this.dataGridView1.TabIndex = 12;
+      this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
       this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
       // 
       // Number
