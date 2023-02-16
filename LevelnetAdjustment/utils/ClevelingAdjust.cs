@@ -275,7 +275,7 @@ namespace LevelnetAdjustment.utils {
         }
         if (idx == 5) {
           idx = 0;
-          if (count == UnknownPoints.Count) {           
+          if (count == UnknownPoints.Count) {
             throw new Exception("无法计算未知点近似高程\r                         请检查已知点或者观测文件");
           }
         }
@@ -399,31 +399,8 @@ namespace LevelnetAdjustment.utils {
 
       // 观测值残差PVV
       Calc_PVV();
-
-      // 求未知数的协因数阵
-      Qxx = NBB.Inverse();
-      // 求高程平差值中误差
-      Mh_P = new double[M];
-      for (int i = 0; i < M; i++) {
-        Mh_P[i] = Math.Sqrt(Qxx[i, i]) * Mu;
-      }
-
-      // 求高差平差值中误差
-      Mh_L = new double[N];
-      for (int i = 0; i < N; i++) {
-        var startIdx = ObservedDatasNoRep[i].StartIndex;
-        var endIdx = ObservedDatasNoRep[i].EndIndex;
-        Mh_L[i] = Math.Sqrt(Qxx[startIdx, startIdx] + Qxx[endIdx, endIdx] - 2 * Qxx[startIdx, endIdx]) * Mu;
-      }
-
-      // 求观测值协因数矩阵
-      Q = P.Inverse();
-
-      Qll = B * NBB.Inverse() * B.Transpose();
-
-      Qvv = Q - Qll;
-
-      RR = CalcRR();
+      CalcQ();
+      CalcRR();
     }
 
     /// <summary>
@@ -992,11 +969,11 @@ namespace LevelnetAdjustment.utils {
           Qxx[i, j] = NBB[i, j] - 1.0 / SpNumber;
         }
       }
-
       // 求观测值协因数矩阵
-      Qll = P.Inverse();
-      Qvv = Qll - B * NBB.Inverse() * B.Transpose();
-      RR = CalcRR();
+      Q = P.Inverse();
+      Qll = B * NBB.Inverse() * B.Transpose();
+      Qvv = Q - Qll;
+      CalcRR();
       Calc_PVV();
       Mu = Math.Sqrt(PVV / (R - 1));
 
@@ -1071,11 +1048,13 @@ namespace LevelnetAdjustment.utils {
         }
       }
       // 求观测值协因数矩阵
-      Qll = P.Inverse();
+      Q = P.Inverse();
 
-      Qvv = Qll - B * NBB.Inverse() * B.Transpose();
+      Qll = B * NBB.Inverse() * B.Transpose();
 
-      RR = CalcRR();
+      Qvv = Q - Qll;
+
+      CalcRR();
 
       Calc_PVV();
       Mu = Math.Sqrt(PVV / (R - 1));
@@ -1133,9 +1112,6 @@ namespace LevelnetAdjustment.utils {
           t = Options.AlphaLimit * c;
           max = 9.9 * c;
         }*/
-        if (i>132) {
-          Console.WriteLine(1);
-        }
         Threshold.Add(t);
         WarningLevel.Add(StartNumber(V[i, 0], t, max));
       }
@@ -1162,12 +1138,37 @@ namespace LevelnetAdjustment.utils {
     /// 计算平差因子
     /// </summary>
     /// <returns></returns>
-    public Matrix<double> CalcRR() {
+    public void CalcRR() {
       /*Matrix<double> J = B * NBB.Inverse() * B.Transpose() * P;
       return Matrix<double>.Build.DenseIdentity(J.RowCount) - J;*/
 
-      Matrix<double> J = Qvv * P;
-      return Matrix<double>.Build.DenseIdentity(J.RowCount) - J;
+      /*Matrix<double> J = Qvv * P;
+      return Matrix<double>.Build.DenseIdentity(J.RowCount) - J;*/
+
+      RR = Qvv * P;
+    }
+
+    public void CalcQ() {
+      // 求未知数的协因数阵
+      Qxx = NBB.Inverse();
+      // 求高程平差值中误差
+      Mh_P = new double[M];
+      for (int i = 0; i < M; i++) {
+        Mh_P[i] = Math.Sqrt(Qxx[i, i]) * Mu;
+      }
+      // 求高差平差值中误差
+      Mh_L = new double[N];
+      for (int i = 0; i < N; i++) {
+        var startIdx = ObservedDatasNoRep[i].StartIndex;
+        var endIdx = ObservedDatasNoRep[i].EndIndex;
+        Mh_L[i] = Math.Sqrt(Qxx[startIdx, startIdx] + Qxx[endIdx, endIdx] - 2 * Qxx[startIdx, endIdx]) * Mu;
+      }
+      // 求观测值协因数矩阵
+      Q = P.Inverse();
+
+      Qll = B * NBB.Inverse() * B.Transpose();
+
+      Qvv = Q - Qll;
     }
   }
 }

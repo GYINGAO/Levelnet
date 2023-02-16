@@ -2,6 +2,8 @@
 using LevelnetAdjustment.form;
 using LevelnetAdjustment.model;
 using LevelnetAdjustment.utils;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Complex;
 using Newtonsoft.Json;
 using SplashScreenDemo;
 using System;
@@ -1230,6 +1232,29 @@ namespace LevelnetAdjustment {
     }
 
     #endregion
+
+    private void testToolStripMenuItem_Click(object sender, EventArgs e) {
+      /*double[] a = { 1, 0, 0, 1, 0, 0, -1, 0, 1, 0, 0, -1, 0, -1, 1, -1, 1, 0, 0, 1, 0 };
+      Matrix<double> A = Matrix<double>.Build.DenseOfRowMajor(7, 3, a);
+      Matrix<double> P = Matrix<double>.Build.DenseOfDiagonalArray(new[] { 2.0, 2, 1, 1, 1, 1, 2 });
+      Matrix<double> N = A.Transpose() * P * A;
+      Matrix<double> Qxx = N.Inverse();
+      Matrix<double> Qll = A * Qxx * A.Transpose();
+      Matrix<double> Q = P.Inverse();
+      Matrix<double> Qvv = Q - Qll;
+      Matrix<double> R = Qvv * P;
+      for (int i = 0; i < R.RowCount; i++) {
+        Console.WriteLine(R[i, i]);
+      }
+      Console.WriteLine();*/
+
+
+      double r = 0;
+      for (int i = 0; i < ClAdj.RR.RowCount; i++) {
+        r += ClAdj.RR[i, i];
+      }
+      Console.WriteLine(r);
+    }
   }
 }
 
