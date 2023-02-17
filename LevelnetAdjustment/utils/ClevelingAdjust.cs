@@ -247,7 +247,7 @@ namespace LevelnetAdjustment.utils {
       if (UnknownPoints != null && UnknownPoints.Count > 0 && !force) {
         return;
       }
-      AllPoints = Commom.Clone(KnownPointEable);
+      List<PointData> AllPointsCopy = Commom.Clone(KnownPointEable);
       int count = 0;
       int idx = 0;
       // 如果未知点近似高程未计算完，重复循环
@@ -255,19 +255,19 @@ namespace LevelnetAdjustment.utils {
         idx++;
         ObservedDatasNoRep.ForEach(item => {
           //在已知点里面分别查找起点和终点
-          var startIndex = AllPoints.FindIndex(p => p.Number.ToLower() == item.Start.ToLower());
-          var endIndex = AllPoints.FindIndex(p => p.Number.ToLower() == item.End.ToLower());
+          var startIndex = AllPointsCopy.FindIndex(p => p.Number.ToLower() == item.Start.ToLower());
+          var endIndex = AllPointsCopy.FindIndex(p => p.Number.ToLower() == item.End.ToLower());
           //如果起点是已知点，终点是未知点
           if (startIndex != -1 && endIndex == -1) {
             var p = UnknownPoints.Find(t => t.Number == item.End);
-            p.Height = AllPoints[startIndex].Height + item.HeightDiff;
-            AllPoints.Add(p);
+            p.Height = AllPointsCopy[startIndex].Height + item.HeightDiff;
+            AllPointsCopy.Add(p);
           }
           //如果终点是已知点，起点是未知点
           if (endIndex != -1 && startIndex == -1) {
             var p = UnknownPoints.Find(t => t.Number == item.Start);
-            p.Height = AllPoints[endIndex].Height - item.HeightDiff;
-            AllPoints.Add(p);
+            p.Height = AllPointsCopy[endIndex].Height - item.HeightDiff;
+            AllPointsCopy.Add(p);
           }
         });
         if (idx == 1) {
@@ -287,6 +287,8 @@ namespace LevelnetAdjustment.utils {
           UnknownPoint_new.Add(UnknownPoints.Find(p => p.Number == UnknownPoints_array[i].ToString()));
       }
       UnknownPoints = UnknownPoint_new;*/
+
+      AllPoints = Commom.Merge(KnownPointEable, UnknownPoints);
     }
 
     /// <summary>

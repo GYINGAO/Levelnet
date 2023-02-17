@@ -69,7 +69,8 @@ namespace LevelnetAdjustment.utils {
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
-    internal static void ReadDAT(List<RawData> dats, string filename) {
+    internal static int ReadDAT(List<RawData> dats, string filename) {
+      int maxPointNameLength = 0;
       string[] method1 = { "bffb", "bfbf", "fbbf", "abffb", "abfbf", "abf", "bf" };
       string[] method2 = { "bbff", "ffbb" };
       int ct = dats.Count;
@@ -103,7 +104,7 @@ namespace LevelnetAdjustment.utils {
             //判断是否已经增加了一个测站，如果是，移除
             if (stationIdx != 0) {
               dats.RemoveAt(dats.Count - 1);//移除最后一站
-              dats.Add(new RawData());
+              dats.Add(new RawData() { DataType = DataTypeEnum.DAT });
               stationIdx = 0;
             }
             continue;
@@ -122,7 +123,7 @@ namespace LevelnetAdjustment.utils {
             }
             stationIdx++;
             if (stationIdx == 1) {
-              dats.Add(new RawData());
+              dats.Add(new RawData() { DataType = DataTypeEnum.DAT });
               stationNum++;
             }
             var arr3 = Regex.Split(str3, "[\\s]+", RegexOptions.IgnoreCase);
@@ -157,6 +158,7 @@ namespace LevelnetAdjustment.utils {
                 dats[dats.Count - 1].FrontDiff1 = Convert.ToDouble(arr3[1]) * c1;
                 dats[dats.Count - 1].FrontDis1 = Convert.ToDouble(arr4[1]) * c2;
                 dats[dats.Count - 1].FrontPoint = arr2[1];
+                maxPointNameLength = arr2[1].Length > maxPointNameLength ? arr2[1].Length : maxPointNameLength;
               }
               else {
                 dats[dats.Count - 1].FrontDiff2 = Convert.ToDouble(arr3[1]) * c1;
@@ -181,6 +183,7 @@ namespace LevelnetAdjustment.utils {
       }
       dats[ct].IsFileStart = true;
       dats[dats.Count - 1].IsFileFinish = true;
+      return maxPointNameLength;
     }
 
     /// <summary>
@@ -220,7 +223,7 @@ namespace LevelnetAdjustment.utils {
             // 331后视1 332前视1 335后视2 336前视2 32视距
             var pointCode = arr[2].Substring(0, 3);
             if (pointCode != "333" && (rds.Count == 0 || (stationIdx == 0 && rds[rds.Count - 1].BackDis1 != 0))) {
-              rds.Add(new RawData());
+              rds.Add(new RawData() { DataType = DataTypeEnum.GSI });
             }
             switch (pointCode) {
               case "331":

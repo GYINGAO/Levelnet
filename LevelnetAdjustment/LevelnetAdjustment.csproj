@@ -307,6 +307,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="model\Enum.cs" />
     <Compile Include="model\Export.cs" />
     <Compile Include="model\PointData.cs" />
     <Compile Include="model\Closure.cs" />

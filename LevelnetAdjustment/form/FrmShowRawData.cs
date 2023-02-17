@@ -13,6 +13,7 @@ namespace LevelnetAdjustment.form {
     public List<RawData> AddRawDatas { get; set; } = new List<RawData>();
     public ProjectInfo Project { get; set; }
     public string[] FileNames { get; set; }
+    public int maxPointNameLength { get; set; } = 0;
     public FrmShowRawData(ClevelingAdjust cladj, string[] fileNames, ProjectInfo project) {
       ClAdj = cladj;
       InitializeComponent();
@@ -39,9 +40,11 @@ namespace LevelnetAdjustment.form {
           if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {
             continue;
           }
+          int length = 0;
           switch (Path.GetExtension(item).ToLower()) {
             case ".dat":
-              FileHelper.ReadDAT(AddRawDatas, item);
+              length = FileHelper.ReadDAT(AddRawDatas, item);
+              maxPointNameLength = length > maxPointNameLength ? length : maxPointNameLength;
               break;
             case ".gsi":
               FileHelper.ReadGSI(item, AddRawDatas);
@@ -51,7 +54,7 @@ namespace LevelnetAdjustment.form {
           }
         }
 
-        if (AddRawDatas.Count==0) {
+        if (AddRawDatas.Count == 0) {
           loading.CloseWaitForm();
           MessageBox.Show("数据重复", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
           Close();
@@ -94,6 +97,18 @@ namespace LevelnetAdjustment.form {
     }
 
     private void button1_Click(object sender, EventArgs e) {
+      AddRawDatas.ForEach(t => {
+        if (t.DataType == DataTypeEnum.GSI) {
+          int b = t.BackPoint.Length - maxPointNameLength;
+          if (b > 0) {
+            t.BackPoint = t.BackPoint.Substring(b, t.BackPoint.Length - 1);
+          }
+          int f = t.FrontPoint.Length - maxPointNameLength;
+          if (f > 0) {
+            t.FrontPoint = t.FrontPoint.Substring(f, t.FrontPoint.Length - 1);
+          }
+        }
+      });
       ClAdj.RawDatas = Commom.Merge(ClAdj.RawDatas, AddRawDatas);
       foreach (var item in FileNames) {
         if (ClAdj.Options.ImportFiles.Exists(t => t.FileName == Path.GetFileName(item))) {

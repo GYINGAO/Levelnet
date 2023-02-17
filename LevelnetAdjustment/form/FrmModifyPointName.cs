@@ -164,7 +164,7 @@ namespace LevelnetAdjustment.form {
       int idx = 1;
       for (int i = 0; i < ManualModification.ChangedStationLine.Count; i++) {
         for (int j = 0; j < ManualModification.ChangedStationLine[i].Count; j++) {
-          if (ManualModification.ChangedStationLine[i][j].ToString().ToLower().Contains('z')) {
+          if (ManualModification.ChangedStationLine[i][j].ToString().TrimStart('0').ToLower().Contains('z')) {
             string newName = $"Z{idx.ToString().PadLeft(3, '0')}";
             ManualModification.ChangedStationLine[i][j] = newName;
             TextBox textBox = (TextBox)(panel1.Controls.Find($"txt-{i}-{j}", false))[0];
