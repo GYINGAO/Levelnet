@@ -213,6 +213,7 @@ namespace LevelnetAdjustment {
       UpDateMenu(projname);
       toolStripStatusLabel2.Text = "当前项目：" + projname;
       ClearForms();
+      MessageBox.Show("创建成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     /// <summary>
@@ -365,7 +366,7 @@ namespace LevelnetAdjustment {
       loading.ShowLoading();
       try {
         int i = ClAdj.LS_Adjustment();
-        ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网");
+        ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网", Project.Options.OutputFiles.COSADis);
         loading.CloseWaitForm();
         AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
         MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -411,11 +412,11 @@ namespace LevelnetAdjustment {
         int count = ClAdj.AllPoints.FindAll(p => p.IsStable == true).Count;
         if (count <= 0) {
           i = ClAdj.FreeNetAdjust();
-          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网");
+          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网", Project.Options.OutputFiles.COSADis);
         }
         else {
           i = ClAdj.QuasiStable();
-          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳");
+          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳", Project.Options.OutputFiles.COSADis);
         }
 
         loading.CloseWaitForm();

@@ -4,6 +4,7 @@ using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -462,7 +463,7 @@ namespace LevelnetAdjustment.utils {
     /// 输出平差结果
     /// </summary>
     /// <param name="OutpathAdj"></param>
-    public void ExportAdjustResult(string filePath, string split, string space, string title) {
+    public void ExportAdjustResult(string filePath, string split, string space, string title, string cosaPath) {
       // 保存文件
       StringBuilder sb = new StringBuilder();
       sb.AppendLine(split);
@@ -514,6 +515,13 @@ namespace LevelnetAdjustment.utils {
 
       sb.AppendLine(split);
       FileHelper.WriteStrToTxt(sb.ToString(), filePath);
+
+      using (FileStream fileStream = new FileStream(cosaPath, FileMode.Create)) {
+        using (StreamWriter sw = new StreamWriter(fileStream, Encoding.Default)) {
+          KnownPointEable.ForEach(t => sw.WriteLine($"{t.Number},{t.Height}"));
+          ObservedDatas.ForEach(t => sw.WriteLine($"{t.Start},{t.End},{Math.Round(t.HeightDiff, 5)},{Math.Round(t.Distance, 5)}"));
+        }
+      }
     }
 
     /// <summary>

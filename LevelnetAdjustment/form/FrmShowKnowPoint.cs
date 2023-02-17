@@ -19,13 +19,13 @@ namespace LevelnetAdjustment.form {
     }
 
     private void button1_Click(object sender, EventArgs e) {
+      KnownPoints.Clear();
       Close();
-      MessageBox.Show("导入成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void button2_Click(object sender, EventArgs e) {
-      KnownPoints.Clear();
       Close();
+      MessageBox.Show("导入成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void FrmShowKnowPoint_Load(object sender, EventArgs e) {
