@@ -175,7 +175,7 @@ namespace LevelnetAdjustment.form {
       // 
       // btn_cal
       // 
-      this.btn_cal.Location = new System.Drawing.Point(109, 350);
+      this.btn_cal.Location = new System.Drawing.Point(231, 350);
       this.btn_cal.Name = "btn_cal";
       this.btn_cal.Size = new System.Drawing.Size(75, 29);
       this.btn_cal.TabIndex = 18;
@@ -185,7 +185,7 @@ namespace LevelnetAdjustment.form {
       // 
       // btn_con
       // 
-      this.btn_con.Location = new System.Drawing.Point(228, 350);
+      this.btn_con.Location = new System.Drawing.Point(102, 350);
       this.btn_con.Name = "btn_con";
       this.btn_con.Size = new System.Drawing.Size(75, 29);
       this.btn_con.TabIndex = 19;

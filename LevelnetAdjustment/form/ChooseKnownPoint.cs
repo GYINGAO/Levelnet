@@ -1,4 +1,5 @@
 ﻿using LevelnetAdjustment.model;
+using LevelnetAdjustment.utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,9 +14,11 @@ using System.Windows.Forms;
 namespace LevelnetAdjustment.form {
   public partial class ChooseKnownPoint : Form {
     public List<PointData> Points { get; set; }
+    public BindingSource BindingSourcePoint { get; set; }
     public event ChangeStable TransfChangeKnownPoint;
     public ChooseKnownPoint(List<PointData> points) {
       this.Points = points;
+      BindingSourcePoint = new BindingSource() { DataSource = this.Points };
       InitializeComponent();
       //利用反射设置DataGridView的双缓冲
       Type dgvType = this.dataGridView1.GetType();
@@ -26,7 +29,8 @@ namespace LevelnetAdjustment.form {
 
     private void ChooseKnownPoint_Load(object sender, EventArgs e) {
       this.dataGridView1.AutoGenerateColumns = false;
-      this.dataGridView1.DataSource = new BindingList<PointData>(Points);
+      /*   this.dataGridView1.DataSource = new BindingList<PointData>(Points);*/
+      this.dataGridView1.DataSource = BindingSourcePoint;
     }
 
     private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e) {
@@ -43,16 +47,43 @@ namespace LevelnetAdjustment.form {
     }
 
     private void button2_Click(object sender, EventArgs e) {
+      TransfChangeKnownPoint(Points);
       Close();
     }
 
     private void button1_Click(object sender, EventArgs e) {
-      TransfChangeKnownPoint(Points);
       Close();
     }
 
     private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e) {
 
+    }
+
+    private void 添加单个点ToolStripMenuItem_Click(object sender, EventArgs e) {
+      FrmAddOneKnownPoint frm = new FrmAddOneKnownPoint();
+      frm.AddOnePoint += HandleAddOnePoint;
+      frm.ShowDialog();
+    }
+    private void HandleAddOnePoint(PointData point) {
+      BindingSourcePoint.Add(point);
+      dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.Rows.Count - 1;
+    }
+
+    private void 导入文件ToolStripMenuItem_Click(object sender, EventArgs e) {
+      OpenFileDialog openFile = new OpenFileDialog {
+        Multiselect = false,
+        Title = "打开",
+        Filter = "已知点文件|*.txt",
+        FilterIndex = 1,
+        RestoreDirectory = true,
+      };
+      if (openFile.ShowDialog() == DialogResult.OK) {
+        List<PointData> PointList = new List<PointData>();
+        FileHelper.ReadKnPoints(openFile.FileName, PointList);
+        FrmShowKnowPoint frm = new FrmShowKnowPoint(new List<PointData>(), PointList, BindingSourcePoint);
+        frm.ShowDialog(this);
+        dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.Rows.Count - 1;
+      }
     }
   }
 }

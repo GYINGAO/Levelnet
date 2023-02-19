@@ -47,11 +47,11 @@ namespace LevelnetAdjustment.form {
     }
 
     private void button1_Click(object sender, EventArgs e) {
+      TransfEvent(PointList);
       Close();
     }
 
     private void button2_Click(object sender, EventArgs e) {
-      TransfEvent(PointList);
       Close();
     }
   }

@@ -141,3 +141,4 @@ F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdju
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmShowRawData.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmShowKnowPoint.resources
 F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmNotFoundKnowPoint.resources
+F:\编程\水准网平差程序\client\LevelnetAdjustment\obj\Debug\LevelnetAdjustment.form.FrmAddOneKnownPoint.resources

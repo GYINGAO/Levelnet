@@ -29,7 +29,8 @@ namespace LevelnetAdjustment.form {
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void button2_Click(object sender, EventArgs e) {
-      Close();
+      TransfChangeStable(Points);
+      this.Close();
     }
 
     private void ChooseStablePoint_Load(object sender, EventArgs e) {
@@ -56,8 +57,7 @@ namespace LevelnetAdjustment.form {
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void button1_Click(object sender, EventArgs e) {
-      TransfChangeStable(Points);
-      this.Close();
+      Close();
     }
 
     private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e) {

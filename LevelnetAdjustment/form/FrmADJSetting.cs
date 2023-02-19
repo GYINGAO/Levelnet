@@ -103,10 +103,6 @@ namespace LevelnetAdjustment.form {
     }
 
     private void button1_Click(object sender, EventArgs e) {
-      Close();
-    }
-
-    private void button2_Click(object sender, EventArgs e) {
       Options.LevelParams.LevelingGrade = comboBox1.SelectedIndex;
       Options.LevelParams.WangFan = double.Parse(textBox1.Text);
       Options.LevelParams.FuHe = double.Parse(textBox2.Text);
@@ -121,6 +117,10 @@ namespace LevelnetAdjustment.form {
       Options.AlphaLimit = double.Parse(lbl_xiancha.Text);
 
       TransfEvent(Options);
+      Close();
+    }
+
+    private void button2_Click(object sender, EventArgs e) {
       Close();
 
     }

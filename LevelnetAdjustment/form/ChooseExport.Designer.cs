@@ -23,18 +23,18 @@
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
       this.dataGridView1 = new System.Windows.Forms.DataGridView();
-      this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-      this.button1 = new System.Windows.Forms.Button();
-      this.button2 = new System.Windows.Forms.Button();
       this.PointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Height = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.RMSE = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.IsExport = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+      this.button1 = new System.Windows.Forms.Button();
+      this.button2 = new System.Windows.Forms.Button();
       this.tableLayoutPanel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
       this.tableLayoutPanel2.SuspendLayout();
@@ -72,12 +72,42 @@
       this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.dataGridView1.Location = new System.Drawing.Point(3, 3);
       this.dataGridView1.Name = "dataGridView1";
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
       this.dataGridView1.RowTemplate.Height = 23;
       this.dataGridView1.Size = new System.Drawing.Size(403, 425);
       this.dataGridView1.TabIndex = 0;
       this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
+      // 
+      // PointName
+      // 
+      this.PointName.DataPropertyName = "PointName";
+      this.PointName.HeaderText = "点名";
+      this.PointName.Name = "PointName";
+      // 
+      // Height
+      // 
+      this.Height.DataPropertyName = "Height";
+      dataGridViewCellStyle4.Format = "N5";
+      dataGridViewCellStyle4.NullValue = "-1";
+      this.Height.DefaultCellStyle = dataGridViewCellStyle4;
+      this.Height.HeaderText = "高程/m";
+      this.Height.Name = "Height";
+      // 
+      // RMSE
+      // 
+      this.RMSE.DataPropertyName = "RMSE";
+      dataGridViewCellStyle5.Format = "N2";
+      dataGridViewCellStyle5.NullValue = "-";
+      this.RMSE.DefaultCellStyle = dataGridViewCellStyle5;
+      this.RMSE.HeaderText = "中误差";
+      this.RMSE.Name = "RMSE";
+      // 
+      // IsExport
+      // 
+      this.IsExport.DataPropertyName = "IsExport";
+      this.IsExport.HeaderText = "是否导出";
+      this.IsExport.Name = "IsExport";
       // 
       // tableLayoutPanel2
       // 
@@ -102,7 +132,7 @@
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(161, 38);
       this.button1.TabIndex = 0;
-      this.button1.Text = "取消";
+      this.button1.Text = "确定";
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
@@ -114,39 +144,9 @@
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(162, 38);
       this.button2.TabIndex = 1;
-      this.button2.Text = "确定";
+      this.button2.Text = "取消";
       this.button2.UseVisualStyleBackColor = true;
       this.button2.Click += new System.EventHandler(this.button2_Click);
-      // 
-      // PointName
-      // 
-      this.PointName.DataPropertyName = "PointName";
-      this.PointName.HeaderText = "点名";
-      this.PointName.Name = "PointName";
-      // 
-      // Height
-      // 
-      this.Height.DataPropertyName = "Height";
-      dataGridViewCellStyle1.Format = "N5";
-      dataGridViewCellStyle1.NullValue = "-1";
-      this.Height.DefaultCellStyle = dataGridViewCellStyle1;
-      this.Height.HeaderText = "高程/m";
-      this.Height.Name = "Height";
-      // 
-      // RMSE
-      // 
-      this.RMSE.DataPropertyName = "RMSE";
-      dataGridViewCellStyle2.Format = "N2";
-      dataGridViewCellStyle2.NullValue = "-";
-      this.RMSE.DefaultCellStyle = dataGridViewCellStyle2;
-      this.RMSE.HeaderText = "中误差";
-      this.RMSE.Name = "RMSE";
-      // 
-      // IsExport
-      // 
-      this.IsExport.DataPropertyName = "IsExport";
-      this.IsExport.HeaderText = "是否导出";
-      this.IsExport.Name = "IsExport";
       // 
       // ChooseExport
       // 
@@ -170,11 +170,11 @@
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
     private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.Button button2;
     public System.Windows.Forms.DataGridView dataGridView1;
     private System.Windows.Forms.DataGridViewTextBoxColumn PointName;
     private System.Windows.Forms.DataGridViewTextBoxColumn Height;
     private System.Windows.Forms.DataGridViewTextBoxColumn RMSE;
     private System.Windows.Forms.DataGridViewCheckBoxColumn IsExport;
+    private System.Windows.Forms.Button button2;
   }
 }

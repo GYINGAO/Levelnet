@@ -28,14 +28,14 @@
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
       this.dataGridView1 = new System.Windows.Forms.DataGridView();
-      this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-      this.button1 = new System.Windows.Forms.Button();
-      this.button2 = new System.Windows.Forms.Button();
       this.StartPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.EndPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Dis = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.HeightDiff = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.IsExport = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+      this.button1 = new System.Windows.Forms.Button();
+      this.button2 = new System.Windows.Forms.Button();
       this.tableLayoutPanel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
       this.tableLayoutPanel2.SuspendLayout();
@@ -81,45 +81,6 @@
       this.dataGridView1.TabIndex = 0;
       this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
       // 
-      // tableLayoutPanel2
-      // 
-      this.tableLayoutPanel2.ColumnCount = 2;
-      this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel2.Controls.Add(this.button1, 0, 0);
-      this.tableLayoutPanel2.Controls.Add(this.button2, 1, 0);
-      this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 434);
-      this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-      this.tableLayoutPanel2.RowCount = 1;
-      this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel2.Size = new System.Drawing.Size(438, 44);
-      this.tableLayoutPanel2.TabIndex = 1;
-      // 
-      // button1
-      // 
-      this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.button1.Location = new System.Drawing.Point(20, 3);
-      this.button1.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(179, 38);
-      this.button1.TabIndex = 0;
-      this.button1.Text = "取消";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
-      // 
-      // button2
-      // 
-      this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.button2.Location = new System.Drawing.Point(239, 3);
-      this.button2.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
-      this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(179, 38);
-      this.button2.TabIndex = 1;
-      this.button2.Text = "确定";
-      this.button2.UseVisualStyleBackColor = true;
-      this.button2.Click += new System.EventHandler(this.button2_Click);
-      // 
       // StartPoint
       // 
       this.StartPoint.DataPropertyName = "StartPoint";
@@ -155,6 +116,45 @@
       this.IsExport.DataPropertyName = "IsExport";
       this.IsExport.HeaderText = "是否导出";
       this.IsExport.Name = "IsExport";
+      // 
+      // tableLayoutPanel2
+      // 
+      this.tableLayoutPanel2.ColumnCount = 2;
+      this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel2.Controls.Add(this.button1, 0, 0);
+      this.tableLayoutPanel2.Controls.Add(this.button2, 1, 0);
+      this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 434);
+      this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+      this.tableLayoutPanel2.RowCount = 1;
+      this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel2.Size = new System.Drawing.Size(438, 44);
+      this.tableLayoutPanel2.TabIndex = 1;
+      // 
+      // button1
+      // 
+      this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.button1.Location = new System.Drawing.Point(20, 3);
+      this.button1.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(179, 38);
+      this.button1.TabIndex = 0;
+      this.button1.Text = "确定";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // button2
+      // 
+      this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.button2.Location = new System.Drawing.Point(239, 3);
+      this.button2.Margin = new System.Windows.Forms.Padding(20, 3, 20, 3);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(179, 38);
+      this.button2.TabIndex = 1;
+      this.button2.Text = "取消";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.button2_Click);
       // 
       // ChooseExportOb
       // 

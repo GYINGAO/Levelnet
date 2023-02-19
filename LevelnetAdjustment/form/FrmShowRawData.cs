@@ -97,10 +97,6 @@ namespace LevelnetAdjustment.form {
     }
 
     private void button1_Click(object sender, EventArgs e) {
-      Close();
-    }
-
-    private void button2_Click(object sender, EventArgs e) {
       AddRawDatas.ForEach(t => {
         if (t.DataType == DataTypeEnum.GSI) {
           int b = t.BackPoint.Length - maxPointNameLength;
@@ -130,6 +126,10 @@ namespace LevelnetAdjustment.form {
       }
       Close();
       MessageBox.Show("导入成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void button2_Click(object sender, EventArgs e) {
+      Close();
     }
   }
 }

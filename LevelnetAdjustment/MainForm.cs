@@ -770,7 +770,7 @@ namespace LevelnetAdjustment {
       }
     }
 
-    new void Update() {
+    new void Update(bool showResult = false) {
       var Version = Application.ProductVersion.ToString();
       string checkURL = "http://43.142.49.203:7001/check?Version=" + Version;//检测版本更新地址
 
@@ -779,7 +779,7 @@ namespace LevelnetAdjustment {
         string getJson = HttpHelper.Get(checkURL);
         Response res = JsonConvert.DeserializeObject<Response>(getJson);
         if (res.Update) {
-          DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新内容：\r\n" + res.Remark + "\r\n\r\n是否更新?", "更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+          DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新日志：\r\n" + res.Remark + "\r\n\r\n是否更新?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
           if (dr == DialogResult.Yes) {
             //string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
             string downloadURL = "http://43.142.49.203:7001/download";//下载EXE的地址
@@ -787,7 +787,11 @@ namespace LevelnetAdjustment {
             DirectExit = true;
             this.Close();
           }
-
+        }
+        else {
+          if (showResult) {
+            MessageBox.Show("当前版本：" + res.CurrentVersion + "\r\n更新日志：\r\n" + res.Remark + "\r\n\r\n已是最新版本！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          }
         }
       }
       catch (Exception ex) { throw ex; }
@@ -804,7 +808,7 @@ namespace LevelnetAdjustment {
     }
 
     private void 检查更新ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Update();
+      Update(true);
     }
 
     private void 生成观测手簿ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1233,29 +1237,6 @@ namespace LevelnetAdjustment {
     }
 
     #endregion
-
-    private void testToolStripMenuItem_Click(object sender, EventArgs e) {
-      /*double[] a = { 1, 0, 0, 1, 0, 0, -1, 0, 1, 0, 0, -1, 0, -1, 1, -1, 1, 0, 0, 1, 0 };
-      Matrix<double> A = Matrix<double>.Build.DenseOfRowMajor(7, 3, a);
-      Matrix<double> P = Matrix<double>.Build.DenseOfDiagonalArray(new[] { 2.0, 2, 1, 1, 1, 1, 2 });
-      Matrix<double> N = A.Transpose() * P * A;
-      Matrix<double> Qxx = N.Inverse();
-      Matrix<double> Qll = A * Qxx * A.Transpose();
-      Matrix<double> Q = P.Inverse();
-      Matrix<double> Qvv = Q - Qll;
-      Matrix<double> R = Qvv * P;
-      for (int i = 0; i < R.RowCount; i++) {
-        Console.WriteLine(R[i, i]);
-      }
-      Console.WriteLine();*/
-
-
-      double r = 0;
-      for (int i = 0; i < ClAdj.RR.RowCount; i++) {
-        r += ClAdj.RR[i, i];
-      }
-      Console.WriteLine(r);
-    }
   }
 }
 
