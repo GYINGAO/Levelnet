@@ -88,7 +88,7 @@ namespace LevelnetAdjustment {
       GrossErrorDropItem.Image = Properties.Resources.搜索;
       ConstraintNetworkDropItem.Image = Properties.Resources.约束;
       RankDefectNetworkDropItem.Image = Properties.Resources.自由;
-      检查更新ToolStripMenuItem.Image = Properties.Resources.更新2;
+      /*检查更新ToolStripMenuItem.Image = Properties.Resources.更新2;*/
       清空数据ToolStripMenuItem.Image = Properties.Resources.清空;
       高程平差报表ToolStripMenuItem.Image = Properties.Resources.txt2;
       高差平差报表ToolStripMenuItem.Image = Properties.Resources.txt2;
@@ -352,7 +352,7 @@ namespace LevelnetAdjustment {
         }
       }
 
-      ChooseKnownPoint chooseKnownPoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+      ChooseKnownPoint chooseKnownPoint = new ChooseKnownPoint(ClAdj.KnownPoints, ClAdj.ObservedDatasNoRep);
       chooseKnownPoint.TransfChangeKnownPoint += CalcLS;
       chooseKnownPoint.ShowDialog();
     }
@@ -444,7 +444,7 @@ namespace LevelnetAdjustment {
         }
       }
 
-      ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+      ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints, ClAdj.ObservedDatasNoRep);
       chooseStablePoint.TransfChangeKnownPoint += CalcClosureError;
       chooseStablePoint.ShowDialog();
     }
@@ -807,9 +807,9 @@ namespace LevelnetAdjustment {
 
     }
 
-    private void 检查更新ToolStripMenuItem_Click(object sender, EventArgs e) {
-      Update(true);
-    }
+    /*    private void 检查更新ToolStripMenuItem_Click(object sender, EventArgs e) {
+          Update(true);
+        }*/
 
     private void 生成观测手簿ToolStripMenuItem_Click(object sender, EventArgs e) {
       if (File.Exists(Project.Options.OutputFiles.Handbook)) {
@@ -1190,7 +1190,7 @@ namespace LevelnetAdjustment {
         }
       }
 
-      ChooseKnownPoint chooseKnownPoint = new ChooseKnownPoint(ClAdj.KnownPoints);
+      ChooseKnownPoint chooseKnownPoint = new ChooseKnownPoint(ClAdj.KnownPoints, ClAdj.ObservedDatasNoRep);
       chooseKnownPoint.TransfChangeKnownPoint += CalcGrossError;
       chooseKnownPoint.ShowDialog();
     }

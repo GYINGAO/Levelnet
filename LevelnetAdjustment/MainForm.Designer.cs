@@ -56,7 +56,6 @@ namespace LevelnetAdjustment {
       this.HelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.AboutDropItem = new System.Windows.Forms.ToolStripMenuItem();
       this.使用说明ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.检查更新ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.水准仪数据预处理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.导入观测文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -158,7 +157,7 @@ namespace LevelnetAdjustment {
             this.toolStripMenuItem_clear,
             this.toolStripSeparator1});
       this.toolStripMenuItem_open.Name = "toolStripMenuItem_open";
-      this.toolStripMenuItem_open.Size = new System.Drawing.Size(180, 22);
+      this.toolStripMenuItem_open.Size = new System.Drawing.Size(124, 22);
       this.toolStripMenuItem_open.Text = "打开项目";
       // 
       // toolStripMenuItem_choose
@@ -183,26 +182,26 @@ namespace LevelnetAdjustment {
       // NewDropItem
       // 
       this.NewDropItem.Name = "NewDropItem";
-      this.NewDropItem.Size = new System.Drawing.Size(180, 22);
+      this.NewDropItem.Size = new System.Drawing.Size(124, 22);
       this.NewDropItem.Text = "新建项目";
       this.NewDropItem.Click += new System.EventHandler(this.NewDropItem_Click);
       // 
       // toolStripSeparator7
       // 
       this.toolStripSeparator7.Name = "toolStripSeparator7";
-      this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
+      this.toolStripSeparator7.Size = new System.Drawing.Size(121, 6);
       // 
       // eyesToolStripMenuItem
       // 
       this.eyesToolStripMenuItem.Name = "eyesToolStripMenuItem";
-      this.eyesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.eyesToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
       this.eyesToolStripMenuItem.Text = "查看文件";
       this.eyesToolStripMenuItem.Click += new System.EventHandler(this.打开文件ToolStripMenuItem_Click);
       // 
       // ExitDropItem
       // 
       this.ExitDropItem.Name = "ExitDropItem";
-      this.ExitDropItem.Size = new System.Drawing.Size(180, 22);
+      this.ExitDropItem.Size = new System.Drawing.Size(124, 22);
       this.ExitDropItem.Text = "退出";
       this.ExitDropItem.Click += new System.EventHandler(this.ExitDropItem_Click);
       // 
@@ -303,8 +302,7 @@ namespace LevelnetAdjustment {
       // 
       this.HelpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutDropItem,
-            this.使用说明ToolStripMenuItem,
-            this.检查更新ToolStripMenuItem});
+            this.使用说明ToolStripMenuItem});
       this.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
       this.HelpToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
       this.HelpToolStripMenuItem.Text = "帮助";
@@ -312,23 +310,16 @@ namespace LevelnetAdjustment {
       // AboutDropItem
       // 
       this.AboutDropItem.Name = "AboutDropItem";
-      this.AboutDropItem.Size = new System.Drawing.Size(124, 22);
+      this.AboutDropItem.Size = new System.Drawing.Size(180, 22);
       this.AboutDropItem.Text = "关于";
       this.AboutDropItem.Click += new System.EventHandler(this.AboutDropItem_Click);
       // 
       // 使用说明ToolStripMenuItem
       // 
       this.使用说明ToolStripMenuItem.Name = "使用说明ToolStripMenuItem";
-      this.使用说明ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+      this.使用说明ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.使用说明ToolStripMenuItem.Text = "使用说明";
       this.使用说明ToolStripMenuItem.Click += new System.EventHandler(this.使用说明ToolStripMenuItem_Click);
-      // 
-      // 检查更新ToolStripMenuItem
-      // 
-      this.检查更新ToolStripMenuItem.Name = "检查更新ToolStripMenuItem";
-      this.检查更新ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-      this.检查更新ToolStripMenuItem.Text = "检查更新";
-      this.检查更新ToolStripMenuItem.Click += new System.EventHandler(this.检查更新ToolStripMenuItem_Click);
       // 
       // menuStrip1
       // 
@@ -424,26 +415,26 @@ namespace LevelnetAdjustment {
       // 高程平差报表ToolStripMenuItem
       // 
       this.高程平差报表ToolStripMenuItem.Name = "高程平差报表ToolStripMenuItem";
-      this.高程平差报表ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+      this.高程平差报表ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.高程平差报表ToolStripMenuItem.Text = "高程平差报表";
       this.高程平差报表ToolStripMenuItem.Click += new System.EventHandler(this.高程平差报表ToolStripMenuItem_Click);
       // 
       // 高差平差报表ToolStripMenuItem
       // 
       this.高差平差报表ToolStripMenuItem.Name = "高差平差报表ToolStripMenuItem";
-      this.高差平差报表ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+      this.高差平差报表ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.高差平差报表ToolStripMenuItem.Text = "高差平差报表";
       this.高差平差报表ToolStripMenuItem.Click += new System.EventHandler(this.高差平差报表ToolStripMenuItem_Click);
       // 
       // toolStripMenuItem4
       // 
       this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-      this.toolStripMenuItem4.Size = new System.Drawing.Size(145, 6);
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 6);
       // 
       // 多期对比ToolStripMenuItem
       // 
       this.多期对比ToolStripMenuItem.Name = "多期对比ToolStripMenuItem";
-      this.多期对比ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+      this.多期对比ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.多期对比ToolStripMenuItem.Text = "多期对比";
       this.多期对比ToolStripMenuItem.Click += new System.EventHandler(this.高程多期对比ToolStripMenuItem_Click);
       // 
@@ -644,7 +635,6 @@ namespace LevelnetAdjustment {
     private System.Windows.Forms.Timer timer1;
     private System.Windows.Forms.ToolStripButton toolStripButton1;
     private System.Windows.Forms.ToolStripMenuItem 在文件夹中打开ToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem 检查更新ToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem 水准仪数据预处理ToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem 导入观测文件ToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem 观测数据检核ToolStripMenuItem;

@@ -14,9 +14,11 @@ using System.Windows.Forms;
 namespace LevelnetAdjustment.form {
   public partial class ChooseKnownPoint : Form {
     public List<PointData> Points { get; set; }
+    public List<ObservedData> ObservedDatas { get; set; }
     public BindingSource BindingSourcePoint { get; set; }
     public event ChangeStable TransfChangeKnownPoint;
-    public ChooseKnownPoint(List<PointData> points) {
+    public ChooseKnownPoint(List<PointData> points, List<ObservedData> observedDatas) {
+      ObservedDatas = observedDatas;
       this.Points = points;
       BindingSourcePoint = new BindingSource() { DataSource = this.Points };
       InitializeComponent();
@@ -60,13 +62,8 @@ namespace LevelnetAdjustment.form {
     }
 
     private void 添加单个点ToolStripMenuItem_Click(object sender, EventArgs e) {
-      FrmAddOneKnownPoint frm = new FrmAddOneKnownPoint();
-      frm.AddOnePoint += HandleAddOnePoint;
+      FrmAddOneKnownPoint frm = new FrmAddOneKnownPoint(BindingSourcePoint, ObservedDatas, dataGridView1);
       frm.ShowDialog();
-    }
-    private void HandleAddOnePoint(PointData point) {
-      BindingSourcePoint.Add(point);
-      dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.Rows.Count - 1;
     }
 
     private void 导入文件ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -80,7 +77,7 @@ namespace LevelnetAdjustment.form {
       if (openFile.ShowDialog() == DialogResult.OK) {
         List<PointData> PointList = new List<PointData>();
         FileHelper.ReadKnPoints(openFile.FileName, PointList);
-        FrmShowKnowPoint frm = new FrmShowKnowPoint(new List<PointData>(), PointList, BindingSourcePoint);
+        FrmShowKnowPoint frm = new FrmShowKnowPoint(new List<PointData>(), PointList, BindingSourcePoint, ObservedDatas);
         frm.ShowDialog(this);
         dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.Rows.Count - 1;
       }

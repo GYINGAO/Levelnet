@@ -252,7 +252,7 @@ namespace LevelnetAdjustment.utils {
       int count = 0;
       int idx = 0;
       // 如果未知点近似高程未计算完，重复循环
-      while (UnknownPoints.FindIndex(t => t.Height == 0) != -1) {
+      while (UnknownPoints.FindIndex(t => t.Height == -1) != -1) {
         idx++;
         ObservedDatasNoRep.ForEach(item => {
           //在已知点里面分别查找起点和终点
