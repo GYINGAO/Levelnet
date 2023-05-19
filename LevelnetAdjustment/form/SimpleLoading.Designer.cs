@@ -23,69 +23,57 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.lbl_tips_son = new System.Windows.Forms.Label();
-            this.lbl_tips = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            // 
-            // lbl_tips_son
-            // 
-            this.lbl_tips_son.AutoSize = true;
-            this.lbl_tips_son.Location = new System.Drawing.Point(116, 50);
-            this.lbl_tips_son.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lbl_tips_son.Name = "lbl_tips_son";
-            this.lbl_tips_son.Size = new System.Drawing.Size(113, 12);
-            this.lbl_tips_son.TabIndex = 7;
-            this.lbl_tips_son.Text = "Please Waitting...";
-            // 
-            // lbl_tips
-            // 
-            this.lbl_tips.AutoSize = true;
-            this.lbl_tips.Location = new System.Drawing.Point(116, 25);
-            this.lbl_tips.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lbl_tips.Name = "lbl_tips";
-            this.lbl_tips.Size = new System.Drawing.Size(107, 12);
-            this.lbl_tips.TabIndex = 6;
-            this.lbl_tips.Text = "加载中，请稍等...";
-            // 
-            // label1
-            // 
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label1.Image = global::LevelnetAdjustment.Properties.Resources.loading3;
-            this.label1.Location = new System.Drawing.Point(24, 14);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 69);
-            this.label1.TabIndex = 5;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(130, 73);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "取消";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // SimpleLoading
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(270, 114);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.lbl_tips_son);
-            this.Controls.Add(this.lbl_tips);
-            this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "SimpleLoading";
-            this.Text = "提示";
-            this.Load += new System.EventHandler(this.SimpleLoading_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+      this.lbl_tips_son = new System.Windows.Forms.Label();
+      this.lbl_tips = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.SuspendLayout();
+      // 
+      // lbl_tips_son
+      // 
+      this.lbl_tips_son.AutoSize = true;
+      this.lbl_tips_son.Location = new System.Drawing.Point(116, 57);
+      this.lbl_tips_son.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.lbl_tips_son.Name = "lbl_tips_son";
+      this.lbl_tips_son.Size = new System.Drawing.Size(113, 12);
+      this.lbl_tips_son.TabIndex = 7;
+      this.lbl_tips_son.Text = "Please Waitting...";
+      // 
+      // lbl_tips
+      // 
+      this.lbl_tips.AutoSize = true;
+      this.lbl_tips.Location = new System.Drawing.Point(116, 30);
+      this.lbl_tips.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.lbl_tips.Name = "lbl_tips";
+      this.lbl_tips.Size = new System.Drawing.Size(107, 12);
+      this.lbl_tips.TabIndex = 6;
+      this.lbl_tips.Text = "加载中，请稍等...";
+      // 
+      // label1
+      // 
+      this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.label1.Image = global::LevelnetAdjustment.Properties.Resources.loading3;
+      this.label1.Location = new System.Drawing.Point(24, 14);
+      this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(75, 69);
+      this.label1.TabIndex = 5;
+      // 
+      // SimpleLoading
+      // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.ClientSize = new System.Drawing.Size(270, 102);
+      this.Controls.Add(this.lbl_tips_son);
+      this.Controls.Add(this.lbl_tips);
+      this.Controls.Add(this.label1);
+      this.Margin = new System.Windows.Forms.Padding(2);
+      this.MaximizeBox = false;
+      this.MinimizeBox = false;
+      this.Name = "SimpleLoading";
+      this.Text = "提示";
+      this.Load += new System.EventHandler(this.SimpleLoading_Load);
+      this.ResumeLayout(false);
+      this.PerformLayout();
 
         }
 
@@ -94,6 +82,5 @@
         private System.Windows.Forms.Label lbl_tips_son;
         private System.Windows.Forms.Label lbl_tips;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
     }
 }

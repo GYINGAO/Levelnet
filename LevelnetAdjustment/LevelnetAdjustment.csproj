@@ -453,6 +453,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\变形分析.png" />
     <None Include="Resources\eye-open.png" />
     <None Include="Resources\comparison.png" />
     <None Include="Resources\txt2.png" />

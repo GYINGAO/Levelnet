@@ -253,6 +253,16 @@ namespace LevelnetAdjustment.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap 变形分析 {
+            get {
+                object obj = ResourceManager.GetObject("变形分析", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap 坐标 {
             get {
                 object obj = ResourceManager.GetObject("坐标", resourceCulture);

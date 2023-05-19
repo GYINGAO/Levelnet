@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace LevelnetAdjustment {
   public partial class MainForm : Form {
@@ -27,8 +28,6 @@ namespace LevelnetAdjustment {
     public ClevelingAdjust ClAdj { get; set; }
 
     public ProjectInfo Project { get; set; }
-
-    public static bool flag = true;
 
     public bool IsImport { get; set; } = false;
 
@@ -94,6 +93,7 @@ namespace LevelnetAdjustment {
       高差平差报表ToolStripMenuItem.Image = Properties.Resources.txt2;
       多期对比ToolStripMenuItem.Image = Properties.Resources.comparison;
       eyesToolStripMenuItem.Image = Properties.Resources.eye_open;
+      变形分析ToolStripMenuItem.Image = Properties.Resources.变形分析;
 
       //部分按钮禁用
       水准仪数据预处理ToolStripMenuItem.Enabled = false;
@@ -120,7 +120,6 @@ namespace LevelnetAdjustment {
 
       this.BackgroundImage = Properties.Resources.backgroundimage;
       this.BackgroundImageLayout = ImageLayout.Stretch;
-      Update();
       if (StartProj != "") {
         OpenProj(StartProj);
       }
@@ -194,26 +193,20 @@ namespace LevelnetAdjustment {
     /// <param name="e"></param>
     private void NewDropItem_Click(object sender, EventArgs e) {
       CreatePrj prj = new CreatePrj(Project);
-      prj.TransfEvent += UpDateProject;
+      prj.TransfEvent += (project) => {
+        水准仪数据预处理ToolStripMenuItem.Enabled = true;
+        AdjToolStripMenuItem.Enabled = true;
+
+        this.ClAdj = new ClevelingAdjust();
+        this.Project = project;
+        ClAdj.Options = project.Options;
+        var projname = Path.Combine(project.Path, project.Name);
+        UpDateMenu(projname);
+        toolStripStatusLabel2.Text = "当前项目：" + projname;
+        ClearForms();
+        MessageBox.Show("创建成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      };
       prj.ShowDialog();
-    }
-
-    /// <summary>
-    /// 更新项目信息
-    /// </summary>
-    /// <param name="project"></param>
-    public void UpDateProject(ProjectInfo project) {
-      水准仪数据预处理ToolStripMenuItem.Enabled = true;
-      AdjToolStripMenuItem.Enabled = true;
-
-      this.ClAdj = new ClevelingAdjust();
-      this.Project = project;
-      ClAdj.Options = project.Options;
-      var projname = Path.Combine(project.Path, project.Name);
-      UpDateMenu(projname);
-      toolStripStatusLabel2.Text = "当前项目：" + projname;
-      ClearForms();
-      MessageBox.Show("创建成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     /// <summary>
@@ -353,30 +346,27 @@ namespace LevelnetAdjustment {
       }
 
       ChooseKnownPoint chooseKnownPoint = new ChooseKnownPoint(ClAdj.KnownPoints, ClAdj.ObservedDatasNoRep);
-      chooseKnownPoint.TransfChangeKnownPoint += CalcLS;
+      chooseKnownPoint.TransfChangeKnownPoint += (Points) => {
+        ClAdj.KnownPoints = Points;
+        ClAdj.Calc_Params();
+        SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
+        //将Loaing窗口，注入到 SplashScreenManager 来管理
+        GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+        loading.ShowLoading();
+        try {
+          int i = ClAdj.LS_Adjustment();
+          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网", Project.Options.OutputFiles.COSADis);
+          loading.CloseWaitForm();
+          AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
+          MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex) {
+          loading.CloseWaitForm();
+          throw ex;
+        }
+      };
       chooseKnownPoint.ShowDialog();
     }
-
-    void CalcLS(List<PointData> Points) {
-      ClAdj.KnownPoints = Points;
-      ClAdj.Calc_Params();
-      SimpleLoading loadingfrm = new SimpleLoading(this, "约束网平差中，请稍等...");
-      //将Loaing窗口，注入到 SplashScreenManager 来管理
-      GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-      loading.ShowLoading();
-      try {
-        int i = ClAdj.LS_Adjustment();
-        ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网", Project.Options.OutputFiles.COSADis);
-        loading.CloseWaitForm();
-        AddTabPage(Project.Options.OutputFiles.OutpathAdj);  // 新建窗体同时新建一个标签
-        MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-      }
-      catch (Exception ex) {
-        loading.CloseWaitForm();
-        throw ex;
-      }
-    }
-
 
     /// <summary>
     /// 秩亏网平差
@@ -395,41 +385,37 @@ namespace LevelnetAdjustment {
       }
       ClAdj.CalcApproximateHeight();
       ChooseStablePoint chooseStablePoint = new ChooseStablePoint(ClAdj.AllPoints);
-      chooseStablePoint.TransfChangeStable += CalcStable;
+      chooseStablePoint.TransfChangeStable += (Points) => {
+        ClAdj.AllPoints = Points;
+        //ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, Points);
+        SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+        //将Loaing窗口，注入到 SplashScreenManager 来管理
+        GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+        loading.ShowLoading();
+        try {
+          var i = 0;
+          // 有拟稳点
+          int count = ClAdj.AllPoints.FindAll(p => p.IsStable == true).Count;
+          if (count <= 0) {
+            i = ClAdj.FreeNetAdjust();
+            ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网", Project.Options.OutputFiles.COSADis);
+          }
+          else {
+            i = ClAdj.QuasiStable();
+            ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳", Project.Options.OutputFiles.COSADis);
+          }
+
+          loading.CloseWaitForm();
+          AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
+          MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex) {
+          loading.CloseWaitForm();
+          throw ex;
+        }
+      };
       chooseStablePoint.ShowDialog();
     }
-
-    private void CalcStable(List<PointData> Points) {
-      ClAdj.AllPoints = Points;
-      //ClAdj.AllPoints = Commom.Merge(ClAdj.KnownPointEable, Points);
-      SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-      //将Loaing窗口，注入到 SplashScreenManager 来管理
-      GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-      loading.ShowLoading();
-      try {
-        var i = 0;
-        // 有拟稳点
-        int count = ClAdj.AllPoints.FindAll(p => p.IsStable == true).Count;
-        if (count <= 0) {
-          i = ClAdj.FreeNetAdjust();
-          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "自由网", Project.Options.OutputFiles.COSADis);
-        }
-        else {
-          i = ClAdj.QuasiStable();
-          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdjFree, split, space, "拟稳", Project.Options.OutputFiles.COSADis);
-        }
-
-        loading.CloseWaitForm();
-        AddTabPage(Project.Options.OutputFiles.OutpathAdjFree);  // 新建窗体同时新建一个标签
-        MessageBox.Show($"水准网平差完毕，迭代次数：{i}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-      }
-      catch (Exception ex) {
-        loading.CloseWaitForm();
-        throw ex;
-      }
-    }
-
-
 
     /// <summary>
     /// 计算闭合差
@@ -445,31 +431,26 @@ namespace LevelnetAdjustment {
       }
 
       ChooseKnownPoint chooseStablePoint = new ChooseKnownPoint(ClAdj.KnownPoints, ClAdj.ObservedDatasNoRep);
-      chooseStablePoint.TransfChangeKnownPoint += CalcClosureError;
+      chooseStablePoint.TransfChangeKnownPoint += (Points) => {
+        ClAdj.KnownPoints = Points;
+        ClAdj.Calc_Params(false);
+        SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+        //将Loaing窗口，注入到 SplashScreenManager 来管理
+        GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+        loading.ShowLoading();
+        try {
+          ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
+          AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
+          loading.CloseWaitForm();
+          MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex) {
+          loading.CloseWaitForm();
+          throw ex;
+        }
+      };
       chooseStablePoint.ShowDialog();
     }
-
-    void CalcClosureError(List<PointData> Points) {
-      ClAdj.KnownPoints = Points;
-      ClAdj.Calc_Params(false);
-      SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-      //将Loaing窗口，注入到 SplashScreenManager 来管理
-      GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-      loading.ShowLoading();
-      try {
-        ClAdj.CalcClosureError(Project.Options.OutputFiles.OutpathClosure, split, space);
-        AddTabPage(Project.Options.OutputFiles.OutpathClosure);  // 新建窗体同时新建一个标签
-        loading.CloseWaitForm();
-        MessageBox.Show("闭合差计算完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-      }
-      catch (Exception ex) {
-        loading.CloseWaitForm();
-        throw ex;
-      }
-    }
-
-
-
 
     #endregion
 
@@ -742,6 +723,7 @@ namespace LevelnetAdjustment {
         GrossErrorDropItem.Enabled = false;
         ConstraintNetworkDropItem.Enabled = false;
         RankDefectNetworkDropItem.Enabled = false;
+
       }
       else {
         往返测高差较差ToolStripMenuItem.Enabled = true;
@@ -770,46 +752,6 @@ namespace LevelnetAdjustment {
       }
     }
 
-    new void Update(bool showResult = false) {
-      var Version = Application.ProductVersion.ToString();
-      string checkURL = "http://43.142.49.203:7001/check?Version=" + Version;//检测版本更新地址
-
-      try {
-
-        string getJson = HttpHelper.Get(checkURL);
-        Response res = JsonConvert.DeserializeObject<Response>(getJson);
-        if (res.Update) {
-          DialogResult dr = MessageBox.Show("检测到新版本：" + res.LatestVersion + "\r\n当前版本：" + res.CurrentVersion + "\r\n更新日志：\r\n" + res.Remark + "\r\n\r\n是否更新?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-          if (dr == DialogResult.Yes) {
-            //string downloadURL = "http://43.142.49.203:7001/public/" + res.AppName;//下载EXE的地址
-            string downloadURL = "http://43.142.49.203:7001/download";//下载EXE的地址
-            Process.Start(downloadURL);
-            DirectExit = true;
-            this.Close();
-          }
-        }
-        else {
-          if (showResult) {
-            MessageBox.Show("当前版本：" + res.CurrentVersion + "\r\n更新日志：\r\n" + res.Remark + "\r\n\r\n已是最新版本！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-          }
-        }
-      }
-      catch (Exception ex) { throw ex; }
-    }
-
-
-    public partial class Response {
-      public string CurrentVersion { get; set; } = "";
-      public string LatestVersion { get; set; } = "";
-      public string Remark { get; set; } = "";
-      public bool Update { get; set; }
-      public string AppName { get; set; } = "";
-
-    }
-
-    /*    private void 检查更新ToolStripMenuItem_Click(object sender, EventArgs e) {
-          Update(true);
-        }*/
 
     private void 生成观测手簿ToolStripMenuItem_Click(object sender, EventArgs e) {
       if (File.Exists(Project.Options.OutputFiles.Handbook)) {
@@ -857,16 +799,16 @@ namespace LevelnetAdjustment {
 
 
       FrmModifyPointName frm = new FrmModifyPointName(ClAdj.RawDatas, ClAdj.KnownPoints, Project.Options.OutputFiles.COSADis, ClAdj.Options.ManualModification);
-      frm.TransEvent += ExportFile;
+      frm.TransEvent += (manualModification) => {
+        ClAdj.Options.ManualModification = manualModification;
+        Project.Options.ManualModification = manualModification;
+        AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
+      };
       MessageBox.Show("请检查每个测段点名是否重复\r\n如重复请修改，否则将按照同一个点处理！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
       frm.ShowDialog();
     }
 
-    void ExportFile(ManualModify manualModification) {
-      ClAdj.Options.ManualModification = manualModification;
-      Project.Options.ManualModification = manualModification;
-      AddTabPage(Project.Options.OutputFiles.COSADis);  // 新建窗体同时新建一个标签
-    }
+
     void ChangeZD(string zd) {
       FileHelper.ExportIN1(ClAdj.RawDatas, ClAdj.KnownPoints, zd, Project.Options.OutputFiles.COSADis);
       MessageBox.Show("导出成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -937,14 +879,12 @@ namespace LevelnetAdjustment {
 
     private void 设置处理参数ToolStripMenuItem_Click(object sender, EventArgs e) {
       FrmADJSetting rd = new FrmADJSetting(ClAdj.Options);
-      rd.TransfEvent += ChangeLevelParams;
+      rd.TransfEvent += (option) => {
+        this.ClAdj.Options = option;
+        this.Project.Options = option;
+      };
       rd.ShowDialog();
     }
-    void ChangeLevelParams(Option option) {
-      this.ClAdj.Options = option;
-      this.Project.Options = option;
-    }
-
     private void 导入已知点ToolStripMenuItem_Click(object sender, EventArgs e) {
       OpenFileDialog openFile = new OpenFileDialog {
         Multiselect = false,
@@ -998,38 +938,37 @@ namespace LevelnetAdjustment {
     }
     private void 观测数据检核ToolStripMenuItem_Click(object sender, EventArgs e) {
       FrmCheckObsData frm = new FrmCheckObsData(ClAdj.Options.ObsDataLimits);
-      frm.TransfEvent += SetObserverDataLimit;
+      frm.TransfEvent += (limit) => {
+        ClAdj.Options.ObsDataLimits = limit;
+        Project.Options.ObsDataLimits = limit;
+        StringBuilder sb = new StringBuilder();
+        int stationNum = 0;
+        double total = 0;
+        ClAdj.RawDatas.ForEach(r => {
+          stationNum++;
+          if (r.IsStart) {
+            sb.AppendLine($"测站   后视    前视     后尺读数1   后视距1   前尺读数1   前视距1   后尺读数2   后视距2   前尺读数2   前视距2  前后视距差 累计前后视距差");
+            sb.AppendLine("Start-Line");
+          }
+          double dis = r.DisDiffAve * 1000;
+          total += dis;
+          string backdiff1 = r.BackDiff1 < ClAdj.Options.ObsDataLimits.StafLow ? r.BackDiff1.ToString("#0.00000") + "!!!" : r.BackDiff1.ToString("#0.00000");
+          string backdiff2 = r.BackDiff2 < ClAdj.Options.ObsDataLimits.StafLow ? r.BackDiff2.ToString("#0.00000") + "!!!" : r.BackDiff2.ToString("#0.00000");
+          string frontdiff1 = r.FrontDiff1 < ClAdj.Options.ObsDataLimits.StafLow ? r.FrontDiff1.ToString("#0.00000") + "!!!" : r.FrontDiff1.ToString("#0.00000");
+          string frontdiff2 = r.FrontDiff2 < ClAdj.Options.ObsDataLimits.StafLow ? r.FrontDiff2.ToString("#0.00000") + "!!!" : r.FrontDiff2.ToString("#0.00000");
+          string disdiff = Math.Abs(dis) > ClAdj.Options.ObsDataLimits.FBDis ? dis.ToString("#0.000") + "!!!" : dis.ToString("#0.000");
+          string totaldis = Math.Abs(total) > ClAdj.Options.ObsDataLimits.FBDisSum ? total.ToString("#0.000") + "!!!" : total.ToString("#0.000");
+          sb.AppendLine($"{stationNum,-5}{r.BackPoint,-10}{r.FrontPoint,-10}{backdiff1,-12}{r.BackDis1 * 1000,-10:#0.000}{frontdiff1,-12}{r.FrontDis1 * 1000,-10:#0.000}{backdiff2,-12}{r.BackDis2 * 1000,-10:#0.000}{frontdiff2,-12}{r.FrontDis2 * 1000,-10:#0.000}{disdiff,-10}{totaldis,-10}");
+          if (r.IsEnd) {
+            sb.AppendLine("End-Line");
+            sb.AppendLine("");
+            total = 0;
+          }
+        });
+        FileHelper.WriteStrToTxt(sb.ToString(), Project.Options.OutputFiles.CheakRawData);
+        AddTabPage(Project.Options.OutputFiles.CheakRawData);
+      };
       frm.ShowDialog();
-    }
-    void SetObserverDataLimit(ObsDataLimit limit) {
-      ClAdj.Options.ObsDataLimits = limit;
-      Project.Options.ObsDataLimits = limit;
-      StringBuilder sb = new StringBuilder();
-      int stationNum = 0;
-      double total = 0;
-      ClAdj.RawDatas.ForEach(r => {
-        stationNum++;
-        if (r.IsStart) {
-          sb.AppendLine($"测站   后视    前视     后尺读数1   后视距1   前尺读数1   前视距1   后尺读数2   后视距2   前尺读数2   前视距2  前后视距差 累计前后视距差");
-          sb.AppendLine("Start-Line");
-        }
-        double dis = r.DisDiffAve * 1000;
-        total += dis;
-        string backdiff1 = r.BackDiff1 < ClAdj.Options.ObsDataLimits.StafLow ? r.BackDiff1.ToString("#0.00000") + "!!!" : r.BackDiff1.ToString("#0.00000");
-        string backdiff2 = r.BackDiff2 < ClAdj.Options.ObsDataLimits.StafLow ? r.BackDiff2.ToString("#0.00000") + "!!!" : r.BackDiff2.ToString("#0.00000");
-        string frontdiff1 = r.FrontDiff1 < ClAdj.Options.ObsDataLimits.StafLow ? r.FrontDiff1.ToString("#0.00000") + "!!!" : r.FrontDiff1.ToString("#0.00000");
-        string frontdiff2 = r.FrontDiff2 < ClAdj.Options.ObsDataLimits.StafLow ? r.FrontDiff2.ToString("#0.00000") + "!!!" : r.FrontDiff2.ToString("#0.00000");
-        string disdiff = Math.Abs(dis) > ClAdj.Options.ObsDataLimits.FBDis ? dis.ToString("#0.000") + "!!!" : dis.ToString("#0.000");
-        string totaldis = Math.Abs(total) > ClAdj.Options.ObsDataLimits.FBDisSum ? total.ToString("#0.000") + "!!!" : total.ToString("#0.000");
-        sb.AppendLine($"{stationNum,-5}{r.BackPoint,-10}{r.FrontPoint,-10}{backdiff1,-12}{r.BackDis1 * 1000,-10:#0.000}{frontdiff1,-12}{r.FrontDis1 * 1000,-10:#0.000}{backdiff2,-12}{r.BackDis2 * 1000,-10:#0.000}{frontdiff2,-12}{r.FrontDis2 * 1000,-10:#0.000}{disdiff,-10}{totaldis,-10}");
-        if (r.IsEnd) {
-          sb.AppendLine("End-Line");
-          sb.AppendLine("");
-          total = 0;
-        }
-      });
-      FileHelper.WriteStrToTxt(sb.ToString(), Project.Options.OutputFiles.CheakRawData);
-      AddTabPage(Project.Options.OutputFiles.CheakRawData);
     }
 
     private void 清空数据ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1102,24 +1041,22 @@ namespace LevelnetAdjustment {
       exports.Sort((a, b) => b.StartPoint.CompareTo(a.StartPoint));
 
       ChooseExportOb export = new ChooseExportOb(exports);
-      export.TransfEvent += Export_TransfEvent1;
+      export.TransfEvent += (lists) => {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"距离/km",-9}{"高差/m",-9}");
+        int j = 0;
+        lists.ForEach(p => {
+          if (p.IsExport) {
+            j++;
+            sb.AppendLine($"{j,-7}{p.StartPoint,-10}{p.EndPoint,-10}{p.Dis,-11:#0.0000}{p.HeightDiff,-15:#0.00000}");
+          }
+        });
+        FileHelper.WriteStrToTxt(sb.ToString(), Project.Options.OutputFiles.ExportObPath);
+        AddTabPage(Project.Options.OutputFiles.ExportObPath);
+      };
       export.ShowDialog();
     }
 
-    private void Export_TransfEvent1(List<ExportObserve> lists) {
-      StringBuilder sb = new StringBuilder();
-      sb.AppendLine($"{"序号",-5}{"起点",-8}{"终点",-8}{"距离/km",-9}{"高差/m",-9}");
-      int i = 0;
-      lists.ForEach(p => {
-        if (p.IsExport) {
-          i++;
-          sb.AppendLine($"{i,-7}{p.StartPoint,-10}{p.EndPoint,-10}{p.Dis,-11:#0.0000}{p.HeightDiff,-15:#0.00000}");
-        }
-      });
-
-      FileHelper.WriteStrToTxt(sb.ToString(), Project.Options.OutputFiles.ExportObPath);
-      AddTabPage(Project.Options.OutputFiles.ExportObPath);
-    }
 
     private void 高程多期对比ToolStripMenuItem_Click(object sender, EventArgs e) {
       OpenFileDialog openFile = new OpenFileDialog {
@@ -1191,7 +1128,34 @@ namespace LevelnetAdjustment {
       }
 
       ChooseKnownPoint chooseKnownPoint = new ChooseKnownPoint(ClAdj.KnownPoints, ClAdj.ObservedDatasNoRep);
-      chooseKnownPoint.TransfChangeKnownPoint += CalcGrossError;
+      chooseKnownPoint.TransfChangeKnownPoint += (Points) => {
+        ClAdj.KnownPoints = Points;
+        ClAdj.Calc_Params();
+        SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
+        //将Loaing窗口，注入到 SplashScreenManager 来管理
+        GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
+        loading.ShowLoading();
+        try {
+          switch (GrossMethod) {
+            case GrossMethodEnum.DataSnooping:
+              ClAdj.DataSnoopingMethod(split, space, Project.Options.OutputFiles.OutpathGrossError);
+              AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
+              break;
+            case GrossMethodEnum.IGG:
+              ClAdj.IGGMethod(split, space, Project.Options.OutputFiles.OutpathGrossError);
+              break;
+            default:
+              break;
+          }
+          loading.CloseWaitForm();
+          ClAdj.ExportAdjustResult(Project.Options.OutputFiles.OutpathAdj, split, space, "约束网", Project.Options.OutputFiles.COSADis);
+          MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex) {
+          loading.CloseWaitForm();
+          throw ex;
+        }
+      };
       chooseKnownPoint.ShowDialog();
     }
 
@@ -1206,37 +1170,48 @@ namespace LevelnetAdjustment {
     }
 
 
-    private void CalcGrossError(List<PointData> Points) {
-      ClAdj.KnownPoints = Points;
-      ClAdj.Calc_Params();
+    #endregion
 
-      flag = true;
-      SimpleLoading loadingfrm = new SimpleLoading(this, "计算中，请稍等...");
-      //将Loaing窗口，注入到 SplashScreenManager 来管理
-      GF2Koder.SplashScreenManager loading = new GF2Koder.SplashScreenManager(loadingfrm);
-      loading.ShowLoading();
-      try {
-        switch (GrossMethod) {
-          case GrossMethodEnum.DataSnooping:
-            ClAdj.DataSnoopingMethod(split, space, Project.Options.OutputFiles.OutpathGrossError);
-            AddTabPage(Project.Options.OutputFiles.OutpathGrossError);  // 新建窗体同时新建一个标签
-            break;
-          case GrossMethodEnum.IGG:
-            ClAdj.IGGMethod(split, space, Project.Options.OutputFiles.OutpathGrossError);
-            break;
-          default:
-            break;
+    private void 变形分析ToolStripMenuItem_Click(object sender, EventArgs e) {
+      string path = string.Empty;
+      string exe = Path.Combine(Application.StartupPath, "change.exe");
+      if (!File.Exists(exe)) {
+        throw new Exception("在程序目录下未找到change.exe，请检查！");
+      }
+      if (File.Exists(Project.Options.OutputFiles.COSADis)) {
+        path = Project.Options.OutputFiles.COSADis;
+      }
+      else {
+        OpenFileDialog openFile = new OpenFileDialog {
+          Multiselect = false,
+          Title = "打开",
+          Filter = "in1 file|*.in1;*.IN1",
+          FilterIndex = 1,
+          RestoreDirectory = true,
+          InitialDirectory = Path.Combine(Project.Path, Project.Name, "ExportFiles")
+        };
+        if (openFile.ShowDialog() == DialogResult.OK) {
+          path = openFile.FileName;
         }
-        loading.CloseWaitForm();
-        MessageBox.Show("粗差探测完毕", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        else {
+          return;
+        }
+      }
+
+      try {
+        Process myProcess = new Process {
+          StartInfo = new ProcessStartInfo(exe, path) {
+            UseShellExecute = true,
+            ErrorDialog = true
+          }
+        };
+
+        myProcess.Start();
       }
       catch (Exception ex) {
-        loading.CloseWaitForm();
         throw ex;
       }
     }
-
-    #endregion
   }
 }
 

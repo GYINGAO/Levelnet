@@ -97,6 +97,8 @@ namespace LevelnetAdjustment.utils {
     /// 法方程系数阵
     /// </summary>
     public Matrix<double> NBB { get; set; }
+
+
     /// <summary>
     /// 法方程常数项
     /// </summary>
@@ -441,9 +443,6 @@ namespace LevelnetAdjustment.utils {
       int iteration_count = 1;
       // 迭代计算，直到未知数改正数为0
       while (isOverrun(x)) {
-        if (!MainForm.flag) {
-          break;
-        }
         iteration_count++;
         Calc_l();
         Calc_NBB();
@@ -593,9 +592,6 @@ namespace LevelnetAdjustment.utils {
         used[i] = 0;
 
       for (int i = 0; i < N; i++) {
-        if (!MainForm.flag) {
-          break;
-        }
         int k1 = ObservedDatasNoRep[i].StartIndex; //起点点号;
         int k2 = ObservedDatasNoRep[i].EndIndex; //终点点号
         if (used[i] != 0) continue;
@@ -683,9 +679,6 @@ namespace LevelnetAdjustment.utils {
       double[] S = new double[M];    //路线长累加值数组
 
       for (int ii = 0; ii < KnPnumber; ii++) {
-        if (!MainForm.flag) {
-          break;
-        }
         FindShortPath(ii, -1, neighbor, diff, S); //搜索最短路线，用所有观测值
 
         for (int jj = ii + 1; jj < KnPnumber; jj++) {
@@ -777,9 +770,6 @@ namespace LevelnetAdjustment.utils {
       PVV = 0;
       int k;
       for (k = 0; ; k++) {
-        if (!MainForm.flag) {
-          break;
-        }
         Calc_NBB();
         //法方程系数阵已知点对角线加上很大的常数，使得已知点改正数为0
         for (int i = 0; i < KnPnumber; i++) {
@@ -809,7 +799,6 @@ namespace LevelnetAdjustment.utils {
             max_i = i;
           }
         }
-
         /*         // 计算观测值残差
                  Qvv = P.Inverse() - B * NBB.Inverse() * B.Transpose();
                  List<double> vi = new List<double>();
@@ -955,9 +944,6 @@ namespace LevelnetAdjustment.utils {
       V_total = V;
       int iteration_count = 1;
       while (isOverrun(x)) {
-        if (!MainForm.flag) {
-          break;
-        }
         iteration_count++;
         Calc_l();
         Calc_NBB();
@@ -1034,9 +1020,6 @@ namespace LevelnetAdjustment.utils {
       int iteration_count = 1;
       // 迭代计算，直到未知数改正数为0
       while (isOverrun(x)) {
-        if (!MainForm.flag) {
-          break;
-        }
         iteration_count++;
         Calc_l();
         Calc_NBB();
